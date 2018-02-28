@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;application/logic/data.c&apos; to &apos;data.cpp&apos;" description="Rename resource &apos;data.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="logic/data.c" name="data.cpp" stamp="1519150195566" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;application/logic/data.h&apos; to &apos;data.hpp&apos;" description="Rename resource &apos;data.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="logic/data.h" name="data.hpp" stamp="1519150208862" updateReferences="true"/>
+</session>

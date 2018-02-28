@@ -1,0 +1,116 @@
+/******************************************************************************
+ *
+ * @brief     This file is part of the TouchGFX 4.8.0 evaluation distribution.
+ *
+ * @author    Draupner Graphics A/S <http://www.touchgfx.com>
+ *
+ ******************************************************************************
+ *
+ * @section Copyright
+ *
+ * This file is free software and is provided for example purposes. You may
+ * use, copy, and modify within the terms and conditions of the license
+ * agreement.
+ *
+ * This is licensed software for evaluation use, any use must strictly comply
+ * with the evaluation license agreement provided with delivery of the
+ * TouchGFX software.
+ *
+ * The evaluation license agreement can be seen on www.touchgfx.com
+ *
+ * @section Disclaimer
+ *
+ * DISCLAIMER OF WARRANTY/LIMITATION OF REMEDIES: Draupner Graphics A/S has
+ * no obligation to support this software. Draupner Graphics A/S is providing
+ * the software "AS IS", with no express or implied warranties of any kind,
+ * including, but not limited to, any implied warranties of merchantability
+ * or fitness for any particular purpose or warranties against infringement
+ * of any proprietary rights of a third party.
+ *
+ * Draupner Graphics A/S can not be held liable for any consequential,
+ * incidental, or special damages, or any other relief, or for any claim by
+ * any third party, arising from your use of this software.
+ *
+ *****************************************************************************/
+#include <data.hpp>
+#include <gui/common/CustomKeyboard.hpp>
+
+CustomKeyboard::CustomKeyboard() : keyboard(),
+    modeBtnTextArea(),
+	enterPressed(this, &CustomKeyboard::enterPressedHandler),
+    backspacePressed(this, &CustomKeyboard::backspacePressedHandler),
+    keyPressed(this, &CustomKeyboard::keyPressedhandler),
+    alphaKeys(false),
+    uppercaseKeys(false),
+    firstCharacterEntry(false)
+{
+    //Set the callbacks for the callback areas of the keyboard and set its layout.
+    layout.callbackAreaArray[0].callback = &backspacePressed;
+    layout.callbackAreaArray[1].callback = &enterPressed;
+    keyboard.setLayout(&layout);
+    keyboard.setKeyListener(keyPressed);
+    keyboard.setPosition(0, 0, 480, 272);
+    keyboard.setTextIndentation();
+    //Allocate the buffer associated with keyboard.
+    memset(buffer, 0, sizeof(buffer));
+    keyboard.setBuffer(buffer, BUFFER_SIZE);
+
+    uppercaseKeys = true;
+    firstCharacterEntry = true;
+
+    setKeyMappingList();
+
+    add(keyboard);
+    add(modeBtnTextArea);
+}
+
+void CustomKeyboard::setKeyMappingList()
+{
+	keyboard.setKeymappingList(&keyMappingListNum);
+}
+
+void CustomKeyboard::backspacePressedHandler()
+{
+    uint16_t pos = keyboard.getBufferPosition();
+    if (pos > 0)
+    {
+        //Delete the previous entry in the buffer and decrement the position.
+        buffer[pos - 1] = 0;
+        shadow_buffer[pos - 1] = 0;
+        keyboard.setBufferPosition(pos - 1);
+    }
+}
+
+void CustomKeyboard::enterPressedHandler()
+{
+	uint16_t pos = keyboard.getBufferPosition();
+	if(pos == BUFFER_SIZE)
+	{
+		pincode.val = Unicode::atoi(shadow_buffer);
+		int i;
+		for(i = 0; i < BUFFER_SIZE; i++)
+		{
+			buffer[i] = shadow_buffer[i] = 0;
+		}
+		keyboard.setBufferPosition(0);
+	}
+}
+
+void CustomKeyboard::keyPressedhandler(Unicode::UnicodeChar keyChar)
+{
+	if(keyChar > 0)
+	{
+		uint16_t pos = keyboard.getBufferPosition();
+		if(pos > 0)
+		{
+			shadow_buffer[pos - 1] = buffer[pos - 1];
+			buffer[pos - 1] = '*';
+		}
+	}
+}
+
+void CustomKeyboard::setTouchable(bool touch)
+{
+    Container::setTouchable(touch);
+    keyboard.setTouchable(touch);
+}

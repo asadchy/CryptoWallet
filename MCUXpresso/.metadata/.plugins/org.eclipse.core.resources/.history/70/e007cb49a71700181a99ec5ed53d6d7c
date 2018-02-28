@@ -1,0 +1,28 @@
+#include <gui/common/FrontendApplication.hpp>
+
+#include <gui/common/FrontendHeap.hpp>
+#include <touchgfx/transitions/NoTransition.hpp>
+#include <gui/pin_code_screen/pin_codeView.hpp>
+#include <gui/pin_code_screen/pin_codePresenter.hpp>
+#include <gui/startup_screen/startupView.hpp>
+#include <gui/startup_screen/startupPresenter.hpp>
+#include <gui/main_screen_screen/main_screenView.hpp>
+#include <gui/main_screen_screen/main_screenPresenter.hpp>
+
+
+FrontendApplication::FrontendApplication(Model& m, FrontendHeap& heap)
+    : FrontendApplicationBase(m, heap)
+{
+}
+
+void FrontendApplication::gotoMainScreen()
+{
+	customTransitionCallback = touchgfx::Callback<FrontendApplication>(this, &FrontendApplication::gotoMainScreenImpl);
+	pendingScreenTransitionCallback = &customTransitionCallback;
+}
+
+void FrontendApplication::gotoMainScreenImpl()
+{
+	makeTransition< main_screenView, main_screenPresenter, touchgfx::NoTransition, Model >(&currentScreen,
+			&currentPresenter, frontendHeap, &currentTransition, &model);
+}

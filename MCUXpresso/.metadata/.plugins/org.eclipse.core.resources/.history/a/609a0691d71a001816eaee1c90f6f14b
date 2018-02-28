@@ -1,0 +1,26 @@
+#include <gui/status_screen/statusView.hpp>
+
+statusView::statusView()
+{
+
+}
+
+void statusView::setupScreen()
+{
+	add(dialog);
+	dialog.setParrent(&getRootContainer());
+	dialog.setXY(HAL::DISPLAY_WIDTH / 2 - dialog.getWidth() / 2,
+			HAL::DISPLAY_HEIGHT / 2 - dialog.getHeight() / 2);
+
+	statusScreenEntered();
+}
+
+void statusView::tearDownScreen()
+{
+
+}
+
+void statusView::statusScreenEntered()
+{
+	presenter->statusScreenEntered();
+}

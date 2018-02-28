@@ -1,0 +1,60 @@
+#include <gui/main_screen_screen/main_screenView.hpp>
+#include <stdio.h>
+
+main_screenView::main_screenView()
+{
+}
+
+void main_screenView::setupScreen()
+{
+	add(dialog);
+	dialog.setParrent(&this);
+	dialog.setXY(HAL::DISPLAY_WIDTH / 2 - dialog.getWidth() / 2,
+			HAL::DISPLAY_HEIGHT / 2 - dialog.getHeight() / 2);
+
+	transactionScreenEntered();
+}
+
+void main_screenView::tearDownScreen()
+{
+
+}
+
+void main_screenView::setCurrency(char *curr)
+{
+	Unicode::UnicodeChar tmp[16];
+	Unicode::strncpy(tmp, curr, 16);
+	Unicode::snprintf(currencyBuffer, CURRENCY_SIZE, "%s", tmp);
+	currency.invalidate();
+}
+
+void main_screenView::setAddress(unsigned char *addr)
+{
+	int i = 0;
+	char tmp[82];
+	int index;
+	index = snprintf(tmp, 82, "0x");
+	for(i = 0; i < 40; i++)
+	{
+		index += snprintf(&tmp[index], 82 - index, "%02d", addr[i]);
+	}
+	Unicode::strncpy(addressBuffer, tmp, ADDRESS_SIZE);
+	address.invalidate();
+}
+
+void main_screenView::setValue(double val)
+{
+	Unicode::snprintfFloat(valueBuffer, VALUE_SIZE, "%1.10f", val);
+	value.invalidate();
+}
+
+void main_screenView::transactionScreenEntered()
+{
+	presenter->transactionScreenEntered();
+}
+
+void main_screenView::setDialogText(touchgfx::Unicode::UnicodeChar *text)
+{
+	dialog.setText(text);
+}
+

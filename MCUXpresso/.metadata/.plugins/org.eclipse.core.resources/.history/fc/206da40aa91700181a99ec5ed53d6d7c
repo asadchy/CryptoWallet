@@ -1,0 +1,35 @@
+/*
+ * data.h
+ *
+ *  Created on: Feb 20, 2018
+ *      Author: artyom
+ */
+
+#ifndef DATA_HPP_
+#define DATA_HPP_
+
+#ifndef SIMULATOR
+	#include "FreeRTOS.h"
+	#include "task.h"
+	#include "queue.h"
+#endif
+
+#define QUEUE_SIZE								5
+
+enum COMMANDS
+{
+	PINCODE = 0x00,
+	TO_MAIN
+};
+
+struct message
+{
+	int cmd;
+	void *data;
+};
+
+#ifndef SIMULATOR
+	extern QueueHandle_t lcd_to_card, card_to_lcd;
+#endif
+
+#endif /* DATA_HPP_ */

@@ -1,0 +1,33 @@
+#include <gui/status_screen/statusView.hpp>
+#include <gui/status_screen/statusPresenter.hpp>
+
+statusPresenter::statusPresenter(statusView& v)
+    : view(v)
+{
+}
+
+void statusPresenter::activate()
+{
+
+}
+
+void statusPresenter::deactivate()
+{
+
+}
+
+void statusPresenter::toMainScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoMainScreen();
+}
+
+void statusPresenter::statusScreenEntered()
+{
+	model->statusScreenEntered();
+}
+
+void statusPresenter::setDialogText(touchgfx::Unicode::UnicodeChar *text)
+{
+	view.setDialogText(text);
+}
+

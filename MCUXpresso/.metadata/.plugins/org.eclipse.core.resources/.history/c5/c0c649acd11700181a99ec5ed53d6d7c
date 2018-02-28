@@ -1,0 +1,46 @@
+#ifndef MAIN_SCREEN_PRESENTER_HPP
+#define MAIN_SCREEN_PRESENTER_HPP
+
+#include <gui/model/ModelListener.hpp>
+#include <mvp/Presenter.hpp>
+#ifndef SIMULATOR
+#include <data.hpp>
+#endif
+
+using namespace touchgfx;
+
+class main_screenView;
+
+class main_screenPresenter : public Presenter, public ModelListener
+{
+public:
+    main_screenPresenter(main_screenView& v);
+
+    /**
+     * The activate function is called automatically when this screen is "switched in"
+     * (ie. made active). Initialization logic can be placed here.
+     */
+    virtual void activate();
+
+    /**
+     * The deactivate function is called automatically when this screen is "switched out"
+     * (ie. made inactive). Teardown functionality can be placed here.
+     */
+    virtual void deactivate();
+
+    virtual ~main_screenPresenter() {};
+
+    virtual void setCurrency(enum currency curr);
+	virtual void setAddress(unsigned char *addr);
+	virtual void setValue(double value);
+
+	void transactionScreenEntered();
+
+private:
+    main_screenPresenter();
+
+    main_screenView& view;
+};
+
+
+#endif // MAIN_SCREEN_PRESENTER_HPP

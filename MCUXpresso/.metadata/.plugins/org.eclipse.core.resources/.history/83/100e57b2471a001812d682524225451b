@@ -1,0 +1,45 @@
+/*
+ * dialog.cpp
+ *
+ *  Created on: Feb 23, 2018
+ *      Author: artyom
+ */
+
+#include <gui/common/dialog.hpp>
+#include <BitmapDatabase.hpp>
+
+Dialog::Dialog() :
+	callback(0),
+	onButtonClicked(this, &Dialog::buttonClicked)
+{
+	backgroung.setBitmap(touchgfx::Bitmap(BITMAP_DIALOG_ID));
+	add(backgroung);
+
+	add(text);
+
+	close.setBitmaps(touchgfx::Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_ID),
+			touchgfx::Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_PRESSED_ID));
+	close.setXY(75, 170);
+	close.setAction(onButtonClicked);
+	add(close);
+
+	setWidth(backgroung.getWidth());
+	setHeight(backgroung.getHeight());
+
+	text.setTypedText(touchgfx::TypedText(T_TEXTID4));
+	text.setWildcard(textBuffer);
+	text.setPosition(10, 100, 280, 40);
+}
+
+void Dialog::setText(touchgfx::Unicode::UnicodeChar *message)
+{
+	touchgfx::Unicode::snprintf(textBuffer, TEXT_SIZE, message);
+	text.invalidate();
+}
+
+void Dialog::buttonClicked(const touchgfx::AbstractButton& bnt)
+{
+
+}
+
+

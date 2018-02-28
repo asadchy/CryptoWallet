@@ -1,0 +1,31 @@
+/*
+ * dialog.hpp
+ *
+ *  Created on: Feb 23, 2018
+ *      Author: artyom
+ */
+
+#ifndef DIALOG_HPP_
+#define DIALOG_HPP_
+
+#include <touchgfx/containers/Container.hpp>
+#include <touchgfx/widgets/Image.hpp>
+#include <touchgfx/widgets/TextArea.hpp>
+#include <touchgfx/widgets/Button.hpp>
+
+class Dialog : public touchgfx::Container
+{
+public:
+	Dialog();
+
+	void setText();
+private:
+	touchgfx::Image backgroung;
+	touchgfx::TextArea text;
+	touchgfx::Button close;
+
+	touchgfx::Callback<Dialog, const touchgfx::AbstractButton&> onButtonClicked;
+	void buttonClicked(const touchgfx::AbstractButton& bnt);
+};
+
+#endif /* DIALOG_HPP_ */

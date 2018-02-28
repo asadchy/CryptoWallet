@@ -1,0 +1,16 @@
+#include <gui/transaction_screen/transactionView.hpp>
+
+transactionView::transactionView()
+{
+
+}
+
+void transactionView::setupScreen()
+{
+
+}
+
+void transactionView::tearDownScreen()
+{
+
+}

@@ -1,0 +1,26 @@
+#ifndef MAIN_SCREEN_VIEW_HPP
+#define MAIN_SCREEN_VIEW_HPP
+
+#include <gui_generated/main_screen_screen/main_screenViewBase.hpp>
+#include <gui/main_screen_screen/main_screenPresenter.hpp>
+#include <gui/common/dialog.hpp>
+
+class main_screenView : public main_screenViewBase
+{
+public:
+    main_screenView();
+    virtual ~main_screenView() {}
+    virtual void setupScreen();
+    virtual void tearDownScreen();
+
+    void setCurrency(char *curr);
+	void setAddress(unsigned char *addr);
+	void setValue(double val);
+
+	void transactionScreenEntered();
+	void main_screenView::setDialogText(touchgfx::Unicode::UnicodeChar *text);
+private:
+	Dialog dialog;
+};
+
+#endif // MAIN_SCREEN_VIEW_HPP

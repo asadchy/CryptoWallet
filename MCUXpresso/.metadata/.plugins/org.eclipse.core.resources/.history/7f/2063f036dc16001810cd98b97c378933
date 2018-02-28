@@ -1,0 +1,22 @@
+#include <gui/pin_code_screen/pin_codeView.hpp>
+#include <gui/pin_code_screen/pin_codePresenter.hpp>
+
+pin_codePresenter::pin_codePresenter(pin_codeView& v)
+    : view(v)
+{
+}
+
+void pin_codePresenter::activate()
+{
+
+}
+
+void pin_codePresenter::deactivate()
+{
+
+}
+
+void pin_codePresenter::enterPincode(int pincode)
+{
+	model->enterPincode(pincode);
+}

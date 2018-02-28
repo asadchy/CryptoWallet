@@ -1,0 +1,7 @@
+build/
+target/NXP/LPCXpresso54608/MCUXpresso/
+*.[oa]
+CryptoWallet.touchgfx
+output_project-updater.log
+output_simcompile.log
+

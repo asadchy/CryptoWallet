@@ -1,0 +1,42 @@
+#include <gui/transaction_screen/transactionView.hpp>
+#include <gui/transaction_screen/transactionPresenter.hpp>
+
+transactionPresenter::transactionPresenter(transactionView& v)
+    : view(v)
+{
+}
+
+void transactionPresenter::activate()
+{
+
+}
+
+void transactionPresenter::deactivate()
+{
+
+}
+
+void transactionPresenter::setCurrency(char *currency)
+{
+	view.setCurrency(currency);
+}
+
+void transactionPresenter::setAddress(unsigned char *addr)
+{
+	view.setAddress(addr);
+}
+
+void transactionPresenter::setValue(double value)
+{
+	view.setValue(value);
+}
+
+void transactionPresenter::transactionScreenEntered()
+{
+	model->transactionScreenEntered();
+}
+
+void transactionPresenter::setDialogText(touchgfx::Unicode::UnicodeChar *text)
+{
+	view.setDialogText(text);
+}

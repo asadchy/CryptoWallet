@@ -1,0 +1,21 @@
+#ifndef STATUS_VIEW_HPP
+#define STATUS_VIEW_HPP
+
+#include <gui_generated/status_screen/statusViewBase.hpp>
+#include <gui/status_screen/statusPresenter.hpp>
+
+class statusView : public statusViewBase
+{
+public:
+    statusView();
+    virtual ~statusView() {}
+    virtual void setupScreen();
+    virtual void tearDownScreen();
+
+    void statusScreenEntered();
+
+private:
+    Dialog dialog;
+};
+
+#endif // STATUS_VIEW_HPP

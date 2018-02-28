@@ -1,0 +1,26 @@
+#ifndef MAIN_SCREEN_VIEW_HPP
+#define MAIN_SCREEN_VIEW_HPP
+
+#include <gui_generated/transaction_screen/transactionViewBase.hpp>
+#include <gui/transaction_screen/transactionPresenter.hpp>
+#include <gui/common/dialog.hpp>
+
+class transactionView : public transactionViewBaseViewBase
+{
+public:
+	transactionView();
+    virtual ~transactionView() {}
+    virtual void setupScreen();
+    virtual void tearDownScreen();
+
+    void setCurrency(char *curr);
+	void setAddress(unsigned char *addr);
+	void setValue(double val);
+
+	void transactionScreenEntered();
+	void setDialogText(touchgfx::Unicode::UnicodeChar *text);
+private:
+	Dialog dialog;
+};
+
+#endif // MAIN_SCREEN_VIEW_HPP

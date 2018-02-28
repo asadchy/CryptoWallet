@@ -1,0 +1,16 @@
+/*
+ * ListElement.cpp
+ *
+ *  Created on: Feb 28, 2018
+ *      Author: artyom
+ */
+
+#include <gui/common/ListElement.hpp>
+
+
+ListElement::ListElement()
+	: Container()
+{
+}
+
+void

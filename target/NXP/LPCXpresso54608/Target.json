@@ -1,0 +1,22 @@
+{
+  "Name" : "LPCXpresso54608",
+  "VendorName" : "NXP",
+  "CompileTargetCmd" : "target\\NXP\\LPCXpresso54608\\IAR\\compile.bat",
+  "FlashTargetCmd" : "target\\NXP\\LPCXpresso54608\\IAR\\flash.bat",
+  "Description" : "",	
+  "Resolutions": [
+    {
+      "DisplayWidth": 480,
+      "DisplayHeight": 272
+    }
+  ], 
+
+  "ColorDepths": 
+  [
+    16
+  ],               
+  "PhysicalButtons" : 
+  [
+  ]
+ 
+}

@@ -1,0 +1,18 @@
+#include <gui/common/FrontendApplication.hpp>
+
+FrontendApplication::FrontendApplication(Model& m, FrontendHeap& heap)
+    : FrontendApplicationBase(m, heap)
+{
+}
+
+void FrontendApplication::gotoMainScreen()
+{
+	transitionCallback = Callback<FrontendApplication>(this, &FrontendApplication::gotoMainScreenImpl);
+	pendingScreenTransitionCallback = &transitionCallback;
+}
+
+void FrontendApplication::gotoMainScreenImpl()
+{
+	makeTransition< main_screenView, main_screenPresenter, NoTransition, Model >(&currentScreen,
+			&currentPresenter, frontendHeap, &currentTransition, &model);
+}

@@ -1,0 +1,32 @@
+#include <gui/main_screen_screen/main_screenView.hpp>
+
+main_screenView::main_screenView()
+{
+
+}
+
+void main_screenView::setupScreen()
+{
+
+}
+
+void main_screenView::tearDownScreen()
+{
+
+}
+
+void main_screenView::setCurrency(char *curr)
+{
+	Unicode::snprintf(currencyBuffer, CURRENCY_SIZE, "%s", currency);
+	cinvalidate();
+}
+
+void main_screenView::setAddress(unsigned char *addr)
+{
+
+}
+
+void main_screenView::setValue(double value)
+{
+
+}

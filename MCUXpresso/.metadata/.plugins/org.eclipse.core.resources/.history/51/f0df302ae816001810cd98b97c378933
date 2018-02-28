@@ -1,0 +1,22 @@
+#include <gui/pin_code_screen/pin_codeView.hpp>
+
+pin_codeView::pin_codeView() :
+	pincodeEnteredCallback(this, &pin_codeView::pincodeEntered)
+{
+}
+
+void pin_codeView::setupScreen()
+{
+	keyboard.setPosition(0, 0, 480, 272);
+	add(keyboard);
+}
+
+void pin_codeView::tearDownScreen()
+{
+
+}
+
+void pin_codeView::pincodeEntered(int pincode)
+{
+	presenter->pincodeEntered(pincode);
+}

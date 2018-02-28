@@ -1,0 +1,21 @@
+#include <gui/status_screen/statusView.hpp>
+
+statusView::statusView()
+{
+	transactionScreenEntered();
+}
+
+void statusView::setupScreen()
+{
+
+}
+
+void statusView::tearDownScreen()
+{
+
+}
+
+void statusView::transactionScreenEntered()
+{
+	presenter->transactionScreenEntered();
+}

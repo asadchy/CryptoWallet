@@ -1,0 +1,19 @@
+/*
+ * data.h
+ *
+ *  Created on: Feb 20, 2018
+ *      Author: artyom
+ */
+
+#ifndef DATA_HPP_
+#define DATA_HPP_
+
+#define QUEUE_SIZE								5
+
+struct message
+{
+	int cmd;
+	void *data;
+};
+
+#endif /* DATA_HPP_ */

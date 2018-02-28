@@ -1,0 +1,10 @@
+/*
+ * data.c
+ *
+ *  Created on: Feb 20, 2018
+ *      Author: artyom
+ */
+
+#include <data.hpp>
+
+QueueHandle_t lcd_to_card, card_to_lcd;

@@ -1,0 +1,27 @@
+#include <gui/pin_code_screen/pin_codeView.hpp>
+#include <gui/pin_code_screen/pin_codePresenter.hpp>
+
+pin_codePresenter::pin_codePresenter(pin_codeView& v)
+    : view(v)
+{
+}
+
+void pin_codePresenter::activate()
+{
+
+}
+
+void pin_codePresenter::deactivate()
+{
+
+}
+
+void pin_codePresenter::pincodeEntered(int pincode)
+{
+	model->pincodeEntered(pincode);
+}
+
+void pin_codePresenter::toMainScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotopin_codeScreenNoTransition();
+}

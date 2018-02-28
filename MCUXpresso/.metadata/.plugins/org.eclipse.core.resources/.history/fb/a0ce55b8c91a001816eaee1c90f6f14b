@@ -1,0 +1,17 @@
+#ifndef TRANSACTION_VIEW_HPP
+#define TRANSACTION_VIEW_HPP
+
+#include <gui_generated/transaction_screen/transactionViewBase.hpp>
+#include <gui/transaction_screen/transactionPresenter.hpp>
+
+class transactionView : public transactionViewBase
+{
+public:
+    transactionView();
+    virtual ~transactionView() {}
+    virtual void setupScreen();
+    virtual void tearDownScreen();
+protected:
+};
+
+#endif // TRANSACTION_VIEW_HPP

@@ -1,0 +1,30 @@
+#include <gui/pin_code_screen/pin_codeView.hpp>
+
+pin_codeView::pin_codeView() :
+	pincodeEnteredCallback(this, &pin_codeView::pincodeEntered)
+{
+}
+
+void pin_codeView::setupScreen()
+{
+	keyboard.setPosition(0, 0, 480, 272);
+	keyboard.setPincodeEnteredCallback(pincodeEnteredCallback);
+	add(keyboard);
+
+	dialog.setXY(HAL::DISPLAY_WIDTH / 2 - dialog.getWidth() / 2,
+			HAL::DISPLAY_HEIGHT / 2 - dialog.getHeight() / 2);
+	Unicode::UnicodeChar mess[48];
+	Unicode::strncpy(mess, "Hello!", 48);
+	dialog.setText(mess);
+	add(dialog);
+}
+
+void pin_codeView::tearDownScreen()
+{
+
+}
+
+void pin_codeView::pincodeEntered(int pincode)
+{
+	presenter->pincodeEntered(pincode);
+}

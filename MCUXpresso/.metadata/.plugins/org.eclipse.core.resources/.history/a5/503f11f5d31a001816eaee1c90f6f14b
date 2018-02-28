@@ -1,0 +1,21 @@
+#include <gui/status_screen/statusView.hpp>
+
+statusView::statusView()
+{
+
+}
+
+void statusView::setupScreen()
+{
+
+}
+
+void statusView::tearDownScreen()
+{
+
+}
+
+void statusView::statusScreenEntered()
+{
+	presenter->statusScreenEntered();
+}

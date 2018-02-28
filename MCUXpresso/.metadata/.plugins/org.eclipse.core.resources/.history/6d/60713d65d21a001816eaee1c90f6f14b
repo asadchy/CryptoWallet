@@ -1,0 +1,75 @@
+#include <gui/transaction_screen/transactionView.hpp>
+#include <stdio.h>
+
+transactionView::transactionView() :
+	onButtonClicked(this, &transactionView::buttonClicked)
+{
+
+}
+
+void transactionView::setupScreen()
+{
+	add(dialog);
+	dialog.setParrent(&getRootContainer());
+	dialog.setXY(HAL::DISPLAY_WIDTH / 2 - dialog.getWidth() / 2,
+			HAL::DISPLAY_HEIGHT / 2 - dialog.getHeight() / 2);
+
+	cancel.setAction(callback)
+
+	transactionScreenEntered();
+}
+
+void transactionView::tearDownScreen()
+{
+
+}
+
+void transactionView::buttonClicked(const touchgfx::AbstractButton& bnt)
+{
+	if(&btn == &cancel)
+	{
+
+	}
+	else if(&btn == confirm)
+	{
+
+	}
+}
+
+void transactionView::setCurrency(char *curr)
+{
+	Unicode::UnicodeChar tmp[16];
+	Unicode::strncpy(tmp, curr, 16);
+	Unicode::snprintf(currencyBuffer, CURRENCY_SIZE, "%s", tmp);
+	currency.invalidate();
+}
+
+void transactionView::setAddress(unsigned char *addr)
+{
+	int i = 0;
+	char tmp[82];
+	int index;
+	index = snprintf(tmp, 82, "0x");
+	for(i = 0; i < 40; i++)
+	{
+		index += snprintf(&tmp[index], 82 - index, "%02d", addr[i]);
+	}
+	Unicode::strncpy(addressBuffer, tmp, ADDRESS_SIZE);
+	address.invalidate();
+}
+
+void transactionView::setValue(double val)
+{
+	Unicode::snprintfFloat(valueBuffer, VALUE_SIZE, "%1.10f", val);
+	value.invalidate();
+}
+
+void transactionView::transactionScreenEntered()
+{
+	presenter->transactionScreenEntered();
+}
+
+void transactionView::setDialogText(touchgfx::Unicode::UnicodeChar *text)
+{
+	dialog.setText(text);
+}
