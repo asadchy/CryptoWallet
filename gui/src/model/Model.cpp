@@ -134,6 +134,12 @@ void Model::message_parser(struct message *message)
 			dialogText[0] = 0;
 			break;
 
+		case TRANSACTION_CONFIRMED:
+			toStatusScreen();
+			static const char *transaction_confirmed = "Transaction send";
+			touchgfx::Unicode::strncpy(dialogText, transaction_confirmed, TEXT_SIZE);
+			break;
+
 		case TRANSACTION:
 			toMainScreen();
 			transaction = static_cast<struct transaction*>(message->data);
@@ -167,6 +173,13 @@ void Model::cancelPressed()
 	toStatusScreen();
 	static const char *message = "Transaction was canceled";
 	touchgfx::Unicode::strncpy(dialogText, message, TEXT_SIZE);
+
+#ifndef SIMULATOR
+	struct message mess = {
+			.cmd = TRANSACTION_CANCELED
+	};
+	xQueueSend(lcd_to_card, static_cast<void*>(&mess), 0);
+#endif
 }
 
 void Model::confirmPressed()
