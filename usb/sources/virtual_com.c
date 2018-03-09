@@ -613,7 +613,7 @@ void APPTask(void *handle)
         }
     }
 #endif
-uint8_t buffer[100] = {0};
+uint8_t buffer[130] = {0};
 uint32_t lenBuf = 0;
 uint32_t send=0;
 static int pin = -1;

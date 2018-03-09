@@ -107,11 +107,13 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<32; i++){
 				mess[i] = dataIn[i+2];
 			}
+			int valueTr = 0;
+			valueTr = (int)dataIn[34]*4096 + (int)dataIn[35]*256 + (int)dataIn[36]*16 + (int)dataIn[37];
 
 			memcpy(transaction.curr_name, "Bitcoin", 8);
-			transaction.value = 1;
+			transaction.value = valueTr;
 			for(int i = 0; i < 34; i++){
-				transaction.addr[i] = 0;
+				transaction.addr[i] = dataIn[i+38];
 			}
 
 			message.cmd = TRANSACTION;
