@@ -753,7 +753,7 @@ void usb_init(void)
                     s_appName,                       /* task name for kernel awareness debugging */
                     15000L / sizeof(portSTACK_TYPE),  /* task stack size                          */
                     &s_cdcVcom,                      /* optional task startup argument           */
-                    3,                               /* initial priority                         */
+                    2,                               /* initial priority                         */
                     &s_cdcVcom.applicationTaskHandle /* optional task handle to create           */
                     ) != pdPASS)
     {
