@@ -106,6 +106,11 @@ private:
     Callback<CustomKeyboard> backspacePressed;
 
     /**
+	 * Callback for the cancel button.
+	 */
+	Callback<CustomKeyboard> cancelPressed;
+
+    /**
      * Callback for when keys are pressed on the keyboard.
      */
     Callback<CustomKeyboard, Unicode::UnicodeChar> keyPressed;
@@ -144,6 +149,11 @@ private:
 	 * Callback handler for the enter button.
 	 */
 	void enterPressedHandler();
+
+	/**
+	 * Callback handler for the cancel button.
+	 */
+	void cancelPressedHandler();
 
 
     /**

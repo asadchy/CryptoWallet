@@ -135,9 +135,6 @@
     <Filter Include="Resource Files\config\msvs">
       <UniqueIdentifier>{C24EAEDB-9A3F-43DC-87FB-C7AC2729A078}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\assets\images\__designer">
-      <UniqueIdentifier>{D5E85852-BB2A-401F-8279-5B36852F86E6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{2F3FC0AA-97C4-4366-9939-94A0FF4E028C}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -281,34 +278,43 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\assets\fonts\Heebo-Regular.ttf">
+      <Filter>Resource Files\assets\fonts</Filter>
+    </None>
+    <None Include="..\..\assets\fonts\Heebo-Thin.ttf">
+      <Filter>Resource Files\assets\fonts</Filter>
+    </None>
     <None Include="..\..\assets\fonts\RobotoCondensed-Regular.ttf">
       <Filter>Resource Files\assets\fonts</Filter>
     </None>
     <None Include="..\..\assets\fonts\verdana.ttf">
       <Filter>Resource Files\assets\fonts</Filter>
     </None>
-    <None Include="..\..\assets\images\__designer\Blue_Buttons_Round_Edge_small.png">
-      <Filter>Resource Files\assets\images\__designer</Filter>
-    </None>
-    <None Include="..\..\assets\images\__designer\Blue_Buttons_Round_Edge_small_pressed.png">
-      <Filter>Resource Files\assets\images\__designer</Filter>
-    </None>
-    <None Include="..\..\assets\images\a1.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\a2.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\a3.png">
+    <None Include="..\..\assets\images\background.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\btc.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\button_not_pressed.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\button_pressed.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\dialog.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\enter_pressed.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\eth.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\key_pressed.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\keyboard.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\keyboard_background.png">
@@ -318,6 +324,15 @@
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\leftDoor.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\list_element_btc.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\list_element_eth.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\list_element_lit.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\lite.png">
@@ -347,7 +362,13 @@
     <None Include="..\..\assets\images\loading-7.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\logo.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\rightDoor.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\startup_background.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\texts\texts.xlsx">

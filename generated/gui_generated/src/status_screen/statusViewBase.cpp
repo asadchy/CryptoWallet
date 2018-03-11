@@ -9,10 +9,10 @@
 statusViewBase::statusViewBase()  
 {
     background.setXY(0, 0);
-    background.setBitmap(Bitmap(BITMAP_A3_ID));
+    background.setBitmap(Bitmap(BITMAP_BACKGROUND_ID));
 
-    available_curr.setPosition(197, 28, 213, 36);
-    available_curr.setColor(touchgfx::Color::getColorFrom24BitRGB(252,248,248));
+    available_curr.setPosition(222, 19, 247, 39);
+    available_curr.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
     available_curr.setLinespacing(0);
     available_curr.setTypedText(TypedText(T_AVAILABLE_CURR));
     add(background);

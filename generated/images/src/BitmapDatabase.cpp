@@ -7,56 +7,36 @@
 using namespace touchgfx;
 #endif
 
-extern const unsigned char _Blue_Buttons_Round_Edge_small[]; 
-extern const unsigned char _Blue_Buttons_Round_Edge_small_pressed[]; 
-extern const unsigned char _a1[]; 
-extern const unsigned char _a2[]; 
-extern const unsigned char _a3[]; 
-extern const unsigned char _btc[]; 
+extern const unsigned char _background[]; 
+extern const unsigned char _btc_status[]; 
+extern const unsigned char _button_not_pressed[]; 
+extern const unsigned char _button_pressed[]; 
 extern const unsigned char _dialog[]; 
-extern const unsigned char _eth[]; 
-extern const unsigned char _keyboard_background[]; 
-extern const unsigned char _keyboard_key_highlighted[]; 
+extern const unsigned char _enter_pressed[]; 
+extern const unsigned char _eth_status[]; 
+extern const unsigned char _key_pressed[]; 
+extern const unsigned char _keyboard[]; 
 extern const unsigned char _leftDoor[]; 
-extern const unsigned char _list_element_btc[]; 
-extern const unsigned char _list_element_eth[]; 
-extern const unsigned char _list_element_lit[]; 
-extern const unsigned char _lite[]; 
-extern const unsigned char _loading_0[]; 
-extern const unsigned char _loading_1[]; 
-extern const unsigned char _loading_2[]; 
-extern const unsigned char _loading_3[]; 
-extern const unsigned char _loading_4[]; 
-extern const unsigned char _loading_5[]; 
-extern const unsigned char _loading_6[]; 
-extern const unsigned char _loading_7[]; 
+extern const unsigned char _lite_status[]; 
+extern const unsigned char _logo[]; 
 extern const unsigned char _rightDoor[]; 
+extern const unsigned char _startup_background[]; 
 
 const touchgfx::Bitmap::BitmapData bitmap_database[] = {
-    { _Blue_Buttons_Round_Edge_small, 0, 170, 60, 11, 4, 148, 50, touchgfx::Bitmap::ARGB8888 },
-    { _Blue_Buttons_Round_Edge_small_pressed, 0, 170, 60, 11, 4, 148, 50, touchgfx::Bitmap::ARGB8888 },
-    { _a1, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _a2, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _a3, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _btc, 0, 48, 48, 8, 7, 32, 34, touchgfx::Bitmap::ARGB8888 },
-    { _dialog, 0, 320, 240, 55, 0, 265, 240, touchgfx::Bitmap::ARGB8888 },
-    { _eth, 0, 48, 48, 9, 9, 31, 31, touchgfx::Bitmap::ARGB8888 },
-    { _keyboard_background, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _keyboard_key_highlighted, 0, 39, 45, 0, 0, 39, 45, touchgfx::Bitmap::RGB565 },
+    { _background, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
+    { _btc_status, 0, 218, 124, 0, 0, 218, 124, touchgfx::Bitmap::RGB565 },
+    { _button_not_pressed, 0, 170, 60, 10, 0, 150, 60, touchgfx::Bitmap::ARGB8888 },
+    { _button_pressed, 0, 170, 60, 10, 0, 150, 60, touchgfx::Bitmap::ARGB8888 },
+    { _dialog, 0, 320, 240, 0, 0, 320, 240, touchgfx::Bitmap::RGB565 },
+    { _enter_pressed, 0, 75, 92, 5, 0, 65, 92, touchgfx::Bitmap::ARGB8888 },
+    { _eth_status, 0, 218, 124, 0, 0, 218, 124, touchgfx::Bitmap::RGB565 },
+    { _key_pressed, 0, 75, 45, 5, 0, 65, 45, touchgfx::Bitmap::ARGB8888 },
+    { _keyboard, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
     { _leftDoor, 0, 258, 272, 0, 0, 241, 272, touchgfx::Bitmap::ARGB8888 },
-    { _list_element_btc, 0, 262, 54, 49, 0, 213, 54, touchgfx::Bitmap::ARGB8888 },
-    { _list_element_eth, 0, 262, 54, 48, 0, 214, 54, touchgfx::Bitmap::ARGB8888 },
-    { _list_element_lit, 0, 262, 54, 48, 0, 214, 54, touchgfx::Bitmap::ARGB8888 },
-    { _lite, 0, 48, 48, 9, 9, 30, 30, touchgfx::Bitmap::ARGB8888 },
-    { _loading_0, 0, 48, 48, 39, 13, 6, 9, touchgfx::Bitmap::ARGB8888 },
-    { _loading_1, 0, 48, 48, 39, 13, 6, 10, touchgfx::Bitmap::ARGB8888 },
-    { _loading_2, 0, 48, 48, 38, 11, 6, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_3, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_4, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_5, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_6, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_7, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _rightDoor, 0, 240, 272, 16, 0, 224, 272, touchgfx::Bitmap::ARGB8888 }
+    { _lite_status, 0, 218, 124, 0, 0, 218, 124, touchgfx::Bitmap::RGB565 },
+    { _logo, 0, 74, 65, 25, 5, 22, 21, touchgfx::Bitmap::ARGB8888 },
+    { _rightDoor, 0, 240, 272, 16, 0, 224, 272, touchgfx::Bitmap::ARGB8888 },
+    { _startup_background, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 }
 };
 
 namespace BitmapDatabase

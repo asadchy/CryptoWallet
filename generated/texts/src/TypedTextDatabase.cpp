@@ -9,21 +9,29 @@
 using namespace touchgfx;
 #endif
 
-extern touchgfx::InternalFlashFont& getFont_RobotoCondensed_Regular_28_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_18_4bpp();
 extern touchgfx::InternalFlashFont& getFont_RobotoCondensed_Regular_20_4bpp();
 extern touchgfx::InternalFlashFont& getFont_RobotoCondensed_Regular_24_4bpp();
 extern touchgfx::InternalFlashFont& getFont_RobotoCondensed_Regular_55_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_30_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_28_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_28_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_20_4bpp();
 
 const touchgfx::Font* const _fonts[] = {
-    &(getFont_RobotoCondensed_Regular_28_4bpp()),
+    &(getFont_Heebo_Regular_18_4bpp()),
     &(getFont_RobotoCondensed_Regular_20_4bpp()),
     &(getFont_RobotoCondensed_Regular_24_4bpp()),
-    &(getFont_RobotoCondensed_Regular_55_4bpp())
+    &(getFont_RobotoCondensed_Regular_55_4bpp()),
+    &(getFont_Heebo_Regular_30_4bpp()),
+    &(getFont_Heebo_Thin_28_4bpp()),
+    &(getFont_Heebo_Regular_28_4bpp()),
+    &(getFont_Heebo_Regular_20_4bpp())
 };
 
 TEXT_LOCATION_FLASH_PRAGMA
 const touchgfx::TypedText::TypedTextData typedText_database_DEFAULT[] TEXT_LOCATION_FLASH_ATTRIBUTE = {
-    { 0, touchgfx::RIGHT, touchgfx::TEXT_DIRECTION_RTL },
+    { 5, touchgfx::RIGHT, touchgfx::TEXT_DIRECTION_RTL },
     { 2, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
     { 2, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::RIGHT, touchgfx::TEXT_DIRECTION_RTL },
@@ -32,16 +40,18 @@ const touchgfx::TypedText::TypedTextData typedText_database_DEFAULT[] TEXT_LOCAT
     { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
-    { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
+    { 5, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::RIGHT, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::RIGHT, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::RIGHT, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
-    { 0, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
-    { 0, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
-    { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
-    { 0, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
-    { 0, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR }
+    { 6, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
+    { 6, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
+    { 4, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
+    { 7, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
+    { 6, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
+    { 5, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
+    { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR }
 };
 
 

@@ -21,7 +21,7 @@ public:
     void setDialogText(touchgfx::Unicode::UnicodeChar *text);
 
 private:
-    static const int CURRENCY_NUM = 10;
+    static const int CURRENCY_NUM = 3;
 
     Dialog dialog;
     ScrollableContainer scroll;

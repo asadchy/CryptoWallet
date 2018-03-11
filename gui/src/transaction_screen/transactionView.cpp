@@ -38,23 +38,19 @@ void transactionView::buttonClicked(const touchgfx::AbstractButton& btn)
 
 void transactionView::setCurrency(char *curr)
 {
-	Unicode::UnicodeChar tmp[16];
-	Unicode::strncpy(tmp, curr, 16);
-	Unicode::snprintf(currencyBuffer, CURRENCY_SIZE, "%s", tmp);
+	uint16_t size;
+	size = Unicode::strncpy(currencyBuffer, curr, CURRENCY_SIZE);
+	if(size > 0)
+		currencyBuffer[size] = 0;
 	currency.invalidate();
 }
 
-void transactionView::setAddress(unsigned char *addr)
+void transactionView::setAddress(char *addr)
 {
-	int i = 0;
-	char tmp[82];
-	int index;
-	index = snprintf(tmp, 82, "0x");
-	for(i = 0; i < 40; i++)
-	{
-		index += snprintf(&tmp[index], 82 - index, "%02d", addr[i]);
-	}
-	Unicode::strncpy(addressBuffer, tmp, ADDRESS_SIZE);
+	uint16_t size;
+	size = Unicode::strncpy(addressBuffer, addr, ADDRESS_SIZE);
+	if(size > 0)
+		addressBuffer[size] = 0;
 	address.invalidate();
 }
 

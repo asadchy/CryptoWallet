@@ -39,6 +39,7 @@ CustomKeyboard::CustomKeyboard() : keyboard(),
     modeBtnTextArea(),
 	enterPressed(this, &CustomKeyboard::enterPressedHandler),
     backspacePressed(this, &CustomKeyboard::backspacePressedHandler),
+	cancelPressed(this, &CustomKeyboard::cancelPressedHandler),
     keyPressed(this, &CustomKeyboard::keyPressedhandler),
     alphaKeys(false),
     uppercaseKeys(false),
@@ -47,6 +48,9 @@ CustomKeyboard::CustomKeyboard() : keyboard(),
     //Set the callbacks for the callback areas of the keyboard and set its layout.
     layout.callbackAreaArray[0].callback = &backspacePressed;
     layout.callbackAreaArray[1].callback = &enterPressed;
+    layout.callbackAreaArray[2].callback = &cancelPressed;
+    layout.keyFontColor = touchgfx::Color::getColorFrom24BitRGB(0x7E, 0xAE, 0xE5);
+    layout.textAreaFontColor = touchgfx::Color::getColorFrom24BitRGB(0x7E, 0xAE, 0xE5);
     keyboard.setLayout(&layout);
     keyboard.setKeyListener(keyPressed);
     keyboard.setPosition(0, 0, 480, 272);
@@ -104,6 +108,11 @@ void CustomKeyboard::enterPressedHandler()
 			pincodeEntered->execute(~1);
 		}
 	}
+}
+
+void CustomKeyboard::cancelPressedHandler()
+{
+	//TODO
 }
 
 void CustomKeyboard::keyPressedhandler(Unicode::UnicodeChar keyChar)

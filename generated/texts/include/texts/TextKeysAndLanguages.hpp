@@ -31,6 +31,8 @@ typedef enum {
     T_CURR_TRANSACTION,
     T_EMPTYTEXT,
     T_CLOSE,
+    T_LOGO_TEXT,
+    T_TEXTID12,
     NUMBER_OF_TEXT_KEYS
 } TEXTS;
 

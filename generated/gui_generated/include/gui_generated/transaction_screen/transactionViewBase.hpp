@@ -39,7 +39,7 @@ protected:
      */
     static const uint16_t CURRENCY_SIZE = 40;
     touchgfx::Unicode::UnicodeChar currencyBuffer[CURRENCY_SIZE];
-    static const uint16_t ADDRESS_SIZE = 42;
+    static const uint16_t ADDRESS_SIZE = 43;
     touchgfx::Unicode::UnicodeChar addressBuffer[ADDRESS_SIZE];
     static const uint16_t VALUE_SIZE = 40;
     touchgfx::Unicode::UnicodeChar valueBuffer[VALUE_SIZE];

@@ -14,7 +14,7 @@ public:
     virtual void tearDownScreen();
 
     void setCurrency(char *curr);
-	void setAddress(unsigned char *addr);
+	void setAddress(char *addr);
 	void setValue(double val);
 
 	void transactionScreenEntered();

@@ -37,7 +37,7 @@ struct message
 struct transaction
 {
 	char curr_name[16];				//currency name
-	unsigned char addr[40];			//address (in hex)
+	char addr[43];					//address (ASCII), 42 bytes address + 1 zero terminator
 	double value;					//transfer amount
 };
 

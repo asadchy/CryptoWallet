@@ -21,7 +21,7 @@ void transactionPresenter::setCurrency(char *currency)
 	view.setCurrency(currency);
 }
 
-void transactionPresenter::setAddress(unsigned char *addr)
+void transactionPresenter::setAddress(char *addr)
 {
 	view.setAddress(addr);
 }
