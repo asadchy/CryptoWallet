@@ -8,10 +8,15 @@
 
 struct Typography
 {
-  static const touchgfx::FontId DISPLAY = 0;
+  static const touchgfx::FontId TRANSACTION = 0;
   static const touchgfx::FontId KEYBOARD = 1;
   static const touchgfx::FontId MODE = 2;
   static const touchgfx::FontId LOGO = 3;
+  static const touchgfx::FontId TRANSACTION_HEAD = 4;
+  static const touchgfx::FontId LOGO_TEXT = 5;
+  static const touchgfx::FontId BUTTON_TEXT = 6;
+  static const touchgfx::FontId ENTERED = 7;
+  static const touchgfx::FontId DIALOG = 8;
 };
 
 class ApplicationFontProvider : public touchgfx::FontProvider

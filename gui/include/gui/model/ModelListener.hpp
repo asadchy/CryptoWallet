@@ -63,7 +63,7 @@ public:
     }
 
     virtual void setCurrency(char *currency) {};
-	virtual void setAddress(unsigned char *addr) {};
+	virtual void setAddress(char *addr) {};
 	virtual void setValue(double value) {};
 	virtual void setDialogText(touchgfx::Unicode::UnicodeChar *text) {};
 

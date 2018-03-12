@@ -6,30 +6,20 @@
 #include <touchgfx/hal/Types.hpp>
 #include <touchgfx/Bitmap.hpp>
 
-const uint16_t BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_ID = 0; // Size: 170x60 pixels
-const uint16_t BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_PRESSED_ID = 1; // Size: 170x60 pixels
-const uint16_t BITMAP_A1_ID = 2; // Size: 480x272 pixels
-const uint16_t BITMAP_A2_ID = 3; // Size: 480x272 pixels
-const uint16_t BITMAP_A3_ID = 4; // Size: 480x272 pixels
-const uint16_t BITMAP_BTC_ID = 5; // Size: 48x48 pixels
-const uint16_t BITMAP_DIALOG_ID = 6; // Size: 320x240 pixels
-const uint16_t BITMAP_ETH_ID = 7; // Size: 48x48 pixels
-const uint16_t BITMAP_KEYBOARD_BACKGROUND_ID = 8; // Size: 480x272 pixels
-const uint16_t BITMAP_KEYBOARD_KEY_HIGHLIGHTED_ID = 9; // Size: 39x45 pixels
-const uint16_t BITMAP_LEFTDOOR_ID = 10; // Size: 258x272 pixels
-const uint16_t BITMAP_LIST_ELEMENT_BTC_ID = 11; // Size: 262x54 pixels
-const uint16_t BITMAP_LIST_ELEMENT_ETH_ID = 12; // Size: 262x54 pixels
-const uint16_t BITMAP_LIST_ELEMENT_LIT_ID = 13; // Size: 262x54 pixels
-const uint16_t BITMAP_LITE_ID = 14; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_0_ID = 15; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_1_ID = 16; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_2_ID = 17; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_3_ID = 18; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_4_ID = 19; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_5_ID = 20; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_6_ID = 21; // Size: 48x48 pixels
-const uint16_t BITMAP_LOADING_7_ID = 22; // Size: 48x48 pixels
-const uint16_t BITMAP_RIGHTDOOR_ID = 23; // Size: 240x272 pixels
+const uint16_t BITMAP_BACKGROUND_ID = 0; // Size: 480x272 pixels
+const uint16_t BITMAP_BTC_STATUS_ID = 1; // Size: 218x124 pixels
+const uint16_t BITMAP_BUTTON_NOT_PRESSED_ID = 2; // Size: 170x60 pixels
+const uint16_t BITMAP_BUTTON_PRESSED_ID = 3; // Size: 170x60 pixels
+const uint16_t BITMAP_DIALOG_ID = 4; // Size: 320x240 pixels
+const uint16_t BITMAP_ENTER_PRESSED_ID = 5; // Size: 75x92 pixels
+const uint16_t BITMAP_ETH_STATUS_ID = 6; // Size: 218x124 pixels
+const uint16_t BITMAP_KEY_PRESSED_ID = 7; // Size: 75x45 pixels
+const uint16_t BITMAP_KEYBOARD_ID = 8; // Size: 480x272 pixels
+const uint16_t BITMAP_LEFTDOOR_ID = 9; // Size: 258x272 pixels
+const uint16_t BITMAP_LITE_STATUS_ID = 10; // Size: 218x124 pixels
+const uint16_t BITMAP_LOGO_ID = 11; // Size: 74x65 pixels
+const uint16_t BITMAP_RIGHTDOOR_ID = 12; // Size: 240x272 pixels
+const uint16_t BITMAP_STARTUP_BACKGROUND_ID = 13; // Size: 480x272 pixels
 
 namespace BitmapDatabase
 {

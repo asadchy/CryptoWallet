@@ -81,7 +81,7 @@ public:
     void statusScreenEntered();
 
     void setCurrency(char *currency);
-    void setAddress(unsigned char *addr);
+    void setAddress(char *addr);
     void setValue(double value);
     void setDialogText(touchgfx::Unicode::UnicodeChar *text);
 

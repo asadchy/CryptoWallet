@@ -9,43 +9,43 @@
 transactionViewBase::transactionViewBase()  
 {
     background.setXY(0, 0);
-    background.setBitmap(Bitmap(BITMAP_A2_ID));
+    background.setBitmap(Bitmap(BITMAP_BACKGROUND_ID));
 
-    currency.setPosition(26, 68, 447, 34);
-    currency.setColor(touchgfx::Color::getColorFrom24BitRGB(0,0,0));
+    currency.setPosition(24, 63, 444, 34);
+    currency.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
     currency.setLinespacing(0);
     currency.setTypedText(TypedText(T_CURRENCY));
     currencyBuffer[0] = 0;
     currency.setWildcard(currencyBuffer);
 
-    address.setPosition(26, 102, 447, 34);
-    address.setColor(touchgfx::Color::getColorFrom24BitRGB(0,0,0));
+    address.setPosition(24, 91, 444, 68);
+    address.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
     address.setLinespacing(0);
     address.setTypedText(TypedText(T_ADDRESS));
     addressBuffer[0] = 0;
     address.setWildcard(addressBuffer);
 
-    value.setPosition(26, 136, 447, 34);
-    value.setColor(touchgfx::Color::getColorFrom24BitRGB(0,0,0));
+    value.setPosition(24, 149, 444, 34);
+    value.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
     value.setLinespacing(0);
     value.setTypedText(TypedText(T_VALUE));
     valueBuffer[0] = 0;
     value.setWildcard(valueBuffer);
 
-    confirm.setPosition(26, 190, 170, 60);
-    confirm.setBitmaps(Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_ID), Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_PRESSED_ID));
+    confirm.setPosition(27, 191, 170, 60);
+    confirm.setBitmaps(Bitmap(BITMAP_BUTTON_NOT_PRESSED_ID), Bitmap(BITMAP_BUTTON_PRESSED_ID));
     confirm.setLabelText(TypedText(T_CONFIRM));
-    confirm.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(0,255,0));
-    confirm.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(0,255,0));
+    confirm.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
+    confirm.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
 
-    cancel.setPosition(283, 190, 170, 60);
-    cancel.setBitmaps(Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_ID), Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_PRESSED_ID));
+    cancel.setPosition(284, 191, 170, 60);
+    cancel.setBitmaps(Bitmap(BITMAP_BUTTON_NOT_PRESSED_ID), Bitmap(BITMAP_BUTTON_PRESSED_ID));
     cancel.setLabelText(TypedText(T_CANCEL));
-    cancel.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(255,0,0));
-    cancel.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(255,0,0));
+    cancel.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
+    cancel.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
 
-    transaction.setXY(138, 22);
-    transaction.setColor(touchgfx::Color::getColorFrom24BitRGB(0,0,0));
+    transaction.setXY(107, 20);
+    transaction.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
     transaction.setLinespacing(0);
     transaction.setTypedText(TypedText(T_CURR_TRANSACTION));
     add(background);

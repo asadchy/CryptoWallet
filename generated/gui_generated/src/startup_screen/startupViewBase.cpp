@@ -7,80 +7,43 @@
 #include <touchgfx/Color.hpp>
 
 startupViewBase::startupViewBase()  :
-    show_logoEndedCallback(this, &startupViewBase::show_logoEndedCallbackHandler),
-    hide_logoEndedCallback(this, &startupViewBase::hide_logoEndedCallbackHandler),
-    triggerEndedCallback(this, &startupViewBase::triggerEndedCallbackHandler)
+    show_logoEndedCallback(this, &startupViewBase::show_logoEndedCallbackHandler)
 {
     background.setXY(0, 0);
-    background.setBitmap(Bitmap(BITMAP_A1_ID));
+    background.setBitmap(Bitmap(BITMAP_STARTUP_BACKGROUND_ID));
 
-    logo.setPosition(276, 15, 198, 213);
-    logo.setColor(touchgfx::Color::getColorFrom24BitRGB(247,231,231));
-    logo.setLinespacing(0);
-    logo.setTypedText(TypedText(T_LOGO));
-    logo.setAlpha(0);
+    logo_png.setXY(203, 104);
+    logo_png.setBitmap(Bitmap(BITMAP_LOGO_ID));
+    logo_png.setAlpha(2);
 
-    loading.setPosition(240, 15, 215, 81);
-    loading.setColor(touchgfx::Color::getColorFrom24BitRGB(252,251,251));
-    loading.setLinespacing(0);
-    loading.setTypedText(TypedText(T_LOADING));
-    loading.setAlpha(0);
-
-    loading_gif.setBitmaps(BITMAP_LOADING_0_ID, BITMAP_LOADING_7_ID);
-    loading_gif.setUpdateTicksInterval(5);
-    loading_gif.setXY(417, 31);
-    loading_gif.setAlpha(0);
-    loading_gif.startAnimation(false,true,true);
+    logo_text.setXY(122, 46);
+    logo_text.setColor(touchgfx::Color::getColorFrom24BitRGB(113,142,168));
+    logo_text.setLinespacing(0);
+    logo_text.setTypedText(TypedText(T_LOGO_TEXT));
+    logo_text.setAlpha(0);
     add(background);
-    add(logo);
-    add(loading);
-    add(loading_gif);
+    add(logo_png);
+    add(logo_text);
 }
 
 //Called when the screen is done with transition/load
 void startupViewBase::afterTransition()
 {
     //show_logo
-    //When screen is entered fade logo
-    //Fade logo to alpha:255 with LinearIn easing in 3000 ms (180 Ticks)
-    logo.clearFadeAnimationEndedAction();
-    logo.startFadeAnimation(255, 180, EasingEquations::linearEaseIn);
-    logo.setFadeAnimationEndedAction(show_logoEndedCallback);
+    //When screen is entered fade logo_png
+    //Fade logo_png to alpha:255 with LinearIn easing in 3000 ms (180 Ticks)
+    logo_png.clearFadeAnimationEndedAction();
+    logo_png.startFadeAnimation(255, 180, EasingEquations::linearEaseIn);
+    logo_png.setFadeAnimationEndedAction(show_logoEndedCallback);
+
+    //show_logo_text
+    //When screen is entered fade logo_text
+    //Fade logo_text to alpha:255 with LinearIn easing in 3000 ms (180 Ticks)
+    logo_text.clearFadeAnimationEndedAction();
+    logo_text.startFadeAnimation(255, 180, EasingEquations::linearEaseIn);
 }
 
-void startupViewBase::show_logoEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::TextArea>& comp)
-{
-    //hide_logo
-    //When show_logo completed fade logo
-    //Fade logo to alpha:0 with LinearIn easing in 1000 ms (60 Ticks)
-    logo.clearFadeAnimationEndedAction();
-    logo.startFadeAnimation(0, 60, EasingEquations::linearEaseIn);
-    logo.setFadeAnimationEndedAction(hide_logoEndedCallback);
-}
-
-void startupViewBase::hide_logoEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::TextArea>& comp)
-{
-    //show_loading
-    //When hide_logo completed fade loading
-    //Set alpha to 255 on loading
-    loading.setAlpha(255);
-    loading.invalidate();
-
-    //show_loading_gif
-    //When show_loading completed fade loading_gif
-    //Set alpha to 255 on loading_gif
-    loading_gif.setAlpha(255);
-    loading_gif.invalidate();
-
-    //trigger
-    //When hide_logo completed fade logo
-    //Fade logo to alpha:0 with LinearIn easing in 5000 ms (300 Ticks)
-    logo.clearFadeAnimationEndedAction();
-    logo.startFadeAnimation(0, 300, EasingEquations::linearEaseIn);
-    logo.setFadeAnimationEndedAction(triggerEndedCallback);
-}
-
-void startupViewBase::triggerEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::TextArea>& comp)
+void startupViewBase::show_logoEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::Image>& comp)
 {
 
 }

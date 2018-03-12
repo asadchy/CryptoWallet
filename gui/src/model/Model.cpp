@@ -55,6 +55,29 @@ void Model::tick()
 		message_parser(&rx_mess);
 	}
 #endif
+
+#ifdef SIMULATOR
+	static int tick_counter = 0;
+	tick_counter++;
+	if(tick_counter == 300 * 2)
+	{
+		static const char *init_pin = "Enter PINCODE";
+		touchgfx::Unicode::strncpy(dialogText, init_pin, TEXT_SIZE);
+		toPincodeScreen();
+	}
+	else if(tick_counter == 600 * 2)
+	{
+		toMainScreen();
+	}
+
+	else if(tick_counter == 900 * 2)
+	{
+		dialogText[0] = 0;
+		toStatusScreen();
+		tick_counter = 0;
+	}
+
+#endif
 }
 
 void Model::pincodeEntered(int pincode)
@@ -85,6 +108,14 @@ void Model::transactionScreenEntered()
 	setCurrency(transaction->curr_name);
 	setAddress(transaction->addr);
 	setValue(transaction->value);
+#endif
+
+#ifdef SIMULATOR
+	static char addr[43] = "0x123456789abCdEf1653abcEF098174eABcef1253";
+	static char curr[] = "Bitcoin";
+	setCurrency(curr);
+	setAddress(addr);
+	setValue(1);
 #endif
 }
 
@@ -153,7 +184,7 @@ void Model::setCurrency(char *currency)
 	modelListener->setCurrency(currency);
 }
 
-void Model::setAddress(unsigned char *addr)
+void Model::setAddress(char *addr)
 {
 	modelListener->setAddress(addr);
 }
