@@ -81,10 +81,16 @@ void transfomSig(BYTE * sign, BYTE *pub, int *len){
 	int lenOutData = (4 + lenSig + lenPubKey);
 	sign[0] = 3 + lenSig + lenPubKey;
 	sign[1] = 1 + lenSig;
-	memcpy(sign + 2, sig, lenSig);
+//	memcpy(sign + 2, sig, lenSig);
+	for(int i=0; i<lenSig; i++){
+		sign[i+2] = sig[i];
+	}
 	sign[2 + lenSig] = 0x01;
 	sign[3 + lenSig] = lenPubKey;
-	memcpy(sign + 4 + lenSig, pub, lenPubKey);
+//	memcpy(sign + 4 + lenSig, pub, lenPubKey);
+	for(int i=0; i<lenPubKey; i++){
+		sign[i+4+lenSig] = pub[i];
+	}
 	*len = lenOutData;
 }
 

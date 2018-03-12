@@ -7,13 +7,13 @@
 typedef unsigned char BYTE;
 typedef unsigned int UINT32;
 
-void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut){
+void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int pinInit){
 
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
 	BYTE address[40] = { 0 };
 	int addressLen = 0;
-	int pin = 1234;
+	const int pinDef = 1234;
 	BYTE signature[130] = {0};
 	static struct message message;
 	static struct transaction transaction;
@@ -37,7 +37,16 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 		dataOut[2] = 0x4d;
 		dataOut[3] = 0x50;
 		dataOut[4] = 0x01;
-		dataOut[5] = 0x00;
+		if(pinInit == -1){
+			dataOut[5] = 0x04;
+		}else{
+			if(pinInit == pinDef){
+				dataOut[5] = 0x00;
+			}
+			if(pinInit != pinDef){
+				dataOut[5] = 0x03;
+			}
+		}
 		break;
 	}
 	case 0x4e:{ //numberOfCurrencies
@@ -63,7 +72,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			dataOut[6] = 0x00;
 			int compressed = 1;
 			int idCur = 0;
-			genKeyC(pin, idCur, privateKey, publicKey, compressed);
+			genKeyC(pinInit, idCur, privateKey, publicKey, compressed);
 			addressBtc(publicKey, compressed, address, &addressLen);
 			for(int i = 0; i<25; i++){
 				dataOut[i+7] = address[i];
@@ -76,7 +85,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			dataOut[5] = 0x48;
 			dataOut[6] = 0x00;
 			int idCur = 1;
-			genKeyE(pin, idCur, privateKey, publicKey);
+			genKeyE(pinInit, idCur, privateKey, publicKey);
 			addressEth(publicKey, address);
 			for(int i = 0; i<20; i++){
 				dataOut[i+7] = address[i];
@@ -90,7 +99,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			dataOut[6] = 0x00;
 			int compressed = 1;
 			int idCur = 2;
-			genKeyC(pin, idCur, privateKey, publicKey, compressed);
+			genKeyC(pinInit, idCur, privateKey, publicKey, compressed);
 			addressBtc(publicKey, compressed, address, &addressLen);
 			for(int i = 0; i<25; i++){
 				dataOut[i+7] = address[i];
@@ -108,7 +117,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 				mess[i] = dataIn[i+2];
 			}
 			int valueTr = 0;
-			valueTr = (int)dataIn[34]*4096 + (int)dataIn[35]*256 + (int)dataIn[36]*16 + (int)dataIn[37];
+			valueTr = ((int)dataIn[34]*4096 + (int)dataIn[35]*256 + (int)dataIn[36]*16 + (int)dataIn[37]);
 
 			memcpy(transaction.curr_name, "Bitcoin", 8);
 			transaction.value = valueTr;
@@ -125,43 +134,90 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			switch(cmd)
 			{
 				case PINCODE:
-					pin = *(int*)message.data;
+
+					if(pinDef == (*(int*)message.data)){
+						pinInit = *(int*)message.data;
+						int compressed = 1;
+						int idCur = 0;
+						taskENTER_CRITICAL();
+						genKeyC(pinInit, idCur, privateKey, publicKey, compressed);
+						int lenOutData = 0;
+						getSignBtc(privateKey, compressed, mess, signature, &lenOutData);
+						*lenOut = 4+lenOutData;
+						dataOut[3] = lenOutData;
+						for(int i=0; i<lenOutData; i++){
+							dataOut[i+4] = signature[i];
+						}
+						taskEXIT_CRITICAL();
+						message.cmd = TRANSACTION_CONFIRMED;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+					}else{
+						dataOut[3] = 0x01;
+						dataOut[4] = 0x04;
+						*lenOut = 5;
+						message.cmd = TO_STATUS;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+					}
+
 					break;
 
 				case TRANSACTION_CANCELED:
+					dataOut[3] = 0x00;
 					break;
 			}
-
-			int compressed = 1;
-			int idCur = 0;
-			taskENTER_CRITICAL();
-			genKeyC(pin, idCur, privateKey, publicKey, compressed);
-			int lenOutData = 0;
-			getSignBtc(privateKey, compressed, mess, signature, &lenOutData);
-			*lenOut = 4+lenOutData;
-			dataOut[3] = lenOutData;
-			for(int i=0; i<lenOutData; i++){
-				dataOut[i+4] = signature[i];
-			}
-			taskEXIT_CRITICAL();
-
-			message.cmd = TRANSACTION_CONFIRMED;
-			xQueueSend(card_to_lcd, (void*)&message, 0);
 		}
-		if(dataIn[1] == 0x02){//litcoin
+		if(dataIn[1] == 0x02){//litecoin
 			BYTE mess[32] = {0};
 			for(int i=0; i<32; i++){
 				mess[i] = dataIn[i+2];
 			}
-			int compressed = 1;
-			int idCur = 2;
-			genKeyC(pin, idCur, privateKey, publicKey, compressed);
-			int lenOutData = 0;
-			getSignBtc(privateKey, compressed, mess, signature, &lenOutData);
-			*lenOut = 4+lenOutData;
-			dataOut[3] = lenOutData;
-			for(int i=0; i<lenOutData; i++){
-				dataOut[i+4] = signature[i];
+			int valueTr = 0;
+			valueTr = ((int)dataIn[34]*4096 + (int)dataIn[35]*256 + (int)dataIn[36]*16 + (int)dataIn[37]);
+
+			memcpy(transaction.curr_name, "Litecoin", 9);
+			transaction.value = valueTr;
+			for(int i = 0; i < 34; i++){
+				transaction.addr[i] = dataIn[i+38];
+			}
+
+			message.cmd = TRANSACTION;
+			message.data = (void*)&transaction;
+			xQueueSend(card_to_lcd, (void*)&message, 0);
+
+			xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
+			int cmd = message.cmd;
+			switch(cmd)
+			{
+				case PINCODE:
+
+					if(pinDef == *(int*)message.data){
+						pinInit = *(int*)message.data;
+						int compressed = 1;
+						int idCur = 2;
+						taskENTER_CRITICAL();
+						genKeyC(pinInit, idCur, privateKey, publicKey, compressed);
+						int lenOutData = 0;
+						getSignBtc(privateKey, compressed, mess, signature, &lenOutData);
+						*lenOut = 4+lenOutData;
+						dataOut[3] = lenOutData;
+						for(int i=0; i<lenOutData; i++){
+							dataOut[i+4] = signature[i];
+						}
+						taskEXIT_CRITICAL();
+						message.cmd = TRANSACTION_CONFIRMED;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+					}else{
+						dataOut[3] = 0x01;
+						dataOut[4] = 0x04;
+						message.cmd = TO_STATUS;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+					}
+
+					break;
+
+				case TRANSACTION_CANCELED:
+					dataOut[3] = 0x00;
+					break;
 			}
 		}
 		if(dataIn[1] == 0x01){//ethereum
@@ -169,16 +225,54 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<32; i++){
 				mess[i] = dataIn[i+2];
 			}
-			int idCur = 1;
-			genKeyE(pin, idCur, privateKey, publicKey);
-			getSignEther(privateKey, mess, signature);
-			*lenOut = 4+65;
-			dataOut[3] = 65;
-			for(int i=0; i<65; i++){
-				dataOut[i+4] = signature[i];
+			int valueTr = 0;
+			valueTr = ((int)dataIn[34]*4096 + (int)dataIn[35]*256 + (int)dataIn[36]*16 + (int)dataIn[37]);
+
+			memcpy(transaction.curr_name, "Ethereum", 9);
+			transaction.value = valueTr;
+			for(int i = 0; i < 42; i++){
+				transaction.addr[i] = dataIn[i+38];
+			}
+
+			message.cmd = TRANSACTION;
+			message.data = (void*)&transaction;
+			xQueueSend(card_to_lcd, (void*)&message, 0);
+
+			xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
+			int cmd = message.cmd;
+			switch(cmd)
+			{
+				case PINCODE:
+
+					if(pinDef == *(int*)message.data){
+						pinInit = *(int*)message.data;
+						int idCur = 1;
+						taskENTER_CRITICAL();
+						genKeyE(pinInit, idCur, privateKey, publicKey);
+						getSignEther(privateKey, mess, signature);
+						*lenOut = 4+65;
+						dataOut[3] = 65;
+						for(int i=0; i<65; i++){
+							dataOut[i+4] = signature[i];
+						}
+						taskEXIT_CRITICAL();
+						message.cmd = TRANSACTION_CONFIRMED;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+					}else{
+						dataOut[3] = 0x01;
+						dataOut[4] = 0x04;
+						message.cmd = TO_STATUS;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+					}
+
+					break;
+
+				case TRANSACTION_CANCELED:
+					dataOut[3] = 0x00;
+					break;
 			}
 		}
-		break;
+	break;
 	}
 	default:{
 		dataIn[0] = 0x00;;
@@ -190,7 +284,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 }
 
-int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send){
+int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int pinInit){
 	for(int i = (*lenBuf); i<((*lenBuf)+(*lenIn)); i++){
 		buffer[i] = dataIn[i-(*lenBuf)];
 	}
@@ -210,7 +304,7 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 						}
 						*send=1;
 						uint32_t lenTempBuf = end-start;
-						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf);
+						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf, pinInit);
 						return 0;
 					}
 				}

@@ -616,7 +616,9 @@ void APPTask(void *handle)
 uint8_t buffer[130] = {0};
 uint32_t lenBuf = 0;
 uint32_t send=0;
-static int pin = -1;
+int numCheckPin = 0;
+static int pinInit = -1;
+static int pinDef = 1234;
 struct message mess;
 
 vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -631,12 +633,25 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
     		switch(cmd)
     		{
     			case PINCODE:
-    				if(pin == -1)
+    				if(pinInit == -1)
     				{
-    					pin = *(int*)mess.data;
+    					if(pinDef == *(int*)mess.data){
+    						numCheckPin = 0;
+    						pinInit = *(int*)mess.data;
+    						mess.cmd = TO_STATUS;
+    						xQueueSend(card_to_lcd, (void*)&mess, 0);
+    					}
+    					else{
+    						numCheckPin ++;
+    						if(numCheckPin > 2){
+    							mess.cmd = BLOCKED;
+    							xQueueSend(card_to_lcd, (void*)&mess, 0);
 
-    					mess.cmd = TO_STATUS;
-    					xQueueSend(card_to_lcd, (void*)&mess, 0);
+    						}else{
+    							mess.cmd = WRONG_PINCODE;
+    							xQueueSend(card_to_lcd, (void*)&mess, 0);
+    							}
+    					}
     				}
     				else
     				{
@@ -668,7 +683,7 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
             {
                 uint32_t size = s_sendSize;
                 s_sendSize = 0;
-                dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send);
+                dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, pinInit);
 
                 if(send>0){
                error =
