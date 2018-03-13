@@ -35,5 +35,16 @@ void getSignEther(BYTE *privKey, BYTE* hash, BYTE* outData) {
 
 	uECC_sign_with_nonce(privKey, hash, 32, hash, outData, curves);
 
-	outData[64] = 27 + (pubKey[63] & 1);
+		int len = 0;
+		BYTE outS[32]={0};
+		int trans = 0;
+		transfomS(outData, &len, outS, &trans);
+		for(int i=0; i<32; i++){
+			outData[i+32] = outS[i];
+		}
+		if(!(outData[0] < 0x80)){
+			outData[64] = 27 + (outData[63] & 1);
+		}else{
+			outData[64] = 28 - (outData[63] & 1);
+		}
 }

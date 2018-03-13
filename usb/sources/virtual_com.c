@@ -683,8 +683,9 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
             {
                 uint32_t size = s_sendSize;
                 s_sendSize = 0;
-                dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, pinInit);
-
+                if(numCheckPin<3){
+                	dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, pinInit);
+                }
                 if(send>0){
                error =
                     USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);

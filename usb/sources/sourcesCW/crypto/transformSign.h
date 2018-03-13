@@ -10,7 +10,7 @@
 
 typedef unsigned char BYTE;
 
-void transfomS(BYTE *sign, int *len, BYTE *out);
+void transfomS(BYTE *sign, int *len, BYTE *out, int *trans);
 void transfomR(BYTE *sign, int *len, BYTE *out);
 void transfomSig(BYTE * sign, BYTE *pub, int *len);
 
