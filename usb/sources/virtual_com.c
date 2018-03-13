@@ -653,10 +653,10 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
     							}
     					}
     				}
-    				else
+    			/*	else
     				{
     					int temp_pin = *(int*)mess.data;
-    				}
+    				}*/
     				break;
     		}
     	}
@@ -684,14 +684,14 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
                 uint32_t size = s_sendSize;
                 s_sendSize = 0;
                 if(numCheckPin<3){
-                	dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, pinInit);
+                	dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
                 }
                 if(send>0){
                error =
                     USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
                 send=0;
                 lenBuf = 0;
-                for(int i =0; i<100; i++){
+                for(int i =0; i<130; i++){
                 	buffer[i] = 0x00;
                 }
                 if (error != kStatus_USB_Success)
