@@ -32,8 +32,8 @@ void getSignEther(BYTE *privKey, BYTE* hash, BYTE* outData) {
 	curves = uECC_secp256k1();
 	BYTE pubKey[64] = { 0 };
 	uECC_compute_public_key(privKey, pubKey, curves);
-
-	uECC_sign_with_nonce(privKey, hash, 32, hash, outData, curves);
+	int v = 0;
+	uECC_sign_with_nonce_E(privKey, hash, 32, hash, outData, curves, &v);
 
 		int len = 0;
 		BYTE outS[32]={0};
@@ -42,9 +42,10 @@ void getSignEther(BYTE *privKey, BYTE* hash, BYTE* outData) {
 		for(int i=0; i<32; i++){
 			outData[i+32] = outS[i];
 		}
-		if(!(outData[0] < 0x80)){
-			outData[64] = 27 + (outData[63] & 1);
+
+		if(trans == 1){
+			outData[64] = (v^1) + 27;
 		}else{
-			outData[64] = 28 - (outData[63] & 1);
+			outData[64] = v + 27;
 		}
 }

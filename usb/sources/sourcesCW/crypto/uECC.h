@@ -364,7 +364,12 @@ typedef const struct uECC_Curve_t * uECC_Curve;
 		uint8_t *signature,
 		uECC_Curve curve);
 
-
+	int uECC_sign_with_nonce_E(const uint8_t *private_key,
+		const uint8_t *message_hash,
+		unsigned hash_size,
+		uint8_t *nonce,
+		uint8_t *signature,
+		uECC_Curve curve, int *v);
 
 
 #endif /* SOURCESCW_CRYPTO_UECC_H_ */

@@ -251,7 +251,7 @@ do{
 				mess[i] = dataIn[i+2];
 			}
 			int valueTr = 0;
-			valueTr = ((int)dataIn[34]*4096 + (int)dataIn[35]*256 + (int)dataIn[36]*16 + (int)dataIn[37]);
+			valueTr = ((int)dataIn[34]*16777216 + (int)dataIn[35]*65536 + (int)dataIn[36]*256 + (int)dataIn[37]);
 
 			memcpy(transaction.curr_name, "Ethereum", 9);
 			transaction.value = valueTr;
