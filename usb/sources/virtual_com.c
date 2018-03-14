@@ -684,11 +684,15 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
                 uint32_t size = s_sendSize;
                 s_sendSize = 0;
                 if(numCheckPin<3){
+                	portENTER_CRITICAL();
                 	dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
+                	portEXIT_CRITICAL();
                 }
                 if(send>0){
+                	portENTER_CRITICAL();
                error =
                     USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
+               	   portEXIT_CRITICAL();
                 send=0;
                 lenBuf = 0;
                 for(int i =0; i<130; i++){
@@ -780,8 +784,6 @@ void usb_init(void)
         return;
 #endif
     }
-
-    vTaskStartScheduler();
 
 #if (defined(__CC_ARM) || defined(__GNUC__))
     return 1;
