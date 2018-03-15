@@ -621,12 +621,14 @@ static int pinInit = -1;
 static int pinDef = 1234;
 struct message mess;
 
+
 vTaskDelay(500 / portTICK_PERIOD_MS);
 mess.cmd = INIT_PINCODE;
 xQueueSend(card_to_lcd, (void*)&mess, 0);
 
     while (1)
     {
+
     	if(xQueueReceive(lcd_to_card, (void*)&mess, 0))
     	{
     		int cmd = mess.cmd;
