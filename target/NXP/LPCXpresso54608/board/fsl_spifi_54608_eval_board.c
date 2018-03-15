@@ -67,7 +67,7 @@ void BOARD_InitSPIFI(void)
 
     /* Initialize SPIFI */
     SPIFI_GetDefaultConfig(&config);
-    config.isReadFullClockCycle = true;  //SSN changed this (was false). Required for 48MHz SPIFI.
+    //config.isReadFullClockCycle = true;  //SSN changed this (was false). Required for 48MHz SPIFI.
     SPIFI_Init(SPIFI, &config);
 
     /* Enable Quad mode */

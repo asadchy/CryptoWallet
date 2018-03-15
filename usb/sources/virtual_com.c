@@ -72,7 +72,7 @@ extern uint8_t USB_EnterLowpowerMode(void);
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
-#define FLASH_ADDR			0x10FFF000UL
+#define FLASH_ADDR			0x10800000
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -631,13 +631,13 @@ uint8_t buffer[120] = {0};
 uint32_t lenBuf = 0;
 uint32_t send=0;
 int numCheckPin = 0;
-uint32_t pinInit = -1;
+int pinInit = -1;
 uint32_t pinDef[2];
 struct message mess;
 int initWallet = 0;
 
 read_flash(pinDef, 2);
-if(pinDef[0] != 0x5555)
+if(pinDef[0] != 0x555)
 {
 	struct message messInit;
 	vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -654,16 +654,18 @@ if(pinDef[0] != 0x5555)
 				pinDef[0] = 0x5555;
 				write_flash(pinDef, 2);
 				initWallet = 1;
-				messInit.cmd = TO_STATUS;
-				xQueueSend(card_to_lcd, (void*)&messInit, 0);
 			}
 		}
 	}
 }
 
-vTaskDelay(500 / portTICK_PERIOD_MS);
-mess.cmd = INIT_PINCODE;
-xQueueSend(card_to_lcd, (void*)&mess, 0);
+//vTaskDelay(500 / portTICK_PERIOD_MS);
+int32_t ret;
+mess.cmd = TO_STATUS;//INIT_PINCODE;
+do{
+	ret = xQueueSend(card_to_lcd, (void*)&mess, 10 / portTICK_PERIOD_MS);
+} while(ret != pdPASS);
+taskYIELD();
 
 while (1)
 {
@@ -728,9 +730,9 @@ while (1)
 
 			}
 			if(send>0){
-				portENTER_CRITICAL();
+				//portENTER_CRITICAL();
 				error =	USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
-				portEXIT_CRITICAL();
+				//portEXIT_CRITICAL();
                 send=0;
                 lenBuf = 0;
                 for(int i =0; i<120; i++){
@@ -833,9 +835,10 @@ static void write_flash(uint32_t *data, uint32_t size)
 	if(size > PAGE_SIZE / 4)
 		size = PAGE_SIZE / 4;
 
-	vTaskSuspendAll();
+	portENTER_CRITICAL();
 	/* Reset the SPIFI to switch to command mode */
 	SPIFI_ResetCommand(SPIFI);
+	EnableIRQ(SPIFI0_IRQn);
 	/* Write enable */
 	SPIFI_SetCommand(SPIFI, &command[WRITE_ENABLE]);
 	/* Set address */
@@ -860,7 +863,10 @@ static void write_flash(uint32_t *data, uint32_t size)
 		}
 	}
 	check_if_finish();
-	xTaskResumeAll();
+
+	SPIFI_ResetCommand(SPIFI);
+	SPIFI_SetMemoryCommand(SPIFI, &command[READ]);
+	portEXIT_CRITICAL();
 }
 
 static void read_flash(uint32_t *data, uint32_t size)
@@ -868,11 +874,9 @@ static void read_flash(uint32_t *data, uint32_t size)
 	if(size > PAGE_SIZE / 4)
 			size = PAGE_SIZE / 4;
 
-	vTaskSuspendAll();
+	portENTER_CRITICAL();
 	/* Reset to memory command mode */
 	SPIFI_ResetCommand(SPIFI);
-	/* Set address */
-	SPIFI_SetCommandAddress(SPIFI, FSL_FEATURE_SPIFI_START_ADDR);
 	/* Read enable */
 	SPIFI_SetMemoryCommand(SPIFI, &command[READ]);
 
@@ -880,6 +884,6 @@ static void read_flash(uint32_t *data, uint32_t size)
 	{
 		data[i] = *(uint32_t*)(FLASH_ADDR + i * sizeof(uint32_t));
 	}
-	xTaskResumeAll();
+	portEXIT_CRITICAL();
 }
 
