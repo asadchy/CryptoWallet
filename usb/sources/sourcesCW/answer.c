@@ -4,6 +4,7 @@
 #include "crypto/sign.h"
 #include "string.h"
 #include "data.hpp"
+//#include "flash.h"
 typedef unsigned char BYTE;
 typedef unsigned int UINT32;
 
@@ -13,7 +14,9 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	BYTE publicKey[65] = { 0 };
 	BYTE address[40] = { 0 };
 	int addressLen = 0;
-	const int pinDef = 1234;
+	uint32_t pinDef[2] = {0};
+	//read_flash2(pinDef, 8);
+	pinDef[1] = *pinInit;
 	BYTE signature[130] = {0};
 	static struct message message;
 	static struct transaction transaction;
@@ -41,10 +44,10 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 		if(*pinInit == -1){
 			dataOut[5] = 0x04;
 		}else{
-			if(*pinInit == pinDef){
+			if(*pinInit == pinDef[1]){
 				dataOut[5] = 0x00;
 			}
-			if(*pinInit != pinDef){
+			if(*pinInit != pinDef[1]){
 				dataOut[5] = 0x03;
 			}
 		}
@@ -64,7 +67,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 		dataOut[0] = 0x43;
 		dataOut[1] = 0x4f;
 		dataOut[2] = 0x4d;
-		if(*pinInit != pinDef){
+		if(*pinInit != pinDef[1]){
 			dataOut[3] = 0x00;
 			*lenOut = 4;
 			break;
@@ -143,7 +146,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			{
 				case PINCODE:
 do{
-					if(pinDef == (*(int*)message.data)){
+					if(pinDef[1] == (*(int*)message.data)){
 						*pinInit = *(int*)message.data;
 						numCheckPin = 0;
 						int compressed = 1;
@@ -173,7 +176,7 @@ do{
 						xQueueSend(card_to_lcd, (void*)&message, 0);
 						xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 					}
-}while((pinDef != (*(int*)message.data))||(numCheckPin!=0));
+}while((pinDef[1] != (*(int*)message.data))||(numCheckPin!=0));
 					break;
 
 				case TRANSACTION_CANCELED:
@@ -206,7 +209,7 @@ do{
 			{
 				case PINCODE:
 					do{
-						if(pinDef == (*(int*)message.data)){
+						if(pinDef[1] == (*(int*)message.data)){
 							*pinInit = *(int*)message.data;
 							numCheckPin = 0;
 							int compressed = 1;
@@ -236,7 +239,7 @@ do{
 							xQueueSend(card_to_lcd, (void*)&message, 0);
 							xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 						}
-					}while((pinDef != (*(int*)message.data))||(numCheckPin!=0));
+					}while((pinDef[1] != (*(int*)message.data))||(numCheckPin!=0));
 
 					break;
 
@@ -270,7 +273,7 @@ do{
 			{
 				case PINCODE:
 					do{
-						if(pinDef == (*(int*)message.data)){
+						if(pinDef[1] == (*(int*)message.data)){
 							*pinInit = *(int*)message.data;
 							numCheckPin = 0;
 							int idCur = 1;
@@ -298,7 +301,7 @@ do{
 							xQueueSend(card_to_lcd, (void*)&message, 0);
 							xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 						}
-					}while((pinDef != (*(int*)message.data))||(numCheckPin!=0));
+					}while((pinDef[1] != (*(int*)message.data))||(numCheckPin!=0));
 
 					break;
 
@@ -352,14 +355,15 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 }
 
 void checkPin(int *pinInit){
-	int pinDef = 1234;
+	uint32_t pinDef[2] = {0};
+	//read_flash2(pinDef, 8);
 	int numCheckPin = 0;
 	static struct message message;
-	while((*pinInit)!= pinDef || numCheckPin < 3){
+	while((*pinInit)!= pinDef[1] || numCheckPin < 3){
 		message.cmd = WRONG_PINCODE;
 		xQueueSend(card_to_lcd, (void*)&message, 0);
 		xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
-		if(pinDef == (*(int*)message.data)){
+		if(pinDef[1] == (*(int*)message.data)){
 			*pinInit = *(int*)message.data;
 			numCheckPin = 0;
 			message.cmd = TO_STATUS;

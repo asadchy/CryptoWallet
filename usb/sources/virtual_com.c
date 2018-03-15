@@ -627,98 +627,120 @@ void APPTask(void *handle)
         }
     }
 #endif
-uint8_t buffer[130] = {0};
+uint8_t buffer[120] = {0};
 uint32_t lenBuf = 0;
 uint32_t send=0;
 int numCheckPin = 0;
-static int pinInit = -1;
-static int pinDef = 1234;
+uint32_t pinInit = -1;
+uint32_t pinDef[2];
 struct message mess;
+int initWallet = 0;
 
+read_flash(pinDef, 2);
+if(pinDef[0] != 0x5555)
+{
+	struct message messInit;
+	vTaskDelay(500 / portTICK_PERIOD_MS);
+	messInit.cmd = INIT_PINCODE;
+	xQueueSend(card_to_lcd, (void*)&messInit, 0);
+
+	while (!initWallet)
+	{
+		if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+		{
+			if(messInit.cmd == PINCODE)
+			{
+				pinDef[1] = *(uint32_t*)messInit.data;
+				pinDef[0] = 0x5555;
+				write_flash(pinDef, 2);
+				initWallet = 1;
+				messInit.cmd = TO_STATUS;
+				xQueueSend(card_to_lcd, (void*)&messInit, 0);
+			}
+		}
+	}
+}
 
 vTaskDelay(500 / portTICK_PERIOD_MS);
 mess.cmd = INIT_PINCODE;
 xQueueSend(card_to_lcd, (void*)&mess, 0);
 
-    while (1)
-    {
+while (1)
+{
 
-    	if(xQueueReceive(lcd_to_card, (void*)&mess, 0))
-    	{
-    		int cmd = mess.cmd;
-    		switch(cmd)
-    		{
-    			case PINCODE:
-    				if(pinInit == -1)
-    				{
-    					if(pinDef == *(int*)mess.data){
-    						numCheckPin = 0;
-    						pinInit = *(int*)mess.data;
-    						mess.cmd = TO_STATUS;
-    						xQueueSend(card_to_lcd, (void*)&mess, 0);
-    					}
-    					else{
-    						numCheckPin ++;
-    						if(numCheckPin > 2){
-    							mess.cmd = BLOCKED;
-    							xQueueSend(card_to_lcd, (void*)&mess, 0);
+	if(xQueueReceive(lcd_to_card, (void*)&mess, 0))
+	{
+		int cmd = mess.cmd;
+		switch(cmd)
+		{
+		case PINCODE:
+			if(pinInit == -1)
+			{
+				if(pinDef[1] == *(uint32_t*)mess.data){
+					numCheckPin = 0;
+					pinInit = *(uint32_t*)mess.data;
+					mess.cmd = TO_STATUS;
+					xQueueSend(card_to_lcd, (void*)&mess, 0);
+				}
+				else{
+					numCheckPin ++;
+					if(numCheckPin > 2)
+					{
+						mess.cmd = BLOCKED;
+						xQueueSend(card_to_lcd, (void*)&mess, 0);
 
-    						}else{
-    							mess.cmd = WRONG_PINCODE;
-    							xQueueSend(card_to_lcd, (void*)&mess, 0);
-    							}
-    					}
-    				}
-    			/*	else
-    				{
-    					int temp_pin = *(int*)mess.data;
-    				}*/
-    				break;
-    		}
-    	}
+					}else
+					{
+						mess.cmd = WRONG_PINCODE;
+						xQueueSend(card_to_lcd, (void*)&mess, 0);
+					}
+				}
+			}
+			break;
+		}
+	}
 
-        if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
-        {
-            /* User Code */
-            if ((0 != s_recvSize) && (0xFFFFFFFF != s_recvSize))
-            {
-                int32_t i;
+	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
+	{
+		/* User Code */
+		if ((0 != s_recvSize) && (0xFFFFFFFF != s_recvSize))
+		{
+			int32_t i;
 
-                /* Copy Buffer to Send Buff */
-                for (i = 0; i < s_recvSize; i++)
-                {
+			/* Copy Buffer to Send Buff */
+			for (i = 0; i < s_recvSize; i++)
+			{
 
-               		s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
+				s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
 
-                }
-                s_recvSize = 0;
-            }
+			}
+			s_recvSize = 0;
+		}
 
 
-            if (s_sendSize)
-            {
-                uint32_t size = s_sendSize;
-                s_sendSize = 0;
-                if(numCheckPin<3){
+		if (s_sendSize)
+		{
+			uint32_t size = s_sendSize;
+			s_sendSize = 0;
+			if(numCheckPin<3){
 
-                	dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
+				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
 
-                }
-                if(send>0){
-                	portENTER_CRITICAL();
-               error =
-                    USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
-               	   portEXIT_CRITICAL();
+			}
+			if(send>0){
+				portENTER_CRITICAL();
+				error =	USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
+				portEXIT_CRITICAL();
                 send=0;
                 lenBuf = 0;
-                for(int i =0; i<130; i++){
+                for(int i =0; i<120; i++){
                 	buffer[i] = 0x00;
                 }
                 if (error != kStatus_USB_Success)
                 {
                     // Failure to send Data Handling code here
                 }}else{USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, 0);}
-            }
+		}
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
     defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
@@ -860,3 +882,4 @@ static void read_flash(uint32_t *data, uint32_t size)
 	}
 	xTaskResumeAll();
 }
+
