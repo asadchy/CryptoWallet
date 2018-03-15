@@ -686,9 +686,9 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
                 uint32_t size = s_sendSize;
                 s_sendSize = 0;
                 if(numCheckPin<3){
-                	portENTER_CRITICAL();
+                //	portENTER_CRITICAL();
                 	dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
-                	portEXIT_CRITICAL();
+                //	portEXIT_CRITICAL();
                 }
                 if(send>0){
                 	portENTER_CRITICAL();
