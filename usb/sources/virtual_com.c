@@ -66,10 +66,13 @@ extern uint8_t USB_EnterLowpowerMode(void);
 #include "fsl_power.h"
 
 #include "data.hpp"
+
+#include "fsl_spifi.h"
+#include "fsl_spifi_54608_eval_board.h"
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
-
+#define FLASH_ADDR			0x10FFF000UL
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -85,6 +88,9 @@ void BOARD_DbgConsole_Init(void);
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
 
+static void write_flash(uint32_t *data, uint32_t size);
+static void read_flash(uint32_t *data, uint32_t size);
+
 /*******************************************************************************
 * Variables
 ******************************************************************************/
@@ -93,6 +99,14 @@ extern usb_device_class_struct_t g_UsbDeviceCdcVcomConfig;
 /* Data structure of virtual com device */
 usb_cdc_vcom_struct_t s_cdcVcom;
 static char const *s_appName = "app task";
+
+static spifi_command_t command[COMMAND_NUM] = {
+    {PAGE_SIZE, false, kSPIFI_DataInput, 1, kSPIFI_CommandDataQuad, kSPIFI_CommandOpcodeAddrThreeBytes, 0x6B},
+    {PAGE_SIZE, false, kSPIFI_DataOutput, 0, kSPIFI_CommandOpcodeSerial, kSPIFI_CommandOpcodeAddrThreeBytes, 0x38},
+    {4, false, kSPIFI_DataInput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x05},
+    {0, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeAddrThreeBytes, 0x20},
+    {0, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x06},
+    {4, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x01}};
 
 /* Line codinig of cdc device */
 USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_lineCoding[LINE_CODING_SIZE] = {
@@ -684,9 +698,7 @@ xQueueSend(card_to_lcd, (void*)&mess, 0);
                 uint32_t size = s_sendSize;
                 s_sendSize = 0;
                 if(numCheckPin<3){
-                	portENTER_CRITICAL();
                 	dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
-                	portEXIT_CRITICAL();
                 }
                 if(send>0){
                 	portENTER_CRITICAL();
@@ -788,4 +800,59 @@ void usb_init(void)
 #if (defined(__CC_ARM) || defined(__GNUC__))
     return 1;
 #endif
+}
+
+static void write_flash(uint32_t *data, uint32_t size)
+{
+	if(size > PAGE_SIZE / 4)
+		size = PAGE_SIZE / 4;
+
+	vTaskSuspendAll();
+	/* Reset the SPIFI to switch to command mode */
+	SPIFI_ResetCommand(SPIFI);
+	/* Write enable */
+	SPIFI_SetCommand(SPIFI, &command[WRITE_ENABLE]);
+	/* Set address */
+	SPIFI_SetCommandAddress(SPIFI, FLASH_ADDR);
+	/* Erase sector */
+	SPIFI_SetCommand(SPIFI, &command[ERASE_SECTOR]);
+	/* Check if finished */
+	check_if_finish();
+
+	SPIFI_SetCommand(SPIFI, &command[WRITE_ENABLE]);
+	SPIFI_SetCommandAddress(SPIFI, FLASH_ADDR);
+	SPIFI_SetCommand(SPIFI, &command[PROGRAM_PAGE]);
+	for(int i = 0; i < size; i++)
+	{
+		SPIFI_WriteData(SPIFI, data[i]);
+	}
+	if(size < PAGE_SIZE / 4)
+	{
+		for(int i = size; i < PAGE_SIZE / 4; i++)
+		{
+			SPIFI_WriteData(SPIFI, 0);
+		}
+	}
+	check_if_finish();
+	xTaskResumeAll();
+}
+
+static void read_flash(uint32_t *data, uint32_t size)
+{
+	if(size > PAGE_SIZE / 4)
+			size = PAGE_SIZE / 4;
+
+	vTaskSuspendAll();
+	/* Reset to memory command mode */
+	SPIFI_ResetCommand(SPIFI);
+	/* Set address */
+	SPIFI_SetCommandAddress(SPIFI, FSL_FEATURE_SPIFI_START_ADDR);
+	/* Read enable */
+	SPIFI_SetMemoryCommand(SPIFI, &command[READ]);
+
+	for(int i = 0; i < size; i++)
+	{
+		data[i] = *(uint32_t*)(FLASH_ADDR + i * sizeof(uint32_t));
+	}
+	xTaskResumeAll();
 }

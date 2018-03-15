@@ -5,22 +5,6 @@
 #include "fsl_spifi_54608_eval_board.h"
 
 /*******************************************************************************
- * Definitions
- ******************************************************************************/
-
-#define SPIFI SPIFI0
-#define PAGE_SIZE (256)
-#define SECTOR_SIZE (4096)
-#define SPI_BAUDRATE (90000000)
-#define COMMAND_NUM (6)
-#define READ (0)
-#define PROGRAM_PAGE (1)
-#define GET_STATUS (2)
-#define ERASE_SECTOR (3)
-#define WRITE_ENABLE (4)
-#define WRITE_REGISTER (5)
-
-/*******************************************************************************
  * Prototypes
  ******************************************************************************/
 /*******************************************************************************
@@ -39,7 +23,7 @@ static spifi_command_t command[COMMAND_NUM] = {
 /*******************************************************************************
  * Code
  ******************************************************************************/
-static void check_if_finish()
+void check_if_finish()
 {
     uint32_t val = 0;
     /* Check WIP bit */
