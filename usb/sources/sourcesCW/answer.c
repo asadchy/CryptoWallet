@@ -4,7 +4,7 @@
 #include "crypto/sign.h"
 #include "string.h"
 #include "data.hpp"
-#include "flash.h"
+//#include "flash.h"
 typedef unsigned char BYTE;
 typedef unsigned int UINT32;
 
@@ -15,8 +15,8 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	BYTE address[40] = { 0 };
 	int addressLen = 0;
 	uint32_t pinDef[2] = {0};
-	read_flash2(pinDef, 2);
-	//pinDef[1] = *pinInit;
+	//read_flash2(pinDef, 2);
+	pinDef[1] = 1234;
 	BYTE signature[130] = {0};
 	static struct message message;
 	static struct transaction transaction;

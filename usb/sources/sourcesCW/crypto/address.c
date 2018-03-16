@@ -30,7 +30,7 @@ void addressBtc(BYTE *PubKeyBin, int compressed, BYTE *outAddress, int *outAddre
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	BYTE add00ByteRIPEMD160[21] = { 0 };
-	add00ByteRIPEMD160[0] =  0x6f; //testnet, real 0x00
+	add00ByteRIPEMD160[0] =  0x00; //testnet 0x6f, real 0x00
 	for (int i = 0; i < 20; i++)
 	{
 		add00ByteRIPEMD160[i + 1] = outRIPEMD160[i];
@@ -89,7 +89,7 @@ void addressLtc(BYTE *PubKeyBin, int compressed, BYTE *outAddress, int *outAddre
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	BYTE add00ByteRIPEMD160[21] = { 0 };
-	add00ByteRIPEMD160[0] = 0x6f; //testnet, real 0x30
+	add00ByteRIPEMD160[0] = 0x30; //testnet 0x6f , real 0x30
 	for (int i = 0; i < 20; i++)
 	{
 		add00ByteRIPEMD160[i + 1] = outRIPEMD160[i];
