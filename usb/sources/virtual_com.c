@@ -637,7 +637,7 @@ struct message mess;
 int initWallet = 0;
 
 read_flash(pinDef, 2);
-if(pinDef[0] != 0x555)
+if(pinDef[0] != 0x55555)
 {
 	struct message messInit;
 	vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -651,7 +651,7 @@ if(pinDef[0] != 0x555)
 			if(messInit.cmd == PINCODE)
 			{
 				pinDef[1] = *(uint32_t*)messInit.data;
-				pinDef[0] = 0x5555;
+				pinDef[0] = 0x55555;
 				write_flash(pinDef, 2);
 				initWallet = 1;
 			}
