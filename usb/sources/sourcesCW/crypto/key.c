@@ -7,9 +7,9 @@
 #include "sha256.h"
 #include "key.h"
 #include "uECC.h"
+#include "pbkdf2/mnemonic.h"
 
-
-void generatePrivateKey(BYTE* msg, int *idCurrency, BYTE *privKey) {
+void generatePrivateKey(int pin, int *idCurrency, BYTE *privKey) {
 	BYTE tocen[10] = { 0 };
 	int len = 0;
 	switch (*idCurrency)
@@ -52,20 +52,31 @@ void generatePrivateKey(BYTE* msg, int *idCurrency, BYTE *privKey) {
 	default:
 		break;
 	}
+	/*
+	BYTE msg[2] = { 0 };
+	msg[0] = (unsigned char)(pin % 256);
+	msg[1] = (unsigned char)((pin - (pin % 256)) / 256);
+	for(int i = len; i < len + 2; i++)
+	{
+		tocen[i] = msg[i - len];
+	}
+	len = len + 2;
+	HMAC_SHA256(privKey, seed, 32, tocen, len);
+	*/
+
+	BYTE msg[2] = { 0 };
+	msg[0] = (unsigned char)(pin % 256);
+	msg[1] = (unsigned char)((pin - (pin % 256)) / 256);
 
 	BYTE temp[32] = { 0 };
 	SHA_256(msg, 2, temp);
-
 	HMAC_SHA256(privKey, temp, 32, tocen, len);
 }
 
 
 void genKeyC(int pin, int idCurrency, BYTE * privKey, BYTE * pubKey, int compressed) {
 	BYTE pr[32] = { 0 };
-	BYTE msg[2] = { 0 };
-	msg[0] = (unsigned char)(pin % 256);
-	msg[1] = (unsigned char)((pin - (pin % 256)) / 256);
-	generatePrivateKey(msg, &idCurrency, pr);
+	generatePrivateKey(pin, &idCurrency, pr);
 	const struct uECC_Curve_t * curves;
 	curves = uECC_secp256k1();
 	BYTE pub[64] = { 0 };
@@ -88,10 +99,8 @@ void genKeyC(int pin, int idCurrency, BYTE * privKey, BYTE * pubKey, int compres
 }
 
 void genKeyE(int pin, int idCurrency, BYTE * privKey, BYTE * pubKey) {
-	BYTE msg[2] = { 0 };
-	msg[0] = (unsigned char)(pin % 256);
-	msg[1] = (unsigned char)((pin - (pin % 256)) / 256);
-	generatePrivateKey(msg, &idCurrency, privKey);
+
+	generatePrivateKey(pin, &idCurrency, privKey);
 	const struct uECC_Curve_t * curves;
 	curves = uECC_secp256k1();
 	uECC_compute_public_key(privKey, pubKey, curves);

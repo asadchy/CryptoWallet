@@ -632,11 +632,12 @@ uint32_t lenBuf = 0;
 uint32_t send=0;
 int numCheckPin = 0;
 int pinInit = -1;
-uint32_t pinDef[2];
+uint32_t pinDef[34];
+uint8_t seed[32] = {0};
 struct message mess;
 int initWallet = 0;
 
-read_flash(pinDef, 2);
+read_flash(pinDef, 34);
 if(pinDef[0] != 0x55)
 {
 	struct message messInit;
@@ -652,10 +653,17 @@ if(pinDef[0] != 0x55)
 			{
 				pinDef[1] = *(uint32_t*)messInit.data;
 				pinDef[0] = 0x55;
+
 				write_flash(pinDef, 2);
 				initWallet = 1;
 			}
 		}
+	}
+}else
+{
+	for(int i = 0; i<32; i++)
+	{
+		seed[i] = pinDef[i+2];
 	}
 }
 

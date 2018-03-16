@@ -34,11 +34,7 @@ const char *mnemonic_generate(int strength , BYTE* password)
 		return 0;
 	}
 	BYTE data[32] = { 0 };
-	//random_buffer(data, 32);
-	//for (int i = 0; i < 32;i++) data[i] = 0x01;
-
-
-	sha256_Raw(password, 16, data);
+	sha256_Raw(password, 32, data);
 
 	const char *r = mnemonic_from_data(data, strength / 8);
 	memzero(data, sizeof(data));
@@ -187,14 +183,14 @@ int mnemonic_check(const char *mnemonic)
 }
 
 // passphrase must be at most 256 characters or code may crash
-void mnemonic_to_seed(const char *mnemonic, const char *passphrase, BYTE seed[512 / 8])
+void mnemonic_to_seed(const char *mnemonic, UINT32 lenMnem, const char *passphrase, UINT32 lenPass, BYTE seed[512 / 8])
 {
-	int passphraselen = strlen(passphrase);
+	//int passphraselen = strlen(passphrase);
 	BYTE salt[8 + 256];
 	memcpy(salt, "mnemonic", 8);
-	memcpy(salt + 8, passphrase, passphraselen);
+	memcpy(salt + 8, passphrase, lenPass);
 	 PBKDF2_HMAC_SHA512_CTX pctx;
-	pbkdf2_hmac_sha512_Init(&pctx, (const BYTE *)mnemonic, strlen(mnemonic), salt, passphraselen + 8);
+	pbkdf2_hmac_sha512_Init(&pctx, (const BYTE *)mnemonic, lenMnem, salt, lenPass + 8);
 for (int i = 0; i < 16; i++) {
 		pbkdf2_hmac_sha512_Update(&pctx, BIP39_PBKDF2_ROUNDS / 16);
 		}

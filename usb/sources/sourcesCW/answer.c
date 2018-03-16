@@ -78,7 +78,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			dataOut[3] = 0x42;
 			dataOut[4] = 0x54;
 			dataOut[5] = 0x43;
-			dataOut[6] = 0x00;
+
 			int compressed = 1;
 			int idCur = 0;
 			genKeyC(*pinInit, idCur, privateKey, publicKey, compressed);
@@ -86,6 +86,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i<addressLen; i++){
 				dataOut[i+7] = address[i];
 			}
+			dataOut[6] = addressLen + 7;
 			*lenOut = addressLen + 7;
 		}
 		if(dataIn[1] == 0x01){//ethereum
@@ -93,7 +94,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			dataOut[3] = 0x45;
 			dataOut[4] = 0x54;
 			dataOut[5] = 0x48;
-			dataOut[6] = 0x00;
+			dataOut[6] = 27;
 			int idCur = 1;
 			genKeyE(*pinInit, idCur, privateKey, publicKey);
 			addressEth(publicKey, address);
@@ -106,15 +107,16 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			dataOut[3] = 0x4c;
 			dataOut[4] = 0x54;
 			dataOut[5] = 0x43;
-			dataOut[6] = 0x00;
+
 			int compressed = 1;
 			int idCur = 2;
 			genKeyC(*pinInit, idCur, privateKey, publicKey, compressed);
-			addressBtc(publicKey, compressed, address, &addressLen);
+			addressLtc(publicKey, compressed, address, &addressLen);
 			for(int i = 0; i<addressLen; i++){
 				dataOut[i+7] = address[i];
 			}
 			*lenOut = addressLen + 7;
+			dataOut[6] = addressLen + 7;
 		}
 		break;
 	}
