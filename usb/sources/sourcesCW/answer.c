@@ -122,9 +122,9 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 	case 0x53:{ //signature
 
-		dataOut[0] = 0x43;
+		/*dataOut[0] = 0x43;
 		dataOut[1] = 0x4f;
-		dataOut[2] = 0x4d;
+		dataOut[2] = 0x4d;*/
 		if(dataIn[1] == 0x00){//bitcoin
 			/*BYTE mess[32] = {0};
 			for(int i=0; i<32; i++){
