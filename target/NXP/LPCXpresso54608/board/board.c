@@ -34,6 +34,7 @@
 #include "fsl_common.h"
 #include "fsl_debug_console.h"
 #include "fsl_emc.h"
+#include "fsl_eeprom.h"
 
 /*******************************************************************************
  * Definitions
@@ -53,6 +54,9 @@
 #define SDRAM_RAS_NCLK (2u)
 #define SDRAM_MODEREG_VALUE (0x23u)
 #define SDRAM_DEV_MEMORYMAP (0x09u) /* 128Mbits (8M*16, 4banks, 12 rows, 9 columns)*/
+
+#define EEPROM_SOURCE_CLOCK kCLOCK_BusClk
+#define EEPROM_CLK_FREQ CLOCK_GetFreq(kCLOCK_BusClk)
 
 /*******************************************************************************
  * Variables
@@ -111,4 +115,15 @@ void BOARD_InitSDRAM(void)
     EMC_Init(EMC, &basicConfig);
     /* EMC Dynamc memory configuration. */
     EMC_DynamicMemInit(EMC, &dynTiming, &dynChipConfig, 1);
+}
+
+void BOARD_InitEeprom(void)
+{
+	eeprom_config_t config;
+	uint32_t sourceClock_Hz = 0;
+
+	/* Init EEPROM */
+	EEPROM_GetDefaultConfig(&config);
+	sourceClock_Hz = EEPROM_CLK_FREQ;
+	EEPROM_Init(EEPROM, &config, sourceClock_Hz);
 }
