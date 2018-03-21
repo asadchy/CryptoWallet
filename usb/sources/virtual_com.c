@@ -67,12 +67,11 @@ extern uint8_t USB_EnterLowpowerMode(void);
 
 #include "data.hpp"
 
-#include "fsl_spifi.h"
-#include "fsl_spifi_54608_eval_board.h"
+#include "fsl_eeprom.h"
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
-#define FLASH_ADDR			0x10800000
+#define PIN_ADDR				0U
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -88,8 +87,8 @@ void BOARD_DbgConsole_Init(void);
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
 
-static void write_flash(uint32_t *data, uint32_t size);
-static void read_flash(uint32_t *data, uint32_t size);
+static void write_flash(uint32_t *data, uint32_t size, uint32_t addr);
+static void read_flash(uint32_t *data, uint32_t size, uint32_t addr);
 
 /*******************************************************************************
 * Variables
@@ -99,14 +98,6 @@ extern usb_device_class_struct_t g_UsbDeviceCdcVcomConfig;
 /* Data structure of virtual com device */
 usb_cdc_vcom_struct_t s_cdcVcom;
 static char const *s_appName = "app task";
-
-static spifi_command_t command[COMMAND_NUM] = {
-    {PAGE_SIZE, false, kSPIFI_DataInput, 1, kSPIFI_CommandDataQuad, kSPIFI_CommandOpcodeAddrThreeBytes, 0x6B},
-    {PAGE_SIZE, false, kSPIFI_DataOutput, 0, kSPIFI_CommandOpcodeSerial, kSPIFI_CommandOpcodeAddrThreeBytes, 0x38},
-    {4, false, kSPIFI_DataInput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x05},
-    {0, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeAddrThreeBytes, 0x20},
-    {0, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x06},
-    {4, false, kSPIFI_DataOutput, 0, kSPIFI_CommandAllSerial, kSPIFI_CommandOpcodeOnly, 0x01}};
 
 /* Line codinig of cdc device */
 USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_lineCoding[LINE_CODING_SIZE] = {
@@ -637,7 +628,7 @@ uint8_t seed[32] = {0};
 struct message mess;
 int initWallet = 0;
 
-read_flash(pinDef, 34);
+read_flash(pinDef, 34, PIN_ADDR);
 if(pinDef[0] != 0x55)
 {
 	struct message messInit;
@@ -654,7 +645,7 @@ if(pinDef[0] != 0x55)
 				pinDef[1] = *(uint32_t*)messInit.data;
 				pinDef[0] = 0x55;
 
-				write_flash(pinDef, 2);
+				write_flash(pinDef, 2, PIN_ADDR);
 				initWallet = 1;
 			}
 		}
@@ -838,59 +829,34 @@ void usb_init(void)
 #endif
 }
 
-static void write_flash(uint32_t *data, uint32_t size)
+static void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
 {
-	if(size > PAGE_SIZE / 4)
-		size = PAGE_SIZE / 4;
+	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
+				size = FSL_FEATURE_EEPROM_SIZE / 4;
+
+	if((addr + size) > (FSL_FEATURE_EEPROM_SIZE / 4))
+		return;
 
 	portENTER_CRITICAL();
-	/* Reset the SPIFI to switch to command mode */
-	SPIFI_ResetCommand(SPIFI);
-	EnableIRQ(SPIFI0_IRQn);
-	/* Write enable */
-	SPIFI_SetCommand(SPIFI, &command[WRITE_ENABLE]);
-	/* Set address */
-	SPIFI_SetCommandAddress(SPIFI, FLASH_ADDR);
-	/* Erase sector */
-	SPIFI_SetCommand(SPIFI, &command[ERASE_SECTOR]);
-	/* Check if finished */
-	check_if_finish();
-
-	SPIFI_SetCommand(SPIFI, &command[WRITE_ENABLE]);
-	SPIFI_SetCommandAddress(SPIFI, FLASH_ADDR);
-	SPIFI_SetCommand(SPIFI, &command[PROGRAM_PAGE]);
 	for(int i = 0; i < size; i++)
 	{
-		SPIFI_WriteData(SPIFI, data[i]);
+		EEPROM_WriteWord(EEPROM, addr + i * 4, data[i]);
 	}
-	if(size < PAGE_SIZE / 4)
-	{
-		for(int i = size; i < PAGE_SIZE / 4; i++)
-		{
-			SPIFI_WriteData(SPIFI, 0);
-		}
-	}
-	check_if_finish();
-
-	SPIFI_ResetCommand(SPIFI);
-	SPIFI_SetMemoryCommand(SPIFI, &command[READ]);
 	portEXIT_CRITICAL();
 }
 
-static void read_flash(uint32_t *data, uint32_t size)
+static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 {
-	if(size > PAGE_SIZE / 4)
-			size = PAGE_SIZE / 4;
+	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
+			size = FSL_FEATURE_EEPROM_SIZE / 4;
+
+	if((addr + size) > (FSL_FEATURE_EEPROM_SIZE / 4))
+		return;
 
 	portENTER_CRITICAL();
-	/* Reset to memory command mode */
-	SPIFI_ResetCommand(SPIFI);
-	/* Read enable */
-	SPIFI_SetMemoryCommand(SPIFI, &command[READ]);
-
 	for(int i = 0; i < size; i++)
 	{
-		data[i] = *(uint32_t*)(FLASH_ADDR + i * sizeof(uint32_t));
+		data[i] = *(uint32_t*)(FSL_FEATURE_EEPROM_BASE_ADDRESS + addr + i * 4);
 	}
 	portEXIT_CRITICAL();
 }
