@@ -269,10 +269,10 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
 			}
-			int valueTr = ((int)dataIn[2 + 32*amount]*16777216 + (int)dataIn[3 + 32*amount]*65536 + (int)dataIn[4 + 32*amount]*256 + (int)dataIn[5 + 32*amount]);
+			int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[34] = {0};
 			for(int i=0; i<34; i++){
-				addr[i] = dataIn[6 + 32*amount + i];
+				addr[i] = dataIn[7 + 32*amount + i];
 			}
 			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit);
 		}
@@ -343,10 +343,10 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
 			}
-			int valueTr = ((int)dataIn[2 + 32*amount]*16777216 + (int)dataIn[3 + 32*amount]*65536 + (int)dataIn[4 + 32*amount]*256 + (int)dataIn[5 + 32*amount]);
+			int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[42] = {0};
 			for(int i=0; i<42; i++){
-				addr[i] = dataIn[6 + 32*amount + i];
+				addr[i] = dataIn[7 + 32*amount + i];
 			}
 			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit);
 		}
@@ -368,7 +368,7 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 		buffer[i] = dataIn[i-(*lenBuf)];
 	}
 	(*lenBuf) = (*lenBuf)+(*lenIn);
-	uint8_t tempBuf[100] = {0};
+	uint8_t tempBuf[1800] = {0};
 	uint32_t start = 0;
 	uint32_t end = 0;
 	if((*lenBuf) > 5){

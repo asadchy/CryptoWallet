@@ -27,3 +27,12 @@ void seedFromMnemonic(BYTE *mnemonic, UINT32 lenMnem, BYTE *password, UINT32 len
 	mnemonic_to_seed((char*)mnemonic, lenMnem, (char*)password, lenPass, seedT);
 	sha256_Raw(seedT, 64, seed);
 }
+
+void seedGen(char *password, BYTE* seed, int strength)
+{
+BYTE mnem[250] = {0};
+int lenMnem = 0;
+mnemonicGenerate((BYTE*)password, mnem, &lenMnem, strength);
+int lenPass = strlen(password);
+seedFromMnemonic(mnem, lenMnem, (BYTE*)password, lenPass, seed);
+}

@@ -35,6 +35,7 @@
 #include "clock_config.h"
 #include "board.h"
 #include "sourcesCW/answer.h"
+#include "sourcesCW/pbkdf2/mnemonic.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -627,9 +628,10 @@ uint32_t pinDef[34];
 uint8_t seed[32] = {0};
 struct message mess;
 int initWallet = 0;
+pinDef[1] = 1234;
 
 read_flash(pinDef, 34, PIN_ADDR);
-if(pinDef[0] != 0x55)
+if(pinDef[0] != 0x555)
 {
 	struct message messInit;
 	vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -643,9 +645,17 @@ if(pinDef[0] != 0x55)
 			if(messInit.cmd == PINCODE)
 			{
 				pinDef[1] = *(uint32_t*)messInit.data;
-				pinDef[0] = 0x55;
-
-				write_flash(pinDef, 2, PIN_ADDR);
+				pinDef[0] = 0x555;
+				char pin[4] = {0};
+				pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+				pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+				pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+				pin[3] = pinDef[1]%10 + 48;
+				seedGen(pin, seed, 128);
+				for (int i = 0; i<32; i++){
+					pinDef[i+2] = seed[i];
+				}
+				write_flash(pinDef, 34, PIN_ADDR);
 				initWallet = 1;
 			}
 		}

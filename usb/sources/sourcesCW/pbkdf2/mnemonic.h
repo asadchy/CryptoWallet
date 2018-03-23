@@ -16,5 +16,7 @@ void mnemonicGenerate(BYTE *password, BYTE* mnemonic, int *lenMnem, int strength
 
 void seedFromMnemonic(BYTE *mnemonic, UINT32 lenMnem, BYTE *password, UINT32 lenPass, BYTE *seed);
 
+void seedGen(char *password, BYTE* seed, int strength);
+
 
 #endif /* SOURCES_SOURCESCW_PBKDF2_MNEMONIC_H_ */
