@@ -17,6 +17,8 @@ struct Typography
   static const touchgfx::FontId BUTTON_TEXT = 6;
   static const touchgfx::FontId ENTERED = 7;
   static const touchgfx::FontId DIALOG = 8;
+  static const touchgfx::FontId ALPHA_TEXT_BTN = 9;
+  static const touchgfx::FontId ALPHA_TEXT = 10;
 };
 
 class ApplicationFontProvider : public touchgfx::FontProvider

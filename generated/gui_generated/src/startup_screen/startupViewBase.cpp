@@ -12,7 +12,7 @@ startupViewBase::startupViewBase()  :
     background.setXY(0, 0);
     background.setBitmap(Bitmap(BITMAP_STARTUP_BACKGROUND_ID));
 
-    logo_png.setXY(203, 104);
+    logo_png.setXY(192, 94);
     logo_png.setBitmap(Bitmap(BITMAP_LOGO_ID));
     logo_png.setAlpha(2);
 

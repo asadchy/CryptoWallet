@@ -28,7 +28,7 @@ Dialog::Dialog() :
 	close.setLabelText(touchgfx::TypedText(T_CLOSE));
 	close.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(0x7E, 0xAE, 0xE5));
 	close.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(0x7E, 0xAE, 0xE5));
-	close.setXY(75, 170);
+	close.setXY(112, 170);
 	close.setAction(onButtonClicked);
 	ModalWindow::add(close);
 }

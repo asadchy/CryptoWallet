@@ -10,3 +10,9 @@
 #ifndef SIMULATOR
 	QueueHandle_t lcd_to_card, card_to_lcd;
 #endif
+
+const char * const currencies_list[CURR_NUM] = {
+		"Bitcoin",
+		"Ethereum",
+		"Litecoin"
+};

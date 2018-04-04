@@ -13,9 +13,7 @@ public:
     virtual void setupScreen();
     virtual void tearDownScreen();
 
-    void setCurrency(char *curr);
-	void setAddress(char *addr);
-	void setValue(double val);
+    void walletTransaction(struct transaction *trans);
 
 	void transactionScreenEntered();
 	void setDialogText(touchgfx::Unicode::UnicodeChar *text);

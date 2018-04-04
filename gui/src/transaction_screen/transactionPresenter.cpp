@@ -16,19 +16,9 @@ void transactionPresenter::deactivate()
 
 }
 
-void transactionPresenter::setCurrency(char *currency)
+void transactionPresenter::walletTransaction(struct transaction *trans)
 {
-	view.setCurrency(currency);
-}
-
-void transactionPresenter::setAddress(char *addr)
-{
-	view.setAddress(addr);
-}
-
-void transactionPresenter::setValue(double value)
-{
-	view.setValue(value);
+	view.walletTransaction(trans);
 }
 
 void transactionPresenter::transactionScreenEntered()
@@ -60,4 +50,15 @@ void transactionPresenter::toStatusScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoStatusScreen();
 }
+
+void transactionPresenter::toPinScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoPinScreen();
+}
+
+void transactionPresenter::toInitScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();
+}
+
 

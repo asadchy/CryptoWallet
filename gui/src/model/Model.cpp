@@ -34,6 +34,7 @@
  *****************************************************************************/
 #include <gui/model/Model.hpp>
 #include <gui/model/ModelListener.hpp>
+#include <string.h>
 
 #ifndef SIMULATOR
 	#include "data.hpp"
@@ -54,30 +55,166 @@ void Model::tick()
 	{
 		message_parser(&rx_mess);
 	}
+
+	static int i = 0;
+	if(i == 0)
+	{
+		tx_mess.cmd = WALLET_ENTER_MS;
+		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+	}
+	else if(i == 300)
+	{
+		tx_mess.cmd = WALLET_ENTER_PIN;
+		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+	}
+	else if(i == 600)
+	{
+		tx_mess.cmd = WALLET_SET_MS;
+		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+	}
+	else if(i == 900)
+	{
+		tx_mess.cmd = WALLET_SET_PIN;
+		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+	}
+	i++;
+
 #endif
 
 #ifdef SIMULATOR
+	static int const mul = 1;
 	static int tick_counter = 0;
-	tick_counter++;
-	if(tick_counter == 300 * 2)
+	if(tick_counter == mul * 100)
 	{
-		static const char *init_pin = "Enter PINCODE";
-		touchgfx::Unicode::strncpy(dialogText, init_pin, TEXT_SIZE);
-		toPincodeScreen();
+		toInitScreen();
 	}
-	else if(tick_counter == 600 * 2)
+	else if(tick_counter == mul * 200)
+	{
+		toPinScreen();
+	}
+	else if(tick_counter == mul * 300)
+	{
+		//showMSKeyboard();
+		static const char *message = "Enter Your Mnemonic Seed";
+		touchgfx::Unicode::strncpy(tmpText, message, TEXT_SIZE);
+		setHeadText(tmpText);
+	}
+	/*
+	else if(tick_counter == mul * 400)
+	{
+		toStatusScreen();
+	}
+	else if(tick_counter == mul * 500)
 	{
 		toMainScreen();
-	}
-
-	else if(tick_counter == 900 * 2)
-	{
-		dialogText[0] = 0;
-		toStatusScreen();
 		tick_counter = 0;
 	}
-
+	*/
+	tick_counter++;
 #endif
+}
+
+void Model::message_parser(struct message *message)
+{
+#ifndef SIMULATOR
+	switch(message->cmd)
+	{
+		case WALLET_INIT:
+			toInitScreen();
+			break;
+
+		case WALLET_STATUS:
+			toStatusScreen();
+			tmpText[0] = 0;
+			break;
+
+		case WALLET_ENTER_PIN:
+			toPinScreen();
+			pinScreenState = PIN_ENTER;
+			touchgfx::Unicode::strncpy(tmpText, "Enter Your PIN-code", TEXT_SIZE);
+			break;
+
+		case WALLET_SET_PIN:
+			toPinScreen();
+			pinScreenState = PIN_SET;
+			touchgfx::Unicode::strncpy(tmpText, "Set Your PIN-code", TEXT_SIZE);
+			break;
+
+		case WALLET_ENTER_MS:
+			toPinScreen();
+			pinScreenState = MS_ENTER;
+			touchgfx::Unicode::strncpy(tmpText, "Enter Your Mnemonic Seed", TEXT_SIZE);
+			break;
+
+		case WALLET_SET_MS:
+			toPinScreen();
+			pinScreenState = MS_SET;
+			touchgfx::Unicode::strncpy(tmpText, "Set Your Mnemonic Seed", TEXT_SIZE);
+			break;
+
+		case WALLET_TRANSACTION:
+			toMainScreen();
+			transaction = static_cast<struct transaction*>(message->data);
+			break;
+
+		case INIT_PINCODE:
+			toPincodeScreen();
+			static const char *init_pin = "Init PINCODE";
+			touchgfx::Unicode::strncpy(tmpText, init_pin, TEXT_SIZE);
+			break;
+
+		case WALLET_WRONG_PINCODE:
+			static const char *wrong_pin = "Wrong PINCODE";
+			touchgfx::Unicode::strncpy(tmpText, wrong_pin, TEXT_SIZE);
+			setDialogText(tmpText);
+			break;
+
+		case TRANSACTION_CONFIRMED:
+			toStatusScreen();
+			static const char *transaction_confirmed = "Transaction send";
+			touchgfx::Unicode::strncpy(tmpText, transaction_confirmed, TEXT_SIZE);
+			break;
+	}
+#endif
+}
+
+/************************************ Control logic ****************************************/
+void Model::walletTransaction(struct transaction *trans)
+{
+	modelListener->walletTransaction(trans);
+}
+
+void Model::setDialogText(touchgfx::Unicode::UnicodeChar *text)
+{
+	modelListener->setDialogText(text);
+}
+
+void Model::setHeadText(touchgfx::Unicode::UnicodeChar *text)
+{
+	modelListener->setHeadText(text);
+}
+
+void Model::walletStatus(struct wallet_status *status)
+{
+	modelListener->walletStatus(status);
+}
+
+void Model::clearWallet()
+{
+	tx_mess.cmd = WALLET_CMD_CLEAR;
+	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+}
+
+void Model::initWallet()
+{
+	tx_mess.cmd = WALLET_CMD_INIT;
+	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+}
+
+void Model::restoreWallet()
+{
+	tx_mess.cmd = WALLET_CMD_RESTORE;
+	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
 }
 
 void Model::pincodeEntered(int pincode)
@@ -86,7 +223,7 @@ void Model::pincodeEntered(int pincode)
 
 #ifndef SIMULATOR
 	struct message pin_data = {
-			.cmd = PINCODE,
+			.cmd = WALLET_PINCODE,
 			.data = static_cast<void*>(&pin)
 	};
 
@@ -94,36 +231,27 @@ void Model::pincodeEntered(int pincode)
 #endif
 }
 
-void Model::pincodeScreenEntered()
+void Model::msEntered(Unicode::UnicodeChar *mnemonic)
 {
-	setDialogText(dialogText);
+	int i = 0;
+	int j = 0;
+
+	memset(mnemonicSeed, 0, MNEMONIC_SIZE);
+
+	while(i < MNEMONIC_SIZE && mnemonic[i] != 0)
+	{
+		if(mnemonic[i] != '\n')
+		{
+			mnemonicSeed[j++] = static_cast<char>(mnemonic[i]);
+		}
+		i++;
+	}
+	tx_mess.cmd = WALLET_MNEMONIC;
+	tx_mess.data = static_cast<void*>(&mnemonicSeed);
+	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
 }
 
-void Model::transactionScreenEntered()
-{
-	static const char *message = "Confirmation";
-	touchgfx::Unicode::strncpy(dialogText, message, TEXT_SIZE);
-	setDialogText(dialogText);
-#ifndef SIMULATOR
-	setCurrency(transaction->curr_name);
-	setAddress(transaction->addr);
-	setValue(transaction->value);
-#endif
-
-#ifdef SIMULATOR
-	static char addr[43] = "0x123456789abCdEf1653abcEF098174eABcef1253";
-	static char curr[] = "Bitcoin";
-	setCurrency(curr);
-	setAddress(addr);
-	setValue(1);
-#endif
-}
-
-void Model::statusScreenEntered()
-{
-	setDialogText(dialogText);
-}
-
+/************************************ Screens switching ************************************/
 void Model::toMainScreen()
 {
 	modelListener->toMainScreen();
@@ -139,86 +267,92 @@ void Model::toPincodeScreen()
 	modelListener->toPincodeScreen();
 }
 
-void Model::message_parser(struct message *message)
+void Model::toPinScreen()
 {
+	modelListener->toPinScreen();
+}
+
+void Model::toInitScreen()
+{
+	modelListener->toInitScreen();
+}
+
+void Model::showPinKeyboard()
+{
+	modelListener->showPinKeyboard();
+}
+
+void Model::showMSKeyboard()
+{
+	modelListener->showMSKeyboard();
+}
+
+void Model::showMSWindow()
+{
+	modelListener->showMSWindow();
+}
+
+/************************************ Screens entered callbacks *************************/
+void Model::pincodeScreenEntered()
+{
+	setDialogText(tmpText);
+}
+
+void Model::transactionScreenEntered()
+{
+	static const char *message = "Confirmation";
+	touchgfx::Unicode::strncpy(tmpText, message, TEXT_SIZE);
+	setDialogText(tmpText);
 #ifndef SIMULATOR
-	switch(message->cmd)
-	{
-		case TO_MAIN:
-			toMainScreen();
-			break;
 
-		case INIT_PINCODE:
-			toPincodeScreen();
-			static const char *init_pin = "Init PINCODE";
-			touchgfx::Unicode::strncpy(dialogText, init_pin, TEXT_SIZE);
-			break;
-
-		case WRONG_PINCODE:
-			static const char *wrong_pin = "Wrong PINCODE";
-			touchgfx::Unicode::strncpy(dialogText, wrong_pin, TEXT_SIZE);
-			setDialogText(dialogText);
-			break;
-
-		case TO_STATUS:
-			toStatusScreen();
-			dialogText[0] = 0;
-			break;
-
-		case TRANSACTION_CONFIRMED:
-			toStatusScreen();
-			static const char *transaction_confirmed = "Transaction send";
-			touchgfx::Unicode::strncpy(dialogText, transaction_confirmed, TEXT_SIZE);
-			break;
-
-		case TRANSACTION:
-			toMainScreen();
-			transaction = static_cast<struct transaction*>(message->data);
-			break;
-	}
 #endif
 }
 
-void Model::setCurrency(char *currency)
+void Model::statusScreenEntered()
 {
-	modelListener->setCurrency(currency);
+	tmpText[0] = 0;
+	setDialogText(tmpText);
 }
 
-void Model::setAddress(char *addr)
+void Model::pinScreenEntered()
 {
-	modelListener->setAddress(addr);
+	switch(pinScreenState)
+	{
+		case PIN_ENTER:
+		case PIN_SET:
+			showPinKeyboard();
+			break;
+
+		case MS_ENTER:
+			showMSKeyboard();
+			break;
+
+		case MS_SET:
+			showMSWindow();
+			break;
+
+		default:
+			break;
+	}
+	setHeadText(tmpText);
 }
 
-void Model::setValue(double value)
-{
-	modelListener->setValue(value);
-}
-
-void Model::setDialogText(touchgfx::Unicode::UnicodeChar *text)
-{
-	modelListener->setDialogText(text);
-}
-
+/************************************ Buttons callbacks ************************************/
 void Model::cancelPressed()
 {
-	toStatusScreen();
-	static const char *message = "Transaction was canceled";
-	touchgfx::Unicode::strncpy(dialogText, message, TEXT_SIZE);
-
 #ifndef SIMULATOR
-	struct message mess = {
-			.cmd = TRANSACTION_CANCELED
-	};
-	xQueueSend(lcd_to_card, static_cast<void*>(&mess), 0);
+	tx_mess.cmd = WALLET_CANCEL_PRESSED;
+	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
 #endif
 }
 
 void Model::confirmPressed()
 {
-	toPincodeScreen();
-	static const char *init_pin = "Enter PINCODE";
-	touchgfx::Unicode::strncpy(dialogText, init_pin, TEXT_SIZE);
+#ifndef SIMULATOR
+	toPinScreen();
+	pinScreenState = PIN_ENTER;
+	touchgfx::Unicode::strncpy(tmpText, "Enter Your PIN-code", TEXT_SIZE);
+	tx_mess.cmd = WALLET_CONFIRM_PRESSED;
+	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+#endif
 }
-
-
-

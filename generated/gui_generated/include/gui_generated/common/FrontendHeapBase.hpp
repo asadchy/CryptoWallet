@@ -19,6 +19,10 @@
 #include <gui/transaction_screen/transactionPresenter.hpp>
 #include <gui/status_screen/statusView.hpp>
 #include <gui/status_screen/statusPresenter.hpp>
+#include <gui/init_screen/initView.hpp>
+#include <gui/init_screen/initPresenter.hpp>
+#include <gui/pin_screen/pinView.hpp>
+#include <gui/pin_screen/pinPresenter.hpp>
 
 
 /**
@@ -45,7 +49,9 @@ public:
             meta::TypeList< startupView,
             meta::TypeList< transactionView,
             meta::TypeList< statusView,
-            meta::Nil > > >
+            meta::TypeList< initView,
+            meta::TypeList< pinView,
+            meta::Nil > > > > >
             > GeneratedViewTypes;
 
     /**
@@ -61,7 +67,9 @@ public:
             meta::TypeList< startupPresenter,
             meta::TypeList< transactionPresenter,
             meta::TypeList< statusPresenter,
-            meta::Nil > > >
+            meta::TypeList< initPresenter,
+            meta::TypeList< pinPresenter,
+            meta::Nil > > > > >
             > GeneratedPresenterTypes;
 
     /**

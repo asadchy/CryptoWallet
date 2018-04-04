@@ -3,6 +3,7 @@
 
 #include <gui/model/ModelListener.hpp>
 #include <mvp/Presenter.hpp>
+#include <data.hpp>
 
 using namespace touchgfx;
 
@@ -29,9 +30,15 @@ public:
 
     virtual void toMainScreen();
 
+    virtual void toInitScreen();
+
     void statusScreenEntered();
 
+    void clearWallet();
+
     virtual void setDialogText(touchgfx::Unicode::UnicodeChar *text);
+
+    virtual void walletStatus(struct wallet_status *status);
 
 private:
     statusPresenter();

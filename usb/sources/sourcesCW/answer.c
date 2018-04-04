@@ -399,13 +399,13 @@ void checkPin(int *pinInit){
 	int numCheckPin = 0;
 	static struct message message;
 	while((*pinInit)!= pinDef[1] || numCheckPin < 3){
-		message.cmd = WRONG_PINCODE;
+		message.cmd = WALLET_WRONG_PINCODE;
 		xQueueSend(card_to_lcd, (void*)&message, 0);
 		xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 		if(pinDef[1] == (*(int*)message.data)){
 			*pinInit = *(int*)message.data;
 			numCheckPin = 0;
-			message.cmd = TO_STATUS;
+			message.cmd = WALLET_STATUS;
 			xQueueSend(card_to_lcd, (void*)&message, 0);
 		}else{
 			numCheckPin++;
@@ -435,10 +435,10 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	out[2] = 0x4d;
 	out[3] = amount;
 
-	if(id==0) {memcpy(transaction.curr_name, "Bitcoin", 8);}
-	if(id==1) {memcpy(transaction.curr_name, "Ethereum", 9);}
-	if(id==2) {memcpy(transaction.curr_name, "Litecoin", 9);}
-	transaction.value = valueTr;
+	if(id==0) {transaction.curr_name = BTC;}
+	if(id==1) {transaction.curr_name = ETH;}
+	if(id==2) {transaction.curr_name = LTC;}
+	//transaction.value = valueTr;
 	if( id == 0 || id ==2 ){
 		for(int i = 0; i < 34; i++){
 			transaction.addr[i] = addr[i];
@@ -456,7 +456,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	int cmd = message.cmd;
 	switch(cmd)
 	{
-	case PINCODE:
+	case WALLET_PINCODE:
 		do{
 			int tempLen = 4;
 			if(pinDef[1] == (*(int*)message.data)){
@@ -502,7 +502,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 				out[3] = 0x01;
 				out[4] = 0x04;
 				*lenOut = 5;
-				message.cmd = WRONG_PINCODE;
+				message.cmd = WALLET_WRONG_PINCODE;
 				xQueueSend(card_to_lcd, (void*)&message, 0);
 				xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 			}

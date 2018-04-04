@@ -3,18 +3,10 @@
 /*********************************************************************************/
 #include <gui_generated/status_screen/statusViewBase.hpp>
 #include "BitmapDatabase.hpp"
-#include <texts/TextKeysAndLanguages.hpp>
-#include <touchgfx/Color.hpp>
 
 statusViewBase::statusViewBase()  
 {
     background.setXY(0, 0);
-    background.setBitmap(Bitmap(BITMAP_BACKGROUND_ID));
-
-    available_curr.setPosition(222, 19, 247, 39);
-    available_curr.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
-    available_curr.setLinespacing(0);
-    available_curr.setTypedText(TypedText(T_AVAILABLE_CURR));
+    background.setBitmap(Bitmap(BITMAP_STARTUP_BACKGROUND_ID));
     add(background);
-    add(available_curr);
 }

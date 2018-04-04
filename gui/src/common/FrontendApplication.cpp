@@ -63,3 +63,36 @@ void FrontendApplication::gotoStatusScreenImpl()
 	makeTransition<statusView, statusPresenter, NoTransition, Model>(&currentScreen,
 					&currentPresenter, frontendHeap, &currentTransition, &model);
 }
+
+void FrontendApplication::gotoPinScreen()
+{
+	customTransitionCallback = touchgfx::Callback<FrontendApplication>(this, &FrontendApplication::gotoPinScreenImpl);
+	pendingScreenTransitionCallback = &customTransitionCallback;
+}
+
+void FrontendApplication::gotoPinScreenImpl()
+{
+	/*
+	makeTransition<pinView, pinPresenter, CustomTransition, Model>(&currentScreen,
+				&currentPresenter, frontendHeap, &currentTransition, &model);
+	*/
+	makeTransition<pinView, pinPresenter, NoTransition, Model>(&currentScreen,
+					&currentPresenter, frontendHeap, &currentTransition, &model);
+}
+
+void FrontendApplication::gotoInitScreen()
+{
+	customTransitionCallback = touchgfx::Callback<FrontendApplication>(this, &FrontendApplication::gotoInitScreenImpl);
+	pendingScreenTransitionCallback = &customTransitionCallback;
+}
+
+void FrontendApplication::gotoInitScreenImpl()
+{
+	/*
+	makeTransition<initView, initPresenter, CustomTransition, Model>(&currentScreen,
+				&currentPresenter, frontendHeap, &currentTransition, &model);
+	*/
+	makeTransition<initView, initPresenter, NoTransition, Model>(&currentScreen,
+					&currentPresenter, frontendHeap, &currentTransition, &model);
+}
+

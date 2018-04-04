@@ -35,12 +35,11 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-#ifndef SIMULATOR
-	#include "data.hpp"
-#endif
+#include "data.hpp"
 #include <touchgfx/Unicode.hpp>
 
 class ModelListener;
+using namespace touchgfx;
 
 /**
  * The Model class defines the data model in the model-view-presenter paradigm.
@@ -76,21 +75,35 @@ public:
     void tick();
 
     void pincodeEntered(int pincode);
+    void msEntered(Unicode::UnicodeChar *mnemonic);
     void pincodeScreenEntered();
     void transactionScreenEntered();
     void statusScreenEntered();
+    void pinScreenEntered();
 
-    void setCurrency(char *currency);
+    void walletTransaction(struct transaction *trans);
     void setAddress(char *addr);
-    void setValue(double value);
+    void setValue(char *value);
     void setDialogText(touchgfx::Unicode::UnicodeChar *text);
+    void setHeadText(touchgfx::Unicode::UnicodeChar *text);
 
     void toMainScreen();
     void toPincodeScreen();
     void toStatusScreen();
+    void toPinScreen();
+    void toInitScreen();
 
     void cancelPressed();
     void confirmPressed();
+
+    void showPinKeyboard();
+    void showMSKeyboard();
+    void showMSWindow();
+    void walletStatus(struct wallet_status *status);
+
+    void clearWallet();
+    void initWallet();
+    void restoreWallet();
 protected:
     /**
      * Pointer to the currently active presenter.
@@ -100,10 +113,22 @@ protected:
 private:
     void message_parser(struct message *message);
 
+    enum STATE
+	{
+    	PIN_ENTER,
+		MS_ENTER,
+		PIN_SET,
+		MS_SET
+	} pinScreenState;
+
+	static const uint16_t MNEMONIC_SIZE = 123;
+
     int pin;
+    char mnemonicSeed[MNEMONIC_SIZE];
     struct transaction *transaction;
-    touchgfx::Unicode::UnicodeChar dialogText[30];
-	static const uint16_t TEXT_SIZE = 30;
+    touchgfx::Unicode::UnicodeChar tmpText[60];
+	static const uint16_t TEXT_SIZE = 60;
+	struct message tx_mess;
 };
 
 #endif /* MODEL_HPP */

@@ -36,6 +36,7 @@
 #define MODELLISTENER_HPP
 
 #include <gui/model/Model.hpp>
+#include <data.hpp>
 
 /**
  * ModelListener is the interface through which the Model can inform the currently
@@ -62,14 +63,20 @@ public:
         model = m;
     }
 
-    virtual void setCurrency(char *currency) {};
-	virtual void setAddress(char *addr) {};
-	virtual void setValue(double value) {};
+    virtual void walletTransaction(struct transaction *trans) {};
 	virtual void setDialogText(touchgfx::Unicode::UnicodeChar *text) {};
+	virtual void setHeadText(touchgfx::Unicode::UnicodeChar *text) {};
+
+	virtual void showPinKeyboard() {}
+	virtual void showMSKeyboard() {}
+	virtual void showMSWindow() {}
+	virtual void walletStatus(struct wallet_status *status) {}
 
     virtual void toMainScreen() {}
     virtual void toStatusScreen() {}
     virtual void toPincodeScreen() {}
+    virtual void toPinScreen() {}
+    virtual void toInitScreen() {}
 protected:
     Model* model;
 };

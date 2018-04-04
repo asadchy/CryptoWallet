@@ -642,7 +642,7 @@ if(pinDef[0] != 0x555)
 	{
 		if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
 		{
-			if(messInit.cmd == PINCODE)
+			if(messInit.cmd == WALLET_PINCODE)
 			{
 				pinDef[1] = *(uint32_t*)messInit.data;
 				pinDef[0] = 0x555;
@@ -684,13 +684,13 @@ while (1)
 		int cmd = mess.cmd;
 		switch(cmd)
 		{
-		case PINCODE:
+		case WALLET_PINCODE:
 			if(pinInit == -1)
 			{
 				if(pinDef[1] == *(uint32_t*)mess.data){
 					numCheckPin = 0;
 					pinInit = *(uint32_t*)mess.data;
-					mess.cmd = TO_STATUS;
+					mess.cmd = WALLET_STATUS;
 					xQueueSend(card_to_lcd, (void*)&mess, 0);
 				}
 				else{
@@ -702,7 +702,7 @@ while (1)
 
 					}else
 					{
-						mess.cmd = WRONG_PINCODE;
+						mess.cmd = WALLET_WRONG_PINCODE;
 						xQueueSend(card_to_lcd, (void*)&mess, 0);
 					}
 				}

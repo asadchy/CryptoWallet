@@ -1,0 +1,165 @@
+#include <gui/pin_screen/pinView.hpp>
+#include <stdlib.h>
+#include <string.h>
+#include <wordlist.hpp>
+
+pinView::pinView() :
+	pincodeEnteredCallback(this, &pinView::pincodeEntered),
+	MSEnteredCallback(this, &pinView::MSEntered),
+	cancelPressedCallback(this, &pinView::cancelPressed)
+{
+}
+
+void pinView::setupScreen()
+{
+	pinKeyboard.setPosition(0, 0, 480, 272);
+	pinKeyboard.setPincodeEnteredCallback(pincodeEnteredCallback);
+	pinKeyboard.setOpCancelCallback(cancelPressedCallback);
+	add(pinKeyboard);
+	pinKeyboard.setVisible(false);
+
+	msKeyboard.setPosition(0, 0, 480, 272);
+	msKeyboard.setMSEnteredCallback(MSEnteredCallback);
+	msKeyboard.setOpCancelCallback(cancelPressedCallback);
+	add(msKeyboard);
+	msKeyboard.setVisible(false);
+
+	add(dialog);
+	dialog.setXY(HAL::DISPLAY_WIDTH / 2 - dialog.getWidth() / 2,
+			HAL::DISPLAY_HEIGHT / 2 - dialog.getHeight() / 2);
+	dialog.hide();
+
+	msWindow.setPosition(0, 0, 480, 272);
+	msWindow.setBitmap(Bitmap(BITMAP_MS_WINDOW_ID));
+	closeBtn.setPosition(364, 126, 96, 40);
+	closeBtn.setBitmaps(Bitmap(BITMAP_BUTTON_NOT_PRESSED_ID), Bitmap(BITMAP_BUTTON_PRESSED_ID));
+	closeBtn.setLabelText(TypedText(T_CLOSE));
+	closeBtn.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
+	closeBtn.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
+	mnemonicSeed.setPosition(36, 50, 302, 60);
+	mnemonicSeed.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
+	mnemonicSeed.setLinespacing(0);
+	mnemonicSeed.setTypedText(TypedText(T_MSW_TEXT));
+	mnemonicSeedBuffer[0] = '1';
+	mnemonicSeedBuffer[1] = 0;
+	mnemonicSeed.setWildcard(mnemonicSeedBuffer);
+	add(closeBtn);
+	add(msWindow);
+	add(mnemonicSeed);
+	mnemonicSeed.setVisible(false);
+	closeBtn.setVisible(false);
+	msWindow.setVisible(false);
+
+	pinScreenEntered();
+}
+
+void pinView::tearDownScreen()
+{
+
+}
+
+void pinView::showPinKeyboard()
+{
+	mnemonicSeed.setVisible(false);
+	closeBtn.setVisible(false);
+	msWindow.setVisible(false);
+	msKeyboard.setVisible(false);
+	pinKeyboard.setVisible(true);
+	pinKeyboard.invalidate();
+}
+
+void pinView::showMSKeyboard()
+{
+	mnemonicSeed.setVisible(false);
+	closeBtn.setVisible(false);
+	msWindow.setVisible(false);
+	pinKeyboard.setVisible(false);
+	msKeyboard.setVisible(true);
+	msKeyboard.invalidate();
+}
+
+void pinView::showMSWindow()
+{
+	pinKeyboard.setVisible(false);
+	msKeyboard.setVisible(false);
+	mnemonicSeed.setVisible(true);
+	closeBtn.setVisible(true);
+	msWindow.setVisible(true);
+	mnemonicSeed.invalidate();
+	closeBtn.invalidate();
+	msKeyboard.invalidate();
+
+	generateMnemonicSeed(mnemonicSeedBuffer);
+	mnemonicSeed.invalidate();
+
+	MSEntered(mnemonicSeedBuffer);
+}
+
+void pinView::setHeadText(touchgfx::Unicode::UnicodeChar *text)
+{
+	touchgfx::Unicode::snprintf(head_messBuffer, HEAD_MESS_SIZE, text);
+	head_mess.invalidate();
+}
+
+void pinView::pincodeEntered(int pincode)
+{
+	if(pincode == ~1)
+	{
+		static touchgfx::Unicode::UnicodeChar err[30];
+		touchgfx::Unicode::strncpy(err, "PIN must contain 4 digits", 30);
+		dialog.setText(err);
+	}
+	else
+	{
+		presenter->pincodeEntered(pincode);
+	}
+}
+
+void pinView::MSEntered(Unicode::UnicodeChar *mnemonic)
+{
+	if(mnemonic == NULL)
+	{
+		static touchgfx::Unicode::UnicodeChar err[30];
+		touchgfx::Unicode::strncpy(err, "MS must contain 12 words", 30);
+		dialog.setText(err);
+	}
+	else
+	{
+		presenter->msEntered(mnemonic);
+	}
+}
+
+void pinView::cancelPressed()
+{
+	presenter->cancelPressed();
+}
+
+void pinView::pinScreenEntered()
+{
+	presenter->pinScreenEntered();
+}
+
+void pinView::generateMnemonicSeed(Unicode::UnicodeChar *mnemonic)
+{
+	char tmp[MNEMONICSEED_SIZE];
+	static const char space[] = " ";
+
+	memset(tmp, 0, sizeof(tmp));
+	for(int i = 0; i < 12; i++)
+	{
+		long int curr_word = rand() % 2048;
+		size_t slen = strlen(tmp);
+		size_t wlen = strlen(wordlist[curr_word]);
+		if((slen % 40) + wlen > 40)
+		{
+			tmp[slen] = '\n';
+		}
+
+		strncat(tmp, wordlist[curr_word], sizeof(tmp));
+		if(i < 11)
+		{
+			strncat(tmp, space, sizeof(tmp));
+		}
+	}
+	Unicode::strncpy(mnemonic, tmp, MNEMONICSEED_SIZE);
+}

@@ -8,7 +8,7 @@
 using namespace touchgfx;
 #endif
 
-extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_18_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_16_4bpp();
 extern touchgfx::InternalFlashFont& getFont_RobotoCondensed_Regular_20_4bpp();
 extern touchgfx::InternalFlashFont& getFont_RobotoCondensed_Regular_24_4bpp();
 extern touchgfx::InternalFlashFont& getFont_RobotoCondensed_Regular_55_4bpp();
@@ -17,6 +17,8 @@ extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_28_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_28_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_28_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_20_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_20_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_14_4bpp();
 
 touchgfx::Font* ApplicationFontProvider::getFont(touchgfx::FontId fontId)
 {
@@ -24,7 +26,7 @@ touchgfx::Font* ApplicationFontProvider::getFont(touchgfx::FontId fontId)
   {
     
     case Typography::TRANSACTION:
-      return &(getFont_Heebo_Regular_18_4bpp());
+      return &(getFont_Heebo_Regular_16_4bpp());
     
     case Typography::KEYBOARD:
       return &(getFont_RobotoCondensed_Regular_20_4bpp());
@@ -49,6 +51,12 @@ touchgfx::Font* ApplicationFontProvider::getFont(touchgfx::FontId fontId)
     
     case Typography::DIALOG:
       return &(getFont_Heebo_Regular_20_4bpp());
+    
+    case Typography::ALPHA_TEXT_BTN:
+      return &(getFont_Heebo_Regular_20_4bpp());
+    
+    case Typography::ALPHA_TEXT:
+      return &(getFont_Heebo_Thin_14_4bpp());
     
     default:
       return 0;

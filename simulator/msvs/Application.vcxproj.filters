@@ -17,11 +17,17 @@
     <Filter Include="Header Files\gui\common">
       <UniqueIdentifier>{4D70648B-D3CC-4A4D-8B7B-49EE2C6E628E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\gui\init_screen">
+      <UniqueIdentifier>{7E4E7BE7-5203-4A95-98B0-5D6D792AB073}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\gui\model">
       <UniqueIdentifier>{31A19E49-17DB-474B-9C63-9208F8C9F78A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\gui\pin_code_screen">
       <UniqueIdentifier>{42591D4F-825B-4755-9C68-346D9684D2F2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui\pin_screen">
+      <UniqueIdentifier>{551A1C02-E566-4A98-AB58-2A438A7851A6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\gui\startup_screen">
       <UniqueIdentifier>{54518A55-B5CA-438D-BD14-45AAAAD0855C}</UniqueIdentifier>
@@ -35,8 +41,14 @@
     <Filter Include="Header Files\gui_generated\common">
       <UniqueIdentifier>{83E1512D-AF16-43B0-94C3-F1C3BE352149}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\gui_generated\init_screen">
+      <UniqueIdentifier>{9DC8F1AF-F143-4F51-8BD2-81B8B3236292}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\gui_generated\pin_code_screen">
       <UniqueIdentifier>{318D8AF6-EA81-4BCF-80CE-70DBE0DC4175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui_generated\pin_screen">
+      <UniqueIdentifier>{E566010B-C9A6-41F8-8C25-10EC89BB15F7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\gui_generated\startup_screen">
       <UniqueIdentifier>{9A850FFA-BE2E-4CC1-8923-FCE5DFE23196}</UniqueIdentifier>
@@ -151,11 +163,17 @@
     <Filter Include="Source Files\gui\common">
       <UniqueIdentifier>{7CC0E300-D9DB-4974-A8CA-FBD12452C412}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gui\init_screen">
+      <UniqueIdentifier>{4AB036B1-555A-4BDD-BDF2-F98072757BAC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\gui\model">
       <UniqueIdentifier>{AF7C99D5-DAC0-401C-8048-14B22291DB43}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\gui\pin_code_screen">
       <UniqueIdentifier>{306C86F8-4327-420A-A060-89C206381DEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui\pin_screen">
+      <UniqueIdentifier>{5C37E750-2130-493D-B9AD-643ACC53498C}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\gui\simulator">
       <UniqueIdentifier>{1E161810-FBF2-4ADA-B485-F2DB89122188}</UniqueIdentifier>
@@ -172,8 +190,14 @@
     <Filter Include="Source Files\gui_generated\common">
       <UniqueIdentifier>{78D27ADF-1A65-463A-B60F-4CD9D588A551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gui_generated\init_screen">
+      <UniqueIdentifier>{15151AA7-D7D1-497D-8286-9FA0F651A383}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\gui_generated\pin_code_screen">
       <UniqueIdentifier>{6758C701-3B8D-4CAF-B25B-EE4164FC9269}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui_generated\pin_screen">
+      <UniqueIdentifier>{B6F1C0A7-692C-4E7E-85B9-D381620338AC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\gui_generated\startup_screen">
       <UniqueIdentifier>{76D7A3D8-580B-4708-838E-A4F0EE48557B}</UniqueIdentifier>
@@ -219,8 +243,14 @@
     <ClCompile Include="..\..\generated\gui_generated\src\common\FrontendApplicationBase.cpp">
       <Filter>Source Files\gui_generated\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\generated\gui_generated\src\init_screen\initViewBase.cpp">
+      <Filter>Source Files\gui_generated\init_screen</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\generated\gui_generated\src\pin_code_screen\pin_codeViewBase.cpp">
       <Filter>Source Files\gui_generated\pin_code_screen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\generated\gui_generated\src\pin_screen\pinViewBase.cpp">
+      <Filter>Source Files\gui_generated\pin_screen</Filter>
     </ClCompile>
     <ClCompile Include="..\..\generated\gui_generated\src\startup_screen\startupViewBase.cpp">
       <Filter>Source Files\gui_generated\startup_screen</Filter>
@@ -246,6 +276,18 @@
     <ClCompile Include="..\..\gui\src\common\ListElement.cpp">
       <Filter>Source Files\gui\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\gui\src\common\MSKeyboard.cpp">
+      <Filter>Source Files\gui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gui\src\common\PinKeyboard.cpp">
+      <Filter>Source Files\gui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gui\src\init_screen\initPresenter.cpp">
+      <Filter>Source Files\gui\init_screen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gui\src\init_screen\initView.cpp">
+      <Filter>Source Files\gui\init_screen</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\gui\src\model\Model.cpp">
       <Filter>Source Files\gui\model</Filter>
     </ClCompile>
@@ -254,6 +296,12 @@
     </ClCompile>
     <ClCompile Include="..\..\gui\src\pin_code_screen\pin_codeView.cpp">
       <Filter>Source Files\gui\pin_code_screen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gui\src\pin_screen\pinPresenter.cpp">
+      <Filter>Source Files\gui\pin_screen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\gui\src\pin_screen\pinView.cpp">
+      <Filter>Source Files\gui\pin_screen</Filter>
     </ClCompile>
     <ClCompile Include="..\..\gui\src\startup_screen\startupPresenter.cpp">
       <Filter>Source Files\gui\startup_screen</Filter>
@@ -293,13 +341,25 @@
     <None Include="..\..\assets\images\background.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
-    <None Include="..\..\assets\images\btc.png">
+    <None Include="..\..\assets\images\background_3.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\btc_status.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\button_not_pressed.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\button_not_pressed_long.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\button_pressed.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\button_pressed_long.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\curr_status.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\dialog.png">
@@ -308,7 +368,10 @@
     <None Include="..\..\assets\images\enter_pressed.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
-    <None Include="..\..\assets\images\eth.png">
+    <None Include="..\..\assets\images\eth_status.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\key_button_pressed.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\key_pressed.png">
@@ -317,55 +380,28 @@
     <None Include="..\..\assets\images\keyboard.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
-    <None Include="..\..\assets\images\keyboard_background.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\keyboard_key_highlighted.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
     <None Include="..\..\assets\images\leftDoor.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
-    <None Include="..\..\assets\images\list_element_btc.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\list_element_eth.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\list_element_lit.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\lite.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-0.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-1.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-2.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-3.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-4.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-5.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-6.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\loading-7.png">
+    <None Include="..\..\assets\images\lite_status.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\logo.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\ms_keyboard.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\num_button_pressed.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\pin_keyboard.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\rightDoor.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\space_button_pressed.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\startup_background.png">
@@ -787,8 +823,14 @@
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\common\SimConstants.hpp">
       <Filter>Header Files\gui_generated\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\init_screen\initViewBase.hpp">
+      <Filter>Header Files\gui_generated\init_screen</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\pin_code_screen\pin_codeViewBase.hpp">
       <Filter>Header Files\gui_generated\pin_code_screen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\pin_screen\pinViewBase.hpp">
+      <Filter>Header Files\gui_generated\pin_screen</Filter>
     </ClInclude>
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\startup_screen\startupViewBase.hpp">
       <Filter>Header Files\gui_generated\startup_screen</Filter>
@@ -823,6 +865,30 @@
     <ClInclude Include="..\..\gui\include\gui\common\ListElement.hpp">
       <Filter>Header Files\gui\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\common\MSKeyboard.hpp">
+      <Filter>Header Files\gui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\common\MSKeyboardKeyMapping.hpp">
+      <Filter>Header Files\gui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\common\MSKeyboardLayout.hpp">
+      <Filter>Header Files\gui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\common\PinKeyboard.hpp">
+      <Filter>Header Files\gui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\common\PinKeyboardKeyMapping.hpp">
+      <Filter>Header Files\gui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\common\PinKeyboardLayout.hpp">
+      <Filter>Header Files\gui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\init_screen\initPresenter.hpp">
+      <Filter>Header Files\gui\init_screen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\init_screen\initView.hpp">
+      <Filter>Header Files\gui\init_screen</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\gui\include\gui\model\Model.hpp">
       <Filter>Header Files\gui\model</Filter>
     </ClInclude>
@@ -834,6 +900,12 @@
     </ClInclude>
     <ClInclude Include="..\..\gui\include\gui\pin_code_screen\pin_codeView.hpp">
       <Filter>Header Files\gui\pin_code_screen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\pin_screen\pinPresenter.hpp">
+      <Filter>Header Files\gui\pin_screen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\gui\include\gui\pin_screen\pinView.hpp">
+      <Filter>Header Files\gui\pin_screen</Filter>
     </ClInclude>
     <ClInclude Include="..\..\gui\include\gui\startup_screen\startupPresenter.hpp">
       <Filter>Header Files\gui\startup_screen</Filter>
