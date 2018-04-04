@@ -847,12 +847,10 @@ static void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
 	if((addr + size) > (FSL_FEATURE_EEPROM_SIZE / 4))
 		return;
 
-	portENTER_CRITICAL();
 	for(int i = 0; i < size; i++)
 	{
 		EEPROM_WriteWord(EEPROM, addr + i * 4, data[i]);
 	}
-	portEXIT_CRITICAL();
 }
 
 static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
@@ -863,11 +861,9 @@ static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 	if((addr + size) > (FSL_FEATURE_EEPROM_SIZE / 4))
 		return;
 
-	portENTER_CRITICAL();
 	for(int i = 0; i < size; i++)
 	{
 		data[i] = *(uint32_t*)(FSL_FEATURE_EEPROM_BASE_ADDRESS + addr + i * 4);
 	}
-	portEXIT_CRITICAL();
 }
 
