@@ -122,9 +122,9 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 	case 0x53:{ //signature
 
-		dataOut[0] = 0x43;
+		/*dataOut[0] = 0x43;
 		dataOut[1] = 0x4f;
-		dataOut[2] = 0x4d;
+		dataOut[2] = 0x4d;*/
 		if(dataIn[1] == 0x00){//bitcoin
 			/*BYTE mess[32] = {0};
 			for(int i=0; i<32; i++){
@@ -269,10 +269,10 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
 			}
-			int valueTr = ((int)dataIn[2 + 32*amount]*16777216 + (int)dataIn[3 + 32*amount]*65536 + (int)dataIn[4 + 32*amount]*256 + (int)dataIn[5 + 32*amount]);
+			int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[34] = {0};
 			for(int i=0; i<34; i++){
-				addr[i] = dataIn[6 + 32*amount + i];
+				addr[i] = dataIn[7 + 32*amount + i];
 			}
 			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit);
 		}
@@ -343,10 +343,10 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
 			}
-			int valueTr = ((int)dataIn[2 + 32*amount]*16777216 + (int)dataIn[3 + 32*amount]*65536 + (int)dataIn[4 + 32*amount]*256 + (int)dataIn[5 + 32*amount]);
+			int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[42] = {0};
 			for(int i=0; i<42; i++){
-				addr[i] = dataIn[6 + 32*amount + i];
+				addr[i] = dataIn[7 + 32*amount + i];
 			}
 			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit);
 		}
@@ -368,7 +368,7 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 		buffer[i] = dataIn[i-(*lenBuf)];
 	}
 	(*lenBuf) = (*lenBuf)+(*lenIn);
-	uint8_t tempBuf[100] = {0};
+	uint8_t tempBuf[1800] = {0};
 	uint32_t start = 0;
 	uint32_t end = 0;
 	if((*lenBuf) > 5){
@@ -399,13 +399,13 @@ void checkPin(int *pinInit){
 	int numCheckPin = 0;
 	static struct message message;
 	while((*pinInit)!= pinDef[1] || numCheckPin < 3){
-		message.cmd = WALLET_WRONG_PINCODE;
+		message.cmd = WRONG_PINCODE;
 		xQueueSend(card_to_lcd, (void*)&message, 0);
 		xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 		if(pinDef[1] == (*(int*)message.data)){
 			*pinInit = *(int*)message.data;
 			numCheckPin = 0;
-			message.cmd = WALLET_STATUS;
+			message.cmd = TO_STATUS;
 			xQueueSend(card_to_lcd, (void*)&message, 0);
 		}else{
 			numCheckPin++;
@@ -435,10 +435,10 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	out[2] = 0x4d;
 	out[3] = amount;
 
-	if(id==0) {transaction.curr_name = BTC;}
-	if(id==1) {transaction.curr_name = ETH;}
-	if(id==2) {transaction.curr_name = LTC;}
-	//transaction.value = valueTr;
+	if(id==0) {memcpy(transaction.curr_name, "Bitcoin", 8);}
+	if(id==1) {memcpy(transaction.curr_name, "Ethereum", 9);}
+	if(id==2) {memcpy(transaction.curr_name, "Litecoin", 9);}
+	transaction.value = valueTr;
 	if( id == 0 || id ==2 ){
 		for(int i = 0; i < 34; i++){
 			transaction.addr[i] = addr[i];
@@ -456,7 +456,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	int cmd = message.cmd;
 	switch(cmd)
 	{
-	case WALLET_PINCODE:
+	case PINCODE:
 		do{
 			int tempLen = 4;
 			if(pinDef[1] == (*(int*)message.data)){
@@ -502,7 +502,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 				out[3] = 0x01;
 				out[4] = 0x04;
 				*lenOut = 5;
-				message.cmd = WALLET_WRONG_PINCODE;
+				message.cmd = WRONG_PINCODE;
 				xQueueSend(card_to_lcd, (void*)&message, 0);
 				xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 			}
