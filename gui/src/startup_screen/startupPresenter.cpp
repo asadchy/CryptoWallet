@@ -25,3 +25,14 @@ void startupPresenter::toStatusScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoStatusScreen();
 }
+
+void startupPresenter::toPinScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoPinScreen();
+}
+
+void startupPresenter::toInitScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();
+}
+

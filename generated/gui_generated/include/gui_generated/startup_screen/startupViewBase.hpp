@@ -9,7 +9,6 @@
 #include <gui/startup_screen/startupPresenter.hpp>
 #include <touchgfx/widgets/Image.hpp>
 #include <touchgfx/widgets/TextArea.hpp>
-#include <touchgfx/widgets/AnimatedImage.hpp>
 #include <touchgfx/EasingEquations.hpp>
 #include <touchgfx/mixins/FadeAnimator.hpp>
 
@@ -29,25 +28,20 @@ protected:
      * Member Declarations
      */
     touchgfx::Image background;
-    touchgfx::FadeAnimator< touchgfx::TextArea > logo;
-    touchgfx::TextArea loading;
-    touchgfx::AnimatedImage loading_gif;
+    touchgfx::FadeAnimator< touchgfx::Image > logo_png;
+    touchgfx::FadeAnimator< touchgfx::TextArea > logo_text;
 
 private:
 
     /*
      * Interaction Handlers
      */
-    void show_logoEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::TextArea>& comp);
-    void hide_logoEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::TextArea>& comp);
-    void triggerEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::TextArea>& comp);
+    void show_logoEndedCallbackHandler(const touchgfx::FadeAnimator<touchgfx::Image>& comp);
 
     /*
      * Interaction Callback Declarations
      */
-    touchgfx::Callback < startupViewBase, const touchgfx::FadeAnimator<touchgfx::TextArea>& >  show_logoEndedCallback;
-    touchgfx::Callback < startupViewBase, const touchgfx::FadeAnimator<touchgfx::TextArea>& >  hide_logoEndedCallback;
-    touchgfx::Callback < startupViewBase, const touchgfx::FadeAnimator<touchgfx::TextArea>& >  triggerEndedCallback;
+    touchgfx::Callback < startupViewBase, const touchgfx::FadeAnimator<touchgfx::Image>& >  show_logoEndedCallback;
 
 };
 

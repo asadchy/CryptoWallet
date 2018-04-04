@@ -36,32 +36,23 @@ void transactionView::buttonClicked(const touchgfx::AbstractButton& btn)
 	}
 }
 
-void transactionView::setCurrency(char *curr)
+void transactionView::walletTransaction(struct transaction *trans)
 {
-	Unicode::UnicodeChar tmp[16];
-	Unicode::strncpy(tmp, curr, 16);
-	Unicode::snprintf(currencyBuffer, CURRENCY_SIZE, "%s", tmp);
+	uint16_t size;
+	size = Unicode::strncpy(currencyBuffer, currencies_list[trans->curr_name], CURRENCY_SIZE);
+	if(size > 0)
+		currencyBuffer[size] = 0;
 	currency.invalidate();
-}
 
-void transactionView::setAddress(unsigned char *addr)
-{
-	int i = 0;
-	char tmp[82];
-	int index;
-	index = snprintf(tmp, 82, "0x");
-	for(i = 0; i < 40; i++)
-	{
-		index += snprintf(&tmp[index], 82 - index, "%02d", addr[i]);
-	}
-	Unicode::strncpy(addressBuffer, tmp, ADDRESS_SIZE);
+	size = Unicode::strncpy(addressBuffer, trans->addr, ADDRESS_SIZE);
+	if(size > 0)
+		addressBuffer[size] = 0;
 	address.invalidate();
-}
 
-void transactionView::setValue(double val)
-{
-	Unicode::snprintfFloat(valueBuffer, VALUE_SIZE, "%1.10f", val);
-	value.invalidate();
+	size = Unicode::strncpy(currencyBuffer, trans->value, CURRENCY_SIZE);
+	if(size > 0)
+		currencyBuffer[size] = 0;
+	currency.invalidate();
 }
 
 void transactionView::transactionScreenEntered()

@@ -13,6 +13,10 @@
 #include <gui/transaction_screen/transactionPresenter.hpp>
 #include <gui/status_screen/statusView.hpp>
 #include <gui/status_screen/statusPresenter.hpp>
+#include <gui/init_screen/initView.hpp>
+#include <gui/init_screen/initPresenter.hpp>
+#include <gui/pin_screen/pinView.hpp>
+#include <gui/pin_screen/pinPresenter.hpp>
 
 using namespace touchgfx;
 

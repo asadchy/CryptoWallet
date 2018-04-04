@@ -22,11 +22,15 @@ public:
     void gotoMainScreen();
     void gotoPincodeScreen();
     void gotoStatusScreen();
+    void gotoPinScreen();
+    void gotoInitScreen();
 
 private:
     void gotoMainScreenImpl();
     void gotoPincodeScreenImpl();
 	void gotoStatusScreenImpl();
+	void gotoPinScreenImpl();
+	void gotoInitScreenImpl();
     touchgfx::Callback<FrontendApplication> customTransitionCallback;
 };
 

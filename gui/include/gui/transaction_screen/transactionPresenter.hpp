@@ -27,9 +27,7 @@ public:
 
     virtual ~transactionPresenter() {};
 
-    virtual void setCurrency(char *currency);
-	virtual void setAddress(unsigned char *addr);
-	virtual void setValue(double value);
+    virtual void walletTransaction(struct transaction *trans);
 
 	void transactionScreenEntered();
 	virtual void setDialogText(touchgfx::Unicode::UnicodeChar *text);
@@ -39,6 +37,8 @@ public:
 
 	virtual void toPincodeScreen();
 	virtual void toStatusScreen();
+	virtual void toPinScreen();
+	virtual void toInitScreen();
 
 private:
     transactionPresenter();

@@ -19,13 +19,16 @@ Dialog::Dialog() :
 
 	text.setTypedText(touchgfx::TypedText(T_EMPTYTEXT));
 	text.setWildcard(textBuffer);
-	text.setPosition(10, 100, 300, 40);
+	text.setPosition(10, 80, 300, 40);
+	text.setColor(touchgfx::Color::getColorFrom24BitRGB(0x7E, 0xAE, 0xE5));
 	ModalWindow::add(text);
 
-	close.setBitmaps(touchgfx::Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_ID),
-			touchgfx::Bitmap(BITMAP_BLUE_BUTTONS_ROUND_EDGE_SMALL_PRESSED_ID));
+	close.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_NOT_PRESSED_ID),
+			touchgfx::Bitmap(BITMAP_BUTTON_PRESSED_ID));
 	close.setLabelText(touchgfx::TypedText(T_CLOSE));
-	close.setXY(75, 170);
+	close.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(0x7E, 0xAE, 0xE5));
+	close.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(0x7E, 0xAE, 0xE5));
+	close.setXY(112, 170);
 	close.setAction(onButtonClicked);
 	ModalWindow::add(close);
 }

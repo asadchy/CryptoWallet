@@ -7,56 +7,64 @@
 using namespace touchgfx;
 #endif
 
-extern const unsigned char _Blue_Buttons_Round_Edge_small[]; 
-extern const unsigned char _Blue_Buttons_Round_Edge_small_pressed[]; 
-extern const unsigned char _a1[]; 
-extern const unsigned char _a2[]; 
-extern const unsigned char _a3[]; 
-extern const unsigned char _btc[]; 
+extern const unsigned char _background_3[]; 
+extern const unsigned char _bitcoin[]; 
+extern const unsigned char _button_not_pressed[]; 
+extern const unsigned char _button_not_pressed_long[]; 
+extern const unsigned char _button_pressed[]; 
+extern const unsigned char _button_pressed_long[]; 
+extern const unsigned char _clear_wallet[]; 
+extern const unsigned char _clear_wallet_pressed[]; 
+extern const unsigned char _curr_status[]; 
 extern const unsigned char _dialog[]; 
-extern const unsigned char _eth[]; 
-extern const unsigned char _keyboard_background[]; 
-extern const unsigned char _keyboard_key_highlighted[]; 
+extern const unsigned char _enter_pressed[]; 
+extern const unsigned char _ether[]; 
+extern const unsigned char _filler[]; 
+extern const unsigned char _key_button_pressed[]; 
+extern const unsigned char _key_pressed[]; 
+extern const unsigned char _keyboard[]; 
 extern const unsigned char _leftDoor[]; 
-extern const unsigned char _list_element_btc[]; 
-extern const unsigned char _list_element_eth[]; 
-extern const unsigned char _list_element_lit[]; 
-extern const unsigned char _lite[]; 
-extern const unsigned char _loading_0[]; 
-extern const unsigned char _loading_1[]; 
-extern const unsigned char _loading_2[]; 
-extern const unsigned char _loading_3[]; 
-extern const unsigned char _loading_4[]; 
-extern const unsigned char _loading_5[]; 
-extern const unsigned char _loading_6[]; 
-extern const unsigned char _loading_7[]; 
+extern const unsigned char _litecoin[]; 
+extern const unsigned char _logo[]; 
+extern const unsigned char _ms_keyboard[]; 
+extern const unsigned char _ms_window[]; 
+extern const unsigned char _num_button_pressed[]; 
+extern const unsigned char _pin_keyboard[]; 
 extern const unsigned char _rightDoor[]; 
+extern const unsigned char _space_button_pressed[]; 
+extern const unsigned char _startup_background[]; 
+extern const unsigned char _top_slide_menu_background[]; 
+extern const unsigned char _top_slide_menu_button[]; 
 
 const touchgfx::Bitmap::BitmapData bitmap_database[] = {
-    { _Blue_Buttons_Round_Edge_small, 0, 170, 60, 11, 4, 148, 50, touchgfx::Bitmap::ARGB8888 },
-    { _Blue_Buttons_Round_Edge_small_pressed, 0, 170, 60, 11, 4, 148, 50, touchgfx::Bitmap::ARGB8888 },
-    { _a1, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _a2, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _a3, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _btc, 0, 48, 48, 8, 7, 32, 34, touchgfx::Bitmap::ARGB8888 },
-    { _dialog, 0, 320, 240, 55, 0, 265, 240, touchgfx::Bitmap::ARGB8888 },
-    { _eth, 0, 48, 48, 9, 9, 31, 31, touchgfx::Bitmap::ARGB8888 },
-    { _keyboard_background, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _keyboard_key_highlighted, 0, 39, 45, 0, 0, 39, 45, touchgfx::Bitmap::RGB565 },
+    { _background_3, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
+    { _bitcoin, 0, 36, 36, 6, 5, 24, 26, touchgfx::Bitmap::ARGB8888 },
+    { _button_not_pressed, 0, 96, 40, 10, 0, 76, 40, touchgfx::Bitmap::ARGB8888 },
+    { _button_not_pressed_long, 0, 290, 60, 10, 0, 270, 60, touchgfx::Bitmap::ARGB8888 },
+    { _button_pressed, 0, 96, 40, 10, 0, 76, 40, touchgfx::Bitmap::ARGB8888 },
+    { _button_pressed_long, 0, 290, 60, 10, 0, 270, 60, touchgfx::Bitmap::ARGB8888 },
+    { _clear_wallet, 0, 50, 50, 0, 0, 50, 50, touchgfx::Bitmap::RGB565 },
+    { _clear_wallet_pressed, 0, 50, 50, 0, 0, 50, 50, touchgfx::Bitmap::RGB565 },
+    { _curr_status, 0, 130, 200, 0, 0, 130, 200, touchgfx::Bitmap::RGB565 },
+    { _dialog, 0, 320, 240, 0, 0, 320, 240, touchgfx::Bitmap::RGB565 },
+    { _enter_pressed, 0, 75, 92, 5, 0, 65, 92, touchgfx::Bitmap::ARGB8888 },
+    { _ether, 0, 36, 36, 14, 8, 8, 14, touchgfx::Bitmap::ARGB8888 },
+    { _filler, 0, 20, 200, 0, 0, 20, 200, touchgfx::Bitmap::RGB565 },
+    { _key_button_pressed, 0, 30, 32, 4, 5, 22, 22, touchgfx::Bitmap::ARGB8888 },
+    { _key_pressed, 0, 75, 45, 5, 0, 65, 45, touchgfx::Bitmap::ARGB8888 },
+    { _keyboard, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
     { _leftDoor, 0, 258, 272, 0, 0, 241, 272, touchgfx::Bitmap::ARGB8888 },
-    { _list_element_btc, 0, 262, 54, 49, 0, 213, 54, touchgfx::Bitmap::ARGB8888 },
-    { _list_element_eth, 0, 262, 54, 48, 0, 214, 54, touchgfx::Bitmap::ARGB8888 },
-    { _list_element_lit, 0, 262, 54, 48, 0, 214, 54, touchgfx::Bitmap::ARGB8888 },
-    { _lite, 0, 48, 48, 9, 9, 30, 30, touchgfx::Bitmap::ARGB8888 },
-    { _loading_0, 0, 48, 48, 39, 13, 6, 9, touchgfx::Bitmap::ARGB8888 },
-    { _loading_1, 0, 48, 48, 39, 13, 6, 10, touchgfx::Bitmap::ARGB8888 },
-    { _loading_2, 0, 48, 48, 38, 11, 6, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_3, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_4, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_5, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_6, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _loading_7, 0, 48, 48, 38, 12, 7, 11, touchgfx::Bitmap::ARGB8888 },
-    { _rightDoor, 0, 240, 272, 16, 0, 224, 272, touchgfx::Bitmap::ARGB8888 }
+    { _litecoin, 0, 36, 36, 11, 19, 15, 14, touchgfx::Bitmap::ARGB8888 },
+    { _logo, 0, 96, 85, 34, 6, 25, 29, touchgfx::Bitmap::ARGB8888 },
+    { _ms_keyboard, 0, 480, 272, 39, 48, 284, 60, touchgfx::Bitmap::ARGB8888 },
+    { _ms_window, 0, 480, 272, 39, 48, 284, 60, touchgfx::Bitmap::ARGB8888 },
+    { _num_button_pressed, 0, 90, 32, 10, 0, 70, 32, touchgfx::Bitmap::ARGB8888 },
+    { _pin_keyboard, 0, 480, 272, 39, 54, 282, 40, touchgfx::Bitmap::ARGB8888 },
+    { _rightDoor, 0, 240, 272, 16, 0, 224, 272, touchgfx::Bitmap::ARGB8888 },
+    { _space_button_pressed, 0, 302, 32, 10, 0, 282, 32, touchgfx::Bitmap::ARGB8888 },
+    { _startup_background, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
+    { _top_slide_menu_background, 0, 480, 77, 0, 0, 480, 74, touchgfx::Bitmap::ARGB8888 },
+    { _top_slide_menu_button, 0, 54, 24, 8, 0, 38, 20, touchgfx::Bitmap::ARGB8888 }
 };
 
 namespace BitmapDatabase

@@ -30,7 +30,7 @@ void addressBtc(BYTE *PubKeyBin, int compressed, BYTE *outAddress, int *outAddre
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	BYTE add00ByteRIPEMD160[21] = { 0 };
-	add00ByteRIPEMD160[0] =  0x6f; //testnet, real 0x00
+	add00ByteRIPEMD160[0] =  0x00; //testnet 0x6f, real 0x00
 	for (int i = 0; i < 20; i++)
 	{
 		add00ByteRIPEMD160[i + 1] = outRIPEMD160[i];
@@ -50,21 +50,21 @@ void addressBtc(BYTE *PubKeyBin, int compressed, BYTE *outAddress, int *outAddre
 		PubKey25Byte[i] = Sha256Sha256Add00Byte[i - 21];
 	}
 
-/*int	len1 = 25;
+int	len1 = 25;
 uint8_t add[50] = {0};
 int addlen = 0;
-	base58(PubKey25Byte, len, add, &addlen);
-for(int i = 0; i<addlen; i++){
+	base58(PubKey25Byte, len1, add, &addlen);
+/*for(int i = 0; i<addlen; i++){
 	outAddress[i] = add[i];
 }
 *outAddressLength =addlen;
 
 */
 
-for(int i = 0; i<25; i++){
-		outAddress[i] = PubKey25Byte[i];
+for(int i = 0; i<addlen; i++){
+		outAddress[i] = add[i];
 	}
-	*outAddressLength = 25;
+	*outAddressLength = addlen;
 }
 
 
@@ -89,7 +89,7 @@ void addressLtc(BYTE *PubKeyBin, int compressed, BYTE *outAddress, int *outAddre
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	BYTE add00ByteRIPEMD160[21] = { 0 };
-	add00ByteRIPEMD160[0] = 0x6f; //testnet, real 0x30
+	add00ByteRIPEMD160[0] = 0x30; //testnet 0x6f , real 0x30
 	for (int i = 0; i < 20; i++)
 	{
 		add00ByteRIPEMD160[i + 1] = outRIPEMD160[i];
@@ -112,13 +112,21 @@ void addressLtc(BYTE *PubKeyBin, int compressed, BYTE *outAddress, int *outAddre
 		PubKey25Byte[i] = Sha256Sha256Add00Byte[i - 21];
 	}
 
-	/*len = 25;
+	int	len1 = 25;
+	uint8_t add[50] = {0};
+	int addlen = 0;
+		base58(PubKey25Byte, len1, add, &addlen);
+	/*for(int i = 0; i<addlen; i++){
+		outAddress[i] = add[i];
+	}
+	*outAddressLength =addlen;
 
-	base58(PubKey25Byte, len, outAddress, outAddressLength);*/
-	for(int i = 0; i<25; i++){
-			outAddress[i] = PubKey25Byte[i];
+	*/
+
+	for(int i = 0; i<addlen; i++){
+			outAddress[i] = add[i];
 		}
-		*outAddressLength = 25;
+		*outAddressLength = addlen;
 }
 
 void addressEth(BYTE *pubKeyBin, BYTE *outAddress)

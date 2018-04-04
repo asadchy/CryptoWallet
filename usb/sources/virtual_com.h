@@ -83,7 +83,6 @@
 #define NOTIF_PACKET_SIZE (0x08)
 #define UART_BITMAP_SIZE (0x02)
 #define NOTIF_REQUEST_TYPE (0xA1)
-
 /* Define the types for application */
 typedef struct _usb_cdc_vcom_struct
 {
@@ -111,4 +110,7 @@ typedef struct _usb_cdc_acm_info
     uint8_t currentInterface; /* Current interface index.                           */
     uint16_t uartState;       /* UART state of the CDC device.                      */
 } usb_cdc_acm_info_t;
+
+
+
 #endif /* _USB_CDC_VCOM_H_ */

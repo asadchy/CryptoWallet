@@ -11,7 +11,7 @@
 typedef unsigned char BYTE;
 
 
-void generatePrivateKey(BYTE* msg, int *tocenNum, BYTE *privKey);
+void generatePrivateKey(int pin, int *tocenNum, BYTE *privKey);
 
 
 void genKeyC(int pin, int idCurrency, BYTE * privKey, BYTE * pubKey, int compressed);

@@ -8,7 +8,6 @@
 #include <mvp/View.hpp>
 #include <gui/status_screen/statusPresenter.hpp>
 #include <touchgfx/widgets/Image.hpp>
-#include <touchgfx/widgets/TextArea.hpp>
 
 class statusViewBase : public touchgfx::View<statusPresenter>
 {
@@ -25,7 +24,6 @@ protected:
      * Member Declarations
      */
     touchgfx::Image background;
-    touchgfx::TextArea available_curr;
 
 private:
 

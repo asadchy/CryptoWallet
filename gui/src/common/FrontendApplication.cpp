@@ -24,8 +24,12 @@ void FrontendApplication::gotoMainScreen()
 
 void FrontendApplication::gotoMainScreenImpl()
 {
+	/*
 	makeTransition<transactionView, transactionPresenter, CustomTransition, Model>(&currentScreen,
 			&currentPresenter, frontendHeap, &currentTransition, &model);
+	*/
+	makeTransition<transactionView, transactionPresenter, NoTransition, Model>(&currentScreen,
+				&currentPresenter, frontendHeap, &currentTransition, &model);
 }
 
 void FrontendApplication::gotoPincodeScreen()
@@ -36,8 +40,12 @@ void FrontendApplication::gotoPincodeScreen()
 
 void FrontendApplication::gotoPincodeScreenImpl()
 {
+	/*
 	makeTransition<pin_codeView, pin_codePresenter, CustomTransition, Model>(&currentScreen,
 				&currentPresenter, frontendHeap, &currentTransition, &model);
+	*/
+	makeTransition<pin_codeView, pin_codePresenter, NoTransition, Model>(&currentScreen,
+					&currentPresenter, frontendHeap, &currentTransition, &model);
 }
 
 void FrontendApplication::gotoStatusScreen()
@@ -48,6 +56,43 @@ void FrontendApplication::gotoStatusScreen()
 
 void FrontendApplication::gotoStatusScreenImpl()
 {
+	/*
 	makeTransition<statusView, statusPresenter, CustomTransition, Model>(&currentScreen,
 				&currentPresenter, frontendHeap, &currentTransition, &model);
+	*/
+	makeTransition<statusView, statusPresenter, NoTransition, Model>(&currentScreen,
+					&currentPresenter, frontendHeap, &currentTransition, &model);
 }
+
+void FrontendApplication::gotoPinScreen()
+{
+	customTransitionCallback = touchgfx::Callback<FrontendApplication>(this, &FrontendApplication::gotoPinScreenImpl);
+	pendingScreenTransitionCallback = &customTransitionCallback;
+}
+
+void FrontendApplication::gotoPinScreenImpl()
+{
+	/*
+	makeTransition<pinView, pinPresenter, CustomTransition, Model>(&currentScreen,
+				&currentPresenter, frontendHeap, &currentTransition, &model);
+	*/
+	makeTransition<pinView, pinPresenter, NoTransition, Model>(&currentScreen,
+					&currentPresenter, frontendHeap, &currentTransition, &model);
+}
+
+void FrontendApplication::gotoInitScreen()
+{
+	customTransitionCallback = touchgfx::Callback<FrontendApplication>(this, &FrontendApplication::gotoInitScreenImpl);
+	pendingScreenTransitionCallback = &customTransitionCallback;
+}
+
+void FrontendApplication::gotoInitScreenImpl()
+{
+	/*
+	makeTransition<initView, initPresenter, CustomTransition, Model>(&currentScreen,
+				&currentPresenter, frontendHeap, &currentTransition, &model);
+	*/
+	makeTransition<initView, initPresenter, NoTransition, Model>(&currentScreen,
+					&currentPresenter, frontendHeap, &currentTransition, &model);
+}
+

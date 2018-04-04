@@ -66,10 +66,12 @@ extern uint8_t USB_EnterLowpowerMode(void);
 #include "fsl_power.h"
 
 #include "data.hpp"
+
+#include "fsl_eeprom.h"
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
-
+#define PIN_ADDR				0U
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -84,6 +86,9 @@ void BOARD_DbgConsole_Deinit(void);
 void BOARD_DbgConsole_Init(void);
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
+
+static void write_flash(uint32_t *data, uint32_t size, uint32_t addr);
+static void read_flash(uint32_t *data, uint32_t size, uint32_t addr);
 
 /*******************************************************************************
 * Variables
@@ -613,76 +618,130 @@ void APPTask(void *handle)
         }
     }
 #endif
-uint8_t buffer[100] = {0};
+uint8_t buffer[120] = {0};
 uint32_t lenBuf = 0;
 uint32_t send=0;
-static int pin = -1;
+int numCheckPin = 0;
+int pinInit = -1;
+uint32_t pinDef[34];
+uint8_t seed[32] = {0};
 struct message mess;
+int initWallet = 0;
 
-vTaskDelay(500 / portTICK_PERIOD_MS);
-mess.cmd = INIT_PINCODE;
-xQueueSend(card_to_lcd, (void*)&mess, 0);
+read_flash(pinDef, 34, PIN_ADDR);
+if(pinDef[0] != 0x55)
+{
+	struct message messInit;
+	vTaskDelay(500 / portTICK_PERIOD_MS);
+	messInit.cmd = INIT_PINCODE;
+	xQueueSend(card_to_lcd, (void*)&messInit, 0);
 
-    while (1)
-    {
-    	if(xQueueReceive(lcd_to_card, (void*)&mess, 0))
-    	{
-    		int cmd = mess.cmd;
-    		switch(cmd)
-    		{
-    			case PINCODE:
-    				if(pin == -1)
-    				{
-    					pin = *(int*)mess.data;
+	while (!initWallet)
+	{
+		if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+		{
+			if(messInit.cmd == WALLET_PINCODE)
+			{
+				pinDef[1] = *(uint32_t*)messInit.data;
+				pinDef[0] = 0x55;
 
-    					mess.cmd = TO_STATUS;
-    					xQueueSend(card_to_lcd, (void*)&mess, 0);
-    				}
-    				else
-    				{
-    					int temp_pin = *(int*)mess.data;
-    				}
-    				break;
-    		}
-    	}
+				write_flash(pinDef, 2, PIN_ADDR);
+				initWallet = 1;
+			}
+		}
+	}
+}else
+{
+	for(int i = 0; i<32; i++)
+	{
+		seed[i] = pinDef[i+2];
+	}
+}
 
-        if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
-        {
-            /* User Code */
-            if ((0 != s_recvSize) && (0xFFFFFFFF != s_recvSize))
-            {
-                int32_t i;
+//vTaskDelay(500 / portTICK_PERIOD_MS);
+int32_t ret;
+mess.cmd = /*TO_STATUS;//*/INIT_PINCODE;
+do{
+	ret = xQueueSend(card_to_lcd, (void*)&mess, 10 / portTICK_PERIOD_MS);
+} while(ret != pdPASS);
+taskYIELD();
 
-                /* Copy Buffer to Send Buff */
-                for (i = 0; i < s_recvSize; i++)
-                {
+while (1)
+{
 
-               		s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
+	if(xQueueReceive(lcd_to_card, (void*)&mess, 0))
+	{
+		int cmd = mess.cmd;
+		switch(cmd)
+		{
+		case WALLET_PINCODE:
+			if(pinInit == -1)
+			{
+				if(pinDef[1] == *(uint32_t*)mess.data){
+					numCheckPin = 0;
+					pinInit = *(uint32_t*)mess.data;
+					mess.cmd = WALLET_STATUS;
+					xQueueSend(card_to_lcd, (void*)&mess, 0);
+				}
+				else{
+					numCheckPin ++;
+					if(numCheckPin > 2)
+					{
+						mess.cmd = BLOCKED;
+						xQueueSend(card_to_lcd, (void*)&mess, 0);
 
-                }
-                s_recvSize = 0;
-            }
+					}else
+					{
+						mess.cmd = WALLET_WRONG_PINCODE;
+						xQueueSend(card_to_lcd, (void*)&mess, 0);
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
+	{
+		/* User Code */
+		if ((0 != s_recvSize) && (0xFFFFFFFF != s_recvSize))
+		{
+			int32_t i;
+
+			/* Copy Buffer to Send Buff */
+			for (i = 0; i < s_recvSize; i++)
+			{
+
+				s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
+
+			}
+			s_recvSize = 0;
+		}
 
 
-            if (s_sendSize)
-            {
-                uint32_t size = s_sendSize;
-                s_sendSize = 0;
-                dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send);
+		if (s_sendSize)
+		{
+			uint32_t size = s_sendSize;
+			s_sendSize = 0;
+			if(numCheckPin<3){
 
-                if(send>0){
-               error =
-                    USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
+				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
+
+			}
+			if(send>0){
+				//portENTER_CRITICAL();
+				error =	USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
+				//portEXIT_CRITICAL();
                 send=0;
                 lenBuf = 0;
-                for(int i =0; i<100; i++){
+                for(int i =0; i<120; i++){
                 	buffer[i] = 0x00;
                 }
                 if (error != kStatus_USB_Success)
                 {
                     // Failure to send Data Handling code here
                 }}else{USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, 0);}
-            }
+		}
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
     defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
@@ -765,9 +824,40 @@ void usb_init(void)
 #endif
     }
 
-    vTaskStartScheduler();
-
 #if (defined(__CC_ARM) || defined(__GNUC__))
     return 1;
 #endif
 }
+
+static void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
+{
+	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
+				size = FSL_FEATURE_EEPROM_SIZE / 4;
+
+	if((addr + size) > (FSL_FEATURE_EEPROM_SIZE / 4))
+		return;
+
+	portENTER_CRITICAL();
+	for(int i = 0; i < size; i++)
+	{
+		EEPROM_WriteWord(EEPROM, addr + i * 4, data[i]);
+	}
+	portEXIT_CRITICAL();
+}
+
+static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
+{
+	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
+			size = FSL_FEATURE_EEPROM_SIZE / 4;
+
+	if((addr + size) > (FSL_FEATURE_EEPROM_SIZE / 4))
+		return;
+
+	portENTER_CRITICAL();
+	for(int i = 0; i < size; i++)
+	{
+		data[i] = *(uint32_t*)(FSL_FEATURE_EEPROM_BASE_ADDRESS + addr + i * 4);
+	}
+	portEXIT_CRITICAL();
+}
+

@@ -21,6 +21,11 @@ void statusPresenter::toMainScreen()
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoMainScreen();
 }
 
+void statusPresenter::toInitScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();
+}
+
 void statusPresenter::statusScreenEntered()
 {
 	model->statusScreenEntered();
@@ -31,3 +36,12 @@ void statusPresenter::setDialogText(touchgfx::Unicode::UnicodeChar *text)
 	view.setDialogText(text);
 }
 
+void statusPresenter::walletStatus(struct wallet_status *status)
+{
+	view.walletStatus(status);
+}
+
+void statusPresenter::clearWallet()
+{
+	model->clearWallet();
+}
