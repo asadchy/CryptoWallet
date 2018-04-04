@@ -629,7 +629,7 @@ uint8_t seed[32] = {0};
 struct message mess;
 int initWallet = 0;
 pinDef[1] = 1234;
-
+/*
 read_flash(pinDef, 34, PIN_ADDR);
 if(pinDef[0] != 0x555)
 {
@@ -666,7 +666,7 @@ if(pinDef[0] != 0x555)
 	{
 		seed[i] = pinDef[i+2];
 	}
-}
+}*/
 
 //vTaskDelay(500 / portTICK_PERIOD_MS);
 int32_t ret;
