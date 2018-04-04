@@ -55,29 +55,29 @@ void Model::tick()
 	{
 		message_parser(&rx_mess);
 	}
-
-	static int i = 0;
-	if(i == 0)
-	{
-		tx_mess.cmd = WALLET_ENTER_MS;
-		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
-	}
-	else if(i == 300)
-	{
-		tx_mess.cmd = WALLET_ENTER_PIN;
-		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
-	}
-	else if(i == 600)
-	{
-		tx_mess.cmd = WALLET_SET_MS;
-		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
-	}
-	else if(i == 900)
-	{
-		tx_mess.cmd = WALLET_SET_PIN;
-		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
-	}
-	i++;
+//
+//	static int i = 0;
+//	if(i == 0)
+//	{
+//		tx_mess.cmd = WALLET_ENTER_MS;
+//		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+//	}
+//	else if(i == 300)
+//	{
+//		tx_mess.cmd = WALLET_ENTER_PIN;
+//		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+//	}
+//	else if(i == 600)
+//	{
+//		tx_mess.cmd = WALLET_SET_MS;
+//		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+//	}
+//	else if(i == 900)
+//	{
+//		tx_mess.cmd = WALLET_SET_PIN;
+//		xQueueSend(card_to_lcd, static_cast<void*>(&tx_mess), 0);
+//	}
+//	i++;
 
 #endif
 
