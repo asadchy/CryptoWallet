@@ -250,7 +250,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	if(id==1) {transaction.curr_name = ETH;}
 	if(id==2) {transaction.curr_name = LTC;}
 	//transaction.value = valueTr;
-	transaction.value[0] = '0';
+	transaction.value[0] = '8';
 	transaction.value[1] = '\0';
 	if( id == 0 || id ==2 ){
 		for(int i = 0; i < 34; i++){
@@ -267,7 +267,10 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	message.cmd = WALLET_TRANSACTION;
 	message.data = (void*)&transaction;
 	xQueueSend(card_to_lcd, (void*)&message, 0);
-	xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
+	int ans = 0;
+	while(!ans){
+		if(xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY))
+		{
 	int cmd = message.cmd;
 	switch(cmd)
 	{
@@ -322,12 +325,16 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 				xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
 			}
 		}while((pinDef[1] != (*(int*)message.data))||(numCheckPin!=0));
+		ans=1;
 		break;
 
 	case TRANSACTION_CANCELED:
 		out[3] = 0x00;
 		*lenOut = 4;
+		ans=1;
 		break;
-	}
 
+	}
+	}
+	}
 }
