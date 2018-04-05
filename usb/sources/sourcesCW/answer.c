@@ -122,9 +122,6 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 	case 0x53:{ //signature
 
-		/*dataOut[0] = 0x43;
-		dataOut[1] = 0x4f;
-		dataOut[2] = 0x4d;*/
 		if(dataIn[1] == 0x00){//bitcoin
 			int amount = dataIn[2];
 			BYTE mess[512] = {0};
@@ -253,6 +250,8 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	if(id==1) {transaction.curr_name = ETH;}
 	if(id==2) {transaction.curr_name = LTC;}
 	//transaction.value = valueTr;
+	transaction.value[0] = '0';
+	transaction.value[1] = '\0';
 	if( id == 0 || id ==2 ){
 		for(int i = 0; i < 34; i++){
 			transaction.addr[i] = addr[i];
@@ -263,7 +262,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 		for(int i = 0; i < 42; i++){
 			transaction.addr[i] = addr[i];
 		}
-		transaction.addr[43] = '\0';
+		transaction.addr[42] = '\0';
 	}
 	message.cmd = TRANSACTION;
 	message.data = (void*)&transaction;

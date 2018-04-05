@@ -632,6 +632,7 @@ int initWallet = 0;
 int restoreWalletPin = 0;
 int restoreWalletMS = 0;
 int generateWallet = 0;
+pinDef[1] = 1234;/*
 read_flash(pinDef, 34, PIN_ADDR);
 while (pinDef[0] != 0x555)
 {
@@ -672,12 +673,9 @@ while (pinDef[0] != 0x555)
 								if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
 								{
 									int pinToSeed = 1;
-									for(int i = 0; i< lenMnem; i++)
+									if(strncmp(mnemonic, messRes.data, lenMnem))
 									{
-										if(mnemonic[i] != (uint8_t*)(messRes.data + i))
-										{
-											pinToSeed = 0;
-										}
+										pinToSeed = 0;
 									}
 									if(pinToSeed == 1)
 									{
@@ -723,16 +721,15 @@ while (pinDef[0] != 0x555)
 						mnemonic[lenMnem] = '\0';
 						messInit.data = (void*)mnemonic;
 						xQueueSend(card_to_lcd, (void*)&messInit, 0);
-
+						initWallet = 1;
 					}
 					}
-
 				break;
 			}
 		}
 	}
 }
-
+*/
 //vTaskDelay(500 / portTICK_PERIOD_MS);
 int32_t ret;
 mess.cmd = /*TO_STATUS;//*/INIT_PINCODE;
