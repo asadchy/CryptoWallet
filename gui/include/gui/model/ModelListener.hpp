@@ -66,6 +66,7 @@ public:
     virtual void walletTransaction(struct transaction *trans) {};
 	virtual void setDialogText(touchgfx::Unicode::UnicodeChar *text) {};
 	virtual void setHeadText(touchgfx::Unicode::UnicodeChar *text) {};
+	virtual void setMnemonicSeed(Unicode::UnicodeChar *mnemonic) {};
 
 	virtual void showPinKeyboard() {}
 	virtual void showMSKeyboard() {}

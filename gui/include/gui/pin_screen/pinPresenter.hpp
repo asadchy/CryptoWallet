@@ -28,6 +28,7 @@ public:
     virtual ~pinPresenter() {};
 
     virtual void setHeadText(touchgfx::Unicode::UnicodeChar *text);
+    void setMnemonicSeed(Unicode::UnicodeChar *mnemonic);
     void pinScreenEntered();
     void showPinKeyboard();
     void showMSKeyboard();
@@ -36,6 +37,7 @@ public:
     void pincodeEntered(int pincode);
     void msEntered(Unicode::UnicodeChar *mnemonic);
     void cancelPressed();
+    void closePressed();
 
     virtual void toInitScreen();
     virtual void toStatusScreen();

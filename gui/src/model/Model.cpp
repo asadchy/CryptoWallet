@@ -50,7 +50,6 @@ Model::Model() : modelListener(0)
 void Model::tick()
 {
 #ifndef SIMULATOR
-	struct message rx_mess;
 	if(xQueueReceive(card_to_lcd, static_cast<void*>(&rx_mess), 0))
 	{
 		message_parser(&rx_mess);
@@ -251,6 +250,11 @@ void Model::msEntered(Unicode::UnicodeChar *mnemonic)
 	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
 }
 
+void Model::setMnemonicSeed(Unicode::UnicodeChar *mnemonic)
+{
+	modelListener->setMnemonicSeed(mnemonic);
+}
+
 /************************************ Screens switching ************************************/
 void Model::toMainScreen()
 {
@@ -329,6 +333,35 @@ void Model::pinScreenEntered()
 
 		case MS_SET:
 			showMSWindow();
+
+			{
+				char *mnemonic = static_cast<char*>(rx_mess.data);
+				char *ms_ptr;
+				const char *sep = " ";
+				int counter = 0;
+				memset(mnemonicSeed, 0, MNEMONIC_SIZE);
+
+				ms_ptr = strtok(mnemonic, sep);
+				while(ms_ptr != NULL && counter++ < WORDS_NUM)
+				{
+					size_t slen = strlen(mnemonicSeed);
+					size_t wlen = strlen(ms_ptr);
+					if((slen % 40) + wlen > 40)
+					{
+						mnemonicSeed[slen] = '\n';
+					}
+
+					strncat(mnemonicSeed, ms_ptr, TEXT_SIZE);
+					if(counter < WORDS_NUM)
+					{
+						strncat(mnemonicSeed, sep, TEXT_SIZE);
+					}
+					ms_ptr = strtok(NULL, sep);
+				}
+			}
+
+			touchgfx::Unicode::strncpy(tmpText, mnemonicSeed, TEXT_SIZE);
+			setMnemonicSeed(tmpText);
 			break;
 
 		default:
@@ -353,6 +386,14 @@ void Model::confirmPressed()
 	pinScreenState = PIN_ENTER;
 	touchgfx::Unicode::strncpy(tmpText, "Enter Your PIN-code", TEXT_SIZE);
 	tx_mess.cmd = WALLET_CONFIRM_PRESSED;
+	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+#endif
+}
+
+void Model::closePressed()
+{
+#ifndef SIMULATOR
+	tx_mess.cmd = WALLET_MS_ACCEPTED;
 	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
 #endif
 }
