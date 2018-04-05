@@ -37,7 +37,8 @@ enum COMMANDS
 	WALLET_CONFIRM_PRESSED,
 	WALLET_CANCEL_PRESSED,
 	WALLET_WRONG_PINCODE,
-	BLOCKED
+	BLOCKED,
+	WALLET_PIN_NOT_MATCH
 };
 
 struct message
@@ -76,12 +77,6 @@ struct wallet_status
 	int num;								//number of available currencies
 };
 
-struct currency
-{
-	enum CURRENCIES curr;
-	int curr_amount;
-	int curr_dollars;
-};
 
 #ifndef SIMULATOR
 	extern QueueHandle_t lcd_to_card, card_to_lcd;

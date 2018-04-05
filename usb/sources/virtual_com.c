@@ -627,46 +627,111 @@ int pinInit = -1;
 uint32_t pinDef[34];
 uint8_t seed[32] = {0};
 struct message mess;
+struct message messRes;
 int initWallet = 0;
-pinDef[1] = 1234;
-/*
+int restoreWalletPin = 0;
+int restoreWalletMS = 0;
+int generateWallet = 0;
 read_flash(pinDef, 34, PIN_ADDR);
-if(pinDef[0] != 0x555)
+while (pinDef[0] != 0x555)
 {
 	struct message messInit;
 	vTaskDelay(500 / portTICK_PERIOD_MS);
-	messInit.cmd = INIT_PINCODE;
+	messInit.cmd = WALLET_INIT;
 	xQueueSend(card_to_lcd, (void*)&messInit, 0);
 
 	while (!initWallet)
 	{
 		if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
 		{
-			if(messInit.cmd == WALLET_PINCODE)
+			int cmd = messInit.cmd;
+			switch(cmd)
 			{
-				pinDef[1] = *(uint32_t*)messInit.data;
-				pinDef[0] = 0x555;
-				char pin[4] = {0};
-				pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
-				pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
-				pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
-				pin[3] = pinDef[1]%10 + 48;
-				seedGen(pin, seed, 128);
-				for (int i = 0; i<32; i++){
-					pinDef[i+2] = seed[i];
+			case WALLET_CMD_RESTORE:
+
+				messRes.cmd = WALLET_ENTER_PIN;
+				xQueueSend(card_to_lcd, (void*)&messRes, 0);
+				while (!restoreWalletPin)
+				{
+					if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
+					{
+						pinDef[1] = *(uint32_t*)messRes.data;
+						BYTE mnemonic[120] = {0};
+						int lenMnem = 0;
+						char pin[4] = {0};
+						pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+						pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+						pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+						pin[3] = pinDef[1]%10 + 48;
+						mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
+						restoreWalletPin = 1;
+						messRes.cmd = WALLET_ENTER_MS;
+						xQueueSend(card_to_lcd, (void*)&messRes, 0);
+							while(!restoreWalletMS)
+							{
+								if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
+								{
+									int pinToSeed = 1;
+									for(int i = 0; i< lenMnem; i++)
+									{
+										if(mnemonic[i] != (uint8_t*)(messRes.data + i))
+										{
+											pinToSeed = 0;
+										}
+									}
+									if(pinToSeed == 1)
+									{
+										pinDef[0] = 0x555;
+										seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
+										for(int i = 0; i < 32; i++)
+										{
+											pinDef[i+2] = seed[i];
+										}
+										write_flash(pinDef, 34, PIN_ADDR);
+									}
+									restoreWalletMS = 1;
+									initWallet = 1;
+								}
+							}
+					}
 				}
-				write_flash(pinDef, 34, PIN_ADDR);
-				initWallet = 1;
+				break;
+			case WALLET_CMD_INIT:
+				messInit.cmd = WALLET_SET_PIN;
+				xQueueSend(card_to_lcd, (void*)&messInit, 0);
+				while (!initWallet)
+					{
+					if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+					{
+						pinDef[1] = *(uint32_t*)messInit.data;
+						static BYTE mnemonic[120] = {0};
+						int lenMnem = 0;
+						char pin[4] = {0};
+						pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+						pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+						pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+						pin[3] = pinDef[1]%10 + 48;
+						mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
+						seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
+						pinDef[0] = 0x555;
+						for(int i = 0; i < 32; i++)
+						{
+							pinDef[i+2] = seed[i];
+						}
+						write_flash(pinDef, 34, PIN_ADDR);
+						messInit.cmd = WALLET_SET_MS;
+						mnemonic[lenMnem] = '\0';
+						messInit.data = (void*)mnemonic;
+						xQueueSend(card_to_lcd, (void*)&messInit, 0);
+
+					}
+					}
+
+				break;
 			}
 		}
 	}
-}else
-{
-	for(int i = 0; i<32; i++)
-	{
-		seed[i] = pinDef[i+2];
-	}
-}*/
+}
 
 //vTaskDelay(500 / portTICK_PERIOD_MS);
 int32_t ret;
@@ -839,7 +904,7 @@ void usb_init(void)
 #endif
 }
 
-static void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
+void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
 {
 	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
 				size = FSL_FEATURE_EEPROM_SIZE / 4;
@@ -853,7 +918,7 @@ static void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
 	}
 }
 
-static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
+void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 {
 	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
 			size = FSL_FEATURE_EEPROM_SIZE / 4;
