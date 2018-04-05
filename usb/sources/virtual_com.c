@@ -733,6 +733,9 @@ while (pinDef[0] != 0x555)
 
 */
 
+mess.cmd = INIT_PINCODE;
+xQueueSend(card_to_lcd, (void*)&mess, 0);
+
 while (1)
 {
 
