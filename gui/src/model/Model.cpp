@@ -326,29 +326,35 @@ void Model::pinScreenEntered()
 		case PIN_ENTER:
 		case PIN_SET:
 			showPinKeyboard();
+			setHeadText(tmpText);
 			break;
 
 		case MS_ENTER:
 			showMSKeyboard();
+			setHeadText(tmpText);
 			break;
 
 		case MS_SET:
 			showMSWindow();
+			setHeadText(tmpText);
 
 			{
 				char *mnemonic = static_cast<char*>(rx_mess.data);
 				char *ms_ptr;
 				const char *sep = " ";
 				int counter = 0;
+				size_t len_cnt = 0;
 				memset(mnemonicSeed, 0, MNEMONIC_SIZE);
 
 				ms_ptr = strtok(mnemonic, sep);
 				while(ms_ptr != NULL && counter++ < WORDS_NUM)
 				{
-					size_t slen = strlen(mnemonicSeed);
 					size_t wlen = strlen(ms_ptr);
-					if((slen % 40) + wlen > 40)
+					len_cnt += wlen;
+					if(len_cnt > STRING_LEN)
 					{
+						len_cnt -= STRING_LEN;
+						size_t slen = strlen(mnemonicSeed);
 						mnemonicSeed[slen] = '\n';
 					}
 
@@ -356,6 +362,7 @@ void Model::pinScreenEntered()
 					if(counter < WORDS_NUM)
 					{
 						strncat(mnemonicSeed, sep, TEXT_SIZE);
+						len_cnt++;
 					}
 					ms_ptr = strtok(NULL, sep);
 				}
@@ -368,7 +375,6 @@ void Model::pinScreenEntered()
 		default:
 			break;
 	}
-	setHeadText(tmpText);
 }
 
 /************************************ Buttons callbacks ************************************/
