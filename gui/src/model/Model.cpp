@@ -307,6 +307,7 @@ void Model::transactionScreenEntered()
 	static const char *message = "Confirmation";
 	touchgfx::Unicode::strncpy(tmpText, message, TEXT_SIZE);
 	setDialogText(tmpText);
+	walletTransaction((struct transaction*)rx_mess.data);
 #ifndef SIMULATOR
 
 #endif
