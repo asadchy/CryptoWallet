@@ -21,10 +21,12 @@ public:
     void generateMnemonicSeed(Unicode::UnicodeChar *mnemonic);
 
     void setHeadText(touchgfx::Unicode::UnicodeChar *text);
+    void setMnemonicSeed(Unicode::UnicodeChar *mnemonic);
     void pinScreenEntered();
     void pincodeEntered(int pincode);
     void MSEntered(Unicode::UnicodeChar *mnemonic);
     void cancelPressed();
+    void closePressed();
 private:
     PinKeyboard pinKeyboard;
     MSKeyboard msKeyboard;
@@ -33,6 +35,8 @@ private:
     Callback<pinView, int> pincodeEnteredCallback;
     Callback<pinView, Unicode::UnicodeChar*> MSEnteredCallback;
     Callback<pinView, void> cancelPressedCallback;
+    void closePressedHandler(const touchgfx::AbstractButton& btn);
+	touchgfx::Callback<pinView, const touchgfx::AbstractButton&> closePressedCallback;
 
     Image msWindow;
     ButtonWithLabel closeBtn;

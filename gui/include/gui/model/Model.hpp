@@ -86,6 +86,7 @@ public:
     void setValue(char *value);
     void setDialogText(touchgfx::Unicode::UnicodeChar *text);
     void setHeadText(touchgfx::Unicode::UnicodeChar *text);
+    void setMnemonicSeed(Unicode::UnicodeChar *mnemonic);
 
     void toMainScreen();
     void toPincodeScreen();
@@ -95,6 +96,7 @@ public:
 
     void cancelPressed();
     void confirmPressed();
+    void closePressed();
 
     void showPinKeyboard();
     void showMSKeyboard();
@@ -122,12 +124,14 @@ private:
 	} pinScreenState;
 
 	static const uint16_t MNEMONIC_SIZE = 123;
+	static const uint16_t WORDS_NUM = 12;
 
     int pin;
     char mnemonicSeed[MNEMONIC_SIZE];
     struct transaction *transaction;
-    touchgfx::Unicode::UnicodeChar tmpText[60];
-	static const uint16_t TEXT_SIZE = 60;
+    static const uint16_t TEXT_SIZE = 123;
+    touchgfx::Unicode::UnicodeChar tmpText[TEXT_SIZE];
+    struct message rx_mess;
 	struct message tx_mess;
 };
 

@@ -56,6 +56,16 @@ void pinPresenter::cancelPressed()
 	model->cancelPressed();
 }
 
+void pinPresenter::closePressed()
+{
+	model->closePressed();
+}
+
+void pinPresenter::setMnemonicSeed(Unicode::UnicodeChar *mnemonic)
+{
+	view.setMnemonicSeed(mnemonic);
+}
+
 void pinPresenter::toInitScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();

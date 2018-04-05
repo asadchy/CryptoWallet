@@ -264,7 +264,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 		}
 		transaction.addr[42] = '\0';
 	}
-	message.cmd = TRANSACTION;
+	message.cmd = WALLET_TRANSACTION;
 	message.data = (void*)&transaction;
 	xQueueSend(card_to_lcd, (void*)&message, 0);
 	xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);

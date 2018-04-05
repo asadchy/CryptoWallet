@@ -6,7 +6,8 @@
 pinView::pinView() :
 	pincodeEnteredCallback(this, &pinView::pincodeEntered),
 	MSEnteredCallback(this, &pinView::MSEntered),
-	cancelPressedCallback(this, &pinView::cancelPressed)
+	cancelPressedCallback(this, &pinView::cancelPressed),
+	closePressedCallback(this, &pinView::closePressedHandler)
 {
 }
 
@@ -36,6 +37,7 @@ void pinView::setupScreen()
 	closeBtn.setLabelText(TypedText(T_CLOSE));
 	closeBtn.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
 	closeBtn.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
+	closeBtn.setAction(closePressedCallback);
 	mnemonicSeed.setPosition(36, 50, 302, 60);
 	mnemonicSeed.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
 	mnemonicSeed.setLinespacing(0);
@@ -88,11 +90,6 @@ void pinView::showMSWindow()
 	mnemonicSeed.invalidate();
 	closeBtn.invalidate();
 	msKeyboard.invalidate();
-
-	generateMnemonicSeed(mnemonicSeedBuffer);
-	mnemonicSeed.invalidate();
-
-	MSEntered(mnemonicSeedBuffer);
 }
 
 void pinView::setHeadText(touchgfx::Unicode::UnicodeChar *text)
@@ -134,6 +131,16 @@ void pinView::cancelPressed()
 	presenter->cancelPressed();
 }
 
+void pinView::closePressed()
+{
+	presenter->closePressed();
+}
+
+void pinView::closePressedHandler(const touchgfx::AbstractButton& btn)
+{
+	closePressed();
+}
+
 void pinView::pinScreenEntered()
 {
 	presenter->pinScreenEntered();
@@ -162,4 +169,12 @@ void pinView::generateMnemonicSeed(Unicode::UnicodeChar *mnemonic)
 		}
 	}
 	Unicode::strncpy(mnemonic, tmp, MNEMONICSEED_SIZE);
+}
+
+void pinView::setMnemonicSeed(Unicode::UnicodeChar *mnemonic)
+{
+	memset(mnemonicSeedBuffer, 0, MNEMONICSEED_SIZE);
+	Unicode::strncpy(mnemonicSeedBuffer, mnemonic, MNEMONICSEED_SIZE);
+	memset(mnemonic, 0, MNEMONICSEED_SIZE);
+	mnemonicSeed.invalidate();
 }
