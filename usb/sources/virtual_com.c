@@ -633,7 +633,7 @@ int restoreWalletPin = 0;
 int restoreWalletMS = 0;
 int generateWallet = 0;
 pinDef[1] = 1234;
-/*
+
 read_flash(pinDef, 34, PIN_ADDR);
 while (pinDef[0] != 0x555)
 {
@@ -660,7 +660,7 @@ while (pinDef[0] != 0x555)
 						pinDef[1] = *(uint32_t*)messRes.data;
 						BYTE mnemonic[120] = {0};
 						int lenMnem = 0;
-						char pin[4] = {0};
+						BYTE pin[4] = {0};
 						pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
 						pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
 						pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
@@ -721,8 +721,18 @@ while (pinDef[0] != 0x555)
 						messInit.cmd = WALLET_SET_MS;
 						mnemonic[lenMnem] = '\0';
 						messInit.data = (void*)mnemonic;
-						xQueueSend(card_to_lcd, (void*)&messInit, 0);
 						initWallet = 1;
+						xQueueSend(card_to_lcd, (void*)&messInit, 0);
+
+						while(1)
+						{
+							if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+							{
+								messInit.cmd = WALLET_STATUS;
+								xQueueSend(card_to_lcd, (void*)&messInit, 0);
+							}
+						}
+
 					}
 					}
 				break;
@@ -731,7 +741,7 @@ while (pinDef[0] != 0x555)
 	}
 }
 
-*/
+
 
 mess.cmd = INIT_PINCODE;
 xQueueSend(card_to_lcd, (void*)&mess, 0);
@@ -899,7 +909,7 @@ void usb_init(void)
 #endif
 }
 
-void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
+static void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
 {
 	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
 				size = FSL_FEATURE_EEPROM_SIZE / 4;
@@ -913,7 +923,7 @@ void write_flash(uint32_t *data, uint32_t size, uint32_t addr)
 	}
 }
 
-void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
+static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 {
 	if(size > FSL_FEATURE_EEPROM_SIZE / 4)
 			size = FSL_FEATURE_EEPROM_SIZE / 4;
