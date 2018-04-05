@@ -49,10 +49,10 @@ void transactionView::walletTransaction(struct transaction *trans)
 		addressBuffer[size] = 0;
 	address.invalidate();
 
-	size = Unicode::strncpy(currencyBuffer, trans->value, CURRENCY_SIZE);
+	size = Unicode::strncpy(valueBuffer, trans->value, VALUE_SIZE);
 	if(size > 0)
-		currencyBuffer[size] = 0;
-	currency.invalidate();
+		valueBuffer[size] = 0;
+	value.invalidate();
 }
 
 void transactionView::transactionScreenEntered()
