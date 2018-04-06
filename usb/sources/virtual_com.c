@@ -631,12 +631,14 @@ struct message messRes;
 int initWallet = 0;
 int restoreWalletPin = 0;
 int restoreWalletMS = 0;
-int generateWallet = 0;
 pinDef[1] = 1234;
+int walletInit = 0x55;
 
 read_flash(pinDef, 34, PIN_ADDR);
-while (pinDef[0] != 0x555)
+while (pinDef[0] != walletInit)
 {
+	initWallet=0;
+	restoreWalletPin = 0;
 	struct message messInit;
 	vTaskDelay(500 / portTICK_PERIOD_MS);
 	messInit.cmd = WALLET_INIT;
@@ -657,6 +659,10 @@ while (pinDef[0] != 0x555)
 				{
 					if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
 					{
+						cmd = messInit.cmd;
+						switch(cmd)
+						{
+						case WALLET_PINCODE:
 						pinDef[1] = *(uint32_t*)messRes.data;
 						BYTE mnemonic[120] = {0};
 						int lenMnem = 0;
@@ -674,13 +680,13 @@ while (pinDef[0] != 0x555)
 								if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
 								{
 									int pinToSeed = 1;
-									if(strncmp(mnemonic, messRes.data, lenMnem))
+									if(strncmp((char*)mnemonic, (char*)messRes.data, lenMnem))
 									{
 										pinToSeed = 0;
 									}
 									if(pinToSeed == 1)
 									{
-										pinDef[0] = 0x555;
+										pinDef[0] = walletInit;
 										seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
 										for(int i = 0; i < 32; i++)
 										{
@@ -692,6 +698,12 @@ while (pinDef[0] != 0x555)
 									initWallet = 1;
 								}
 							}
+							break;
+						case WALLET_CANCEL_PRESSED:
+							initWallet = 1;
+							restoreWalletPin = 1;
+						break;
+					}
 					}
 				}
 				break;
@@ -702,17 +714,21 @@ while (pinDef[0] != 0x555)
 					{
 					if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
 					{
+						int cmd = messInit.cmd;
+						switch(cmd)
+						{
+						case WALLET_PINCODE:
 						pinDef[1] = *(uint32_t*)messInit.data;
 						static BYTE mnemonic[120] = {0};
 						int lenMnem = 0;
-						char pin[4] = {0};
+						unsigned char pin[4] = {0};
 						pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
 						pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
 						pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
 						pin[3] = pinDef[1]%10 + 48;
 						mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
 						seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
-						pinDef[0] = 0x555;
+						pinDef[0] = walletInit;
 						for(int i = 0; i < 32; i++)
 						{
 							pinDef[i+2] = seed[i];
@@ -732,7 +748,11 @@ while (pinDef[0] != 0x555)
 								xQueueSend(card_to_lcd, (void*)&messInit, 0);
 							}
 						}
-
+						break;
+						case WALLET_CANCEL_PRESSED:
+							initWallet = 1;
+						break;
+						}
 					}
 					}
 				break;
