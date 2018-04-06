@@ -146,31 +146,6 @@ void pinView::pinScreenEntered()
 	presenter->pinScreenEntered();
 }
 
-void pinView::generateMnemonicSeed(Unicode::UnicodeChar *mnemonic)
-{
-	char tmp[MNEMONICSEED_SIZE];
-	static const char space[] = " ";
-
-	memset(tmp, 0, sizeof(tmp));
-	for(int i = 0; i < 12; i++)
-	{
-		long int curr_word = rand() % 2048;
-		size_t slen = strlen(tmp);
-		size_t wlen = strlen(wordlist[curr_word]);
-		if((slen % 40) + wlen > 40)
-		{
-			tmp[slen] = '\n';
-		}
-
-		strncat(tmp, wordlist[curr_word], sizeof(tmp));
-		if(i < 11)
-		{
-			strncat(tmp, space, sizeof(tmp));
-		}
-	}
-	Unicode::strncpy(mnemonic, tmp, MNEMONICSEED_SIZE);
-}
-
 void pinView::setMnemonicSeed(Unicode::UnicodeChar *mnemonic)
 {
 	memset(mnemonicSeedBuffer, 0, MNEMONICSEED_SIZE);

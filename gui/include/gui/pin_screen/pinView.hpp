@@ -18,8 +18,6 @@ public:
     virtual void showMSKeyboard();
     virtual void showMSWindow();
 
-    void generateMnemonicSeed(Unicode::UnicodeChar *mnemonic);
-
     void setHeadText(touchgfx::Unicode::UnicodeChar *text);
     void setMnemonicSeed(Unicode::UnicodeChar *mnemonic);
     void pinScreenEntered();
