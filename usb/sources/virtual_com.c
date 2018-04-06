@@ -628,13 +628,13 @@ uint32_t send=0;
 int numCheckPin = 0;
 int pinInit = -1;
 struct message mess;
-int walletInit = 0x0015;
+int walletInit = 0x1215;
 
 read_flash(pinDef, 34, PIN_ADDR);
 initWalletCMD(walletInit);
 
 
-mess.cmd = INIT_PINCODE;
+mess.cmd = WALLET_ENTER_PIN;
 xQueueSend(card_to_lcd, (void*)&mess, 0);
 
 while (1)
@@ -651,6 +651,27 @@ while (1)
 				if(pinDef[1] == *(uint32_t*)mess.data){
 					numCheckPin = 0;
 					pinInit = *(uint32_t*)mess.data;
+					char amo[11] = {"0.00000000"};
+					amo[10] = '\0';
+					static struct wallet_status statusW;
+
+					for (int i = 0; i < 11; i++)
+					{
+						statusW.curr[0].amount[i] = amo[i];
+						statusW.curr[0].amount_dollars[i] = amo[i];
+						statusW.curr[1].amount[i] = amo[i];
+						statusW.curr[1].amount_dollars[i] = amo[i];
+						statusW.curr[2].amount[i] = amo[i];
+						statusW.curr[2].amount_dollars[i] = amo[i];
+					}
+
+					statusW.curr[0].curr_name = BTC;
+					statusW.curr[1].curr_name = ETH;
+					statusW.curr[2].curr_name = LTC;
+
+					statusW.num = 3;
+
+					mess.data = (void*)&statusW;
 					mess.cmd = WALLET_STATUS;
 					xQueueSend(card_to_lcd, (void*)&mess, 0);
 				}
