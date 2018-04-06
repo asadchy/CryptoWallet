@@ -87,10 +87,10 @@ void BOARD_DbgConsole_Deinit(void);
 void BOARD_DbgConsole_Init(void);
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
-
+uint32_t pinDef[34];
 static void write_flash(uint32_t *data, uint32_t size, uint32_t addr);
 static void read_flash(uint32_t *data, uint32_t size, uint32_t addr);
-
+void initWalletCMD(int walletInit);
 /*******************************************************************************
 * Variables
 ******************************************************************************/
@@ -212,6 +212,9 @@ void USB_DeviceTaskFn(void *deviceHandle)
 #endif
 }
 #endif
+
+
+
 /*!
  * @brief CDC class specific callback function.
  *
@@ -624,156 +627,11 @@ uint32_t lenBuf = 0;
 uint32_t send=0;
 int numCheckPin = 0;
 int pinInit = -1;
-uint32_t pinDef[34];
-uint8_t seed[32] = {0};
 struct message mess;
-struct message messRes;
-int initWallet = 0;
-int restoreWalletPin = 0;
-int restoreWalletMS = 0;
-pinDef[1] = 1234;
-int walletInit = 0x5555;
+int walletInit = 0x0015;
 
 read_flash(pinDef, 34, PIN_ADDR);
-while (pinDef[0] != walletInit)
-{
-	initWallet=0;
-	restoreWalletPin = 0;
-	restoreWalletMS = 0;
-	struct message messInit;
-	vTaskDelay(500 / portTICK_PERIOD_MS);
-	messInit.cmd = WALLET_INIT;
-	xQueueSend(card_to_lcd, (void*)&messInit, 0);
-
-	while (!initWallet)
-	{
-		if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
-		{
-			int cmd = messInit.cmd;
-			switch(cmd)
-			{
-			case WALLET_CMD_RESTORE:
-
-				messRes.cmd = WALLET_ENTER_PIN;
-				xQueueSend(card_to_lcd, (void*)&messRes, 0);
-				while (!restoreWalletPin)
-				{
-					if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
-					{
-						cmd = messRes.cmd;
-						switch(cmd)
-						{
-						case WALLET_PINCODE:
-						pinDef[1] = *(uint32_t*)messRes.data;
-						BYTE mnemonic[120] = {0};
-						int lenMnem = 0;
-						BYTE pin[4] = {0};
-						pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
-						pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
-						pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
-						pin[3] = pinDef[1]%10 + 48;
-						mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
-						restoreWalletPin = 1;
-						messRes.cmd = WALLET_ENTER_MS;
-						xQueueSend(card_to_lcd, (void*)&messRes, 0);
-							while(!restoreWalletMS)
-							{
-								if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
-								{
-									int pinToSeed = 1;
-									cmd = messRes.cmd;
-									switch(cmd)
-									{
-									case WALLET_MNEMONIC:
-
-									if(strncmp((char*)mnemonic, (char*)messRes.data, lenMnem))
-									{
-										pinToSeed = 0;
-									}
-									if(pinToSeed == 1)
-									{
-										pinDef[0] = walletInit;
-										seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
-										for(int i = 0; i < 32; i++)
-										{
-											pinDef[i+2] = seed[i];
-										}
-										write_flash(pinDef, 34, PIN_ADDR);
-									}
-									restoreWalletMS = 1;
-									initWallet = 1;
-									break;
-									case WALLET_CANCEL_PRESSED:
-										initWallet = 1;
-										restoreWalletPin = 1;
-										restoreWalletMS = 1;
-										break;
-								}
-								}
-							}
-							break;
-						case WALLET_CANCEL_PRESSED:
-							initWallet = 1;
-							restoreWalletPin = 1;
-						break;
-					}
-					}
-				}
-				break;
-			case WALLET_CMD_INIT:
-				messInit.cmd = WALLET_SET_PIN;
-				xQueueSend(card_to_lcd, (void*)&messInit, 0);
-				while (!initWallet)
-					{
-					if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
-					{
-						int cmd = messInit.cmd;
-						switch(cmd)
-						{
-						case WALLET_PINCODE:
-						pinDef[1] = *(uint32_t*)messInit.data;
-						static BYTE mnemonic[120] = {0};
-						int lenMnem = 0;
-						unsigned char pin[4] = {0};
-						pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
-						pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
-						pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
-						pin[3] = pinDef[1]%10 + 48;
-						mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
-						seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
-						pinDef[0] = walletInit;
-						for(int i = 0; i < 32; i++)
-						{
-							pinDef[i+2] = seed[i];
-						}
-						write_flash(pinDef, 34, PIN_ADDR);
-						messInit.cmd = WALLET_SET_MS;
-						mnemonic[lenMnem] = '\0';
-						messInit.data = (void*)mnemonic;
-						initWallet = 1;
-						xQueueSend(card_to_lcd, (void*)&messInit, 0);
-
-						while(1)
-						{
-							if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
-							{
-								messInit.cmd = WALLET_STATUS;
-								xQueueSend(card_to_lcd, (void*)&messInit, 0);
-							}
-						}
-						break;
-						case WALLET_CANCEL_PRESSED:
-							initWallet = 1;
-						break;
-						}
-					}
-					}
-				break;
-			}
-		}
-	}
-}
-
+initWalletCMD(walletInit);
 
 
 mess.cmd = INIT_PINCODE;
@@ -810,6 +668,14 @@ while (1)
 					}
 				}
 			}
+			break;
+		case WALLET_CMD_CLEAR:
+			for(int i = 0; i < 34; i++)
+			{
+				pinDef[i] = '\n';
+			}
+			write_flash(pinDef, 34, PIN_ADDR);
+			initWalletCMD(walletInit);
 			break;
 		}
 	}
@@ -970,3 +836,153 @@ static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 	}
 }
 
+void initWalletCMD(int walletInit)
+{
+	uint8_t seed[32] = {0};
+
+	struct message messRes;
+	int initWallet = 0;
+	int restoreWalletPin = 0;
+	int restoreWalletMS = 0;
+	while (pinDef[0] != walletInit)
+	{
+		BYTE pin[5] = {0};
+		pin[4] = '\0';
+		int lenMnem = 0;
+		BYTE mnemonic[120] = {0};
+		initWallet=0;
+		restoreWalletPin = 0;
+		restoreWalletMS = 0;
+		struct message messInit;
+		vTaskDelay(500 / portTICK_PERIOD_MS);
+		messInit.cmd = WALLET_INIT;
+		xQueueSend(card_to_lcd, (void*)&messInit, 0);
+
+		while (!initWallet)
+		{
+			if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+			{
+				int cmd = messInit.cmd;
+				switch(cmd)
+				{
+				case WALLET_CMD_RESTORE:
+
+					messRes.cmd = WALLET_ENTER_PIN;
+					xQueueSend(card_to_lcd, (void*)&messRes, 0);
+					while (!restoreWalletPin)
+					{
+						if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
+						{
+							cmd = messRes.cmd;
+							switch(cmd)
+							{
+							case WALLET_PINCODE:
+							pinDef[1] = *(uint32_t*)messRes.data;
+
+							pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+							pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+							pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+							pin[3] = pinDef[1]%10 + 48;
+							mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
+							restoreWalletPin = 1;
+							messRes.cmd = WALLET_ENTER_MS;
+							xQueueSend(card_to_lcd, (void*)&messRes, 0);
+								while(!restoreWalletMS)
+								{
+									if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
+									{
+										int pinToSeed = 1;
+										cmd = messRes.cmd;
+										switch(cmd)
+										{
+										case WALLET_MNEMONIC:
+
+										if(strncmp((char*)mnemonic, (char*)messRes.data, lenMnem))
+										{
+											pinToSeed = 0;
+										}
+										if(pinToSeed == 1)
+										{
+											pinDef[0] = walletInit;
+											seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
+											for(int i = 0; i < 32; i++)
+											{
+												pinDef[i+2] = seed[i];
+											}
+											write_flash(pinDef, 34, PIN_ADDR);
+										}
+										restoreWalletMS = 1;
+										initWallet = 1;
+									/*	messInit.cmd = WALLET_STATUS;
+										xQueueSend(card_to_lcd, (void*)&messInit, 0);*/
+										break;
+										case WALLET_CANCEL_PRESSED:
+											initWallet = 1;
+											restoreWalletPin = 1;
+											restoreWalletMS = 1;
+											break;
+									}
+									}
+								}
+								break;
+							case WALLET_CANCEL_PRESSED:
+								initWallet = 1;
+								restoreWalletPin = 1;
+							break;
+						}
+						}
+					}
+					break;
+				case WALLET_CMD_INIT:
+					messInit.cmd = WALLET_SET_PIN;
+					xQueueSend(card_to_lcd, (void*)&messInit, 0);
+					while (!initWallet)
+						{
+						if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+						{
+							int cmd = messInit.cmd;
+							switch(cmd)
+							{
+							case WALLET_PINCODE:
+							pinDef[1] = *(uint32_t*)messInit.data;
+
+							pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+							pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+							pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+							pin[3] = pinDef[1]%10 + 48;
+							mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
+							seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
+							pinDef[0] = walletInit;
+							for(int i = 0; i < 32; i++)
+							{
+								pinDef[i+2] = seed[i];
+							}
+							write_flash(pinDef, 34, PIN_ADDR);
+							messInit.cmd = WALLET_SET_MS;
+							mnemonic[lenMnem] = '\0';
+							messInit.data = (void*)mnemonic;
+							initWallet = 1;
+							xQueueSend(card_to_lcd, (void*)&messInit, 0);
+							int temp = 0;
+							while(!temp)
+							{
+								if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+								{
+									temp=1;
+									/*messInit.cmd = WALLET_STATUS;
+									xQueueSend(card_to_lcd, (void*)&messInit, 0);*/
+								}
+							}
+							break;
+							case WALLET_CANCEL_PRESSED:
+								initWallet = 1;
+							break;
+							}
+						}
+						}
+					break;
+				}
+			}
+		}
+	}
+}

@@ -9,7 +9,7 @@ typedef unsigned char BYTE;
 typedef unsigned int UINT32;
 
 void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int *pinInit){
-//	int numCheckPin = 0;
+	int numCheckPin = 0;
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
 	BYTE address[42] = { 0 };

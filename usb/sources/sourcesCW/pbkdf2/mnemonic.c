@@ -12,7 +12,12 @@
 
 void mnemonicGenerate(BYTE *password, BYTE* mnemonic, int *lenMnem, int strength)
 {
-	const char *mnem = mnemonic_generate(strength, password);
+	BYTE pin[32] = {0};
+	for (int i = 0; i < 4; i++)
+	{
+		pin[i] = password[i];
+	}
+	const char *mnem = mnemonic_generate(strength, pin);
 	*lenMnem = strlen(mnem);
 	for (int i = 0; i < *lenMnem; i++)
 	{
