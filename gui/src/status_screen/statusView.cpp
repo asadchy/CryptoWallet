@@ -82,7 +82,7 @@ void statusView::walletStatus(struct wallet_status *status)
 				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
 				Unicode::snprintf(tmp, BUF_SIZE, "%s BTC", tmp_ammount);
 				listElements[elementsCounter].setAmount(tmp);
-				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount_dollars, BUF_SIZE);
 				Unicode::snprintf(tmp, BUF_SIZE, "%s $", tmp_ammount);
 				listElements[elementsCounter].setAmountDollars(tmp);
 				break;
@@ -94,7 +94,7 @@ void statusView::walletStatus(struct wallet_status *status)
 				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
 				Unicode::snprintf(tmp, BUF_SIZE, "%s ETH", tmp_ammount);
 				listElements[elementsCounter].setAmount(tmp);
-				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount_dollars, BUF_SIZE);
 				Unicode::snprintf(tmp, BUF_SIZE, "%s $", tmp_ammount);
 				listElements[elementsCounter].setAmountDollars(tmp);
 				break;
@@ -106,7 +106,7 @@ void statusView::walletStatus(struct wallet_status *status)
 				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
 				Unicode::snprintf(tmp, BUF_SIZE, "%s LTC", tmp_ammount);
 				listElements[elementsCounter].setAmount(tmp);
-				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount_dollars, BUF_SIZE);
 				Unicode::snprintf(tmp, BUF_SIZE, "%s $", tmp_ammount);
 				listElements[elementsCounter].setAmountDollars(tmp);
 				break;
