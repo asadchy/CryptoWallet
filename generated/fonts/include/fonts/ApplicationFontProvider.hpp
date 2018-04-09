@@ -19,6 +19,7 @@ struct Typography
   static const touchgfx::FontId DIALOG = 8;
   static const touchgfx::FontId ALPHA_TEXT_BTN = 9;
   static const touchgfx::FontId ALPHA_TEXT = 10;
+  static const touchgfx::FontId CURR_TEXT_T = 11;
 };
 
 class ApplicationFontProvider : public touchgfx::FontProvider

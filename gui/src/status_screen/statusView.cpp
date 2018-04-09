@@ -58,63 +58,69 @@ void statusView::setDialogText(touchgfx::Unicode::UnicodeChar *text)
 
 void statusView::walletStatus(struct wallet_status *status)
 {
-//	Unicode::UnicodeChar tmp[BUF_SIZE];
-//
-//	for(int i = 0; i < status->num; i++)
-//	{
-//		if(status->curr[i].curr_name < CURR_NUM)
-//		{
-//			if(elementsCounter > 0)
-//			{
-//				listElements[elementsCounter].setListElement(Bitmap(BITMAP_FILLER_ID));
-//				list.add(listElements[elementsCounter]);
-//				elementsCounter++;
-//			}
-//			listElements[elementsCounter].setListElement(Bitmap(BITMAP_CURR_STATUS_ID));
-//		}
-//
-//		switch(status->curr[i].curr_name)
-//		{
-//			case BTC:
-//				listElements[elementsCounter].setCurrIco(Bitmap(BITMAP_BITCOIN_ID));
-//				Unicode::strncpy(tmp, currencies_list[status->curr[i].curr_name], BUF_SIZE);
-//				listElements[elementsCounter].setCurr(tmp);
-//				Unicode::snprintf(tmp, BUF_SIZE, "%s BTC", status->curr[i].amount);
-//				listElements[elementsCounter].setAmount(tmp);
-//				Unicode::snprintf(tmp, BUF_SIZE, "%s $", status->curr[i].amount_dollars);
-//				listElements[elementsCounter].setAmountDollars(tmp);
-//				break;
-//
-//			case ETH:
-//				listElements[elementsCounter].setCurrIco(Bitmap(BITMAP_ETHER_ID));
-//				Unicode::strncpy(tmp, currencies_list[status->curr[i].curr_name], BUF_SIZE);
-//				listElements[elementsCounter].setCurr(tmp);
-//				Unicode::snprintf(tmp, BUF_SIZE, "%s ETH", status->curr[i].amount);
-//				listElements[elementsCounter].setAmount(tmp);
-//				Unicode::snprintf(tmp, BUF_SIZE, "%s $", status->curr[i].amount_dollars);
-//				listElements[elementsCounter].setAmountDollars(tmp);
-//				break;
-//
-//			case LTC:
-//				listElements[elementsCounter].setCurrIco(Bitmap(BITMAP_LITECOIN_ID));
-//				Unicode::strncpy(tmp, currencies_list[status->curr[i].curr_name], BUF_SIZE);
-//				listElements[elementsCounter].setCurr(tmp);
-//				Unicode::snprintf(tmp, BUF_SIZE, "%s LTC", status->curr[i].amount);
-//				listElements[elementsCounter].setAmount(tmp);
-//				Unicode::snprintf(tmp, BUF_SIZE, "%s $", status->curr[i].amount_dollars);
-//				listElements[elementsCounter].setAmountDollars(tmp);
-//				break;
-//
-//			default:
-//				break;
-//		}
-//
-//		if(status->curr[i].curr_name < CURR_NUM)
-//		{
-//			list.add(listElements[elementsCounter]);
-//			elementsCounter++;
-//		}
-//	}
+	Unicode::UnicodeChar tmp[BUF_SIZE], tmp_ammount[BUF_SIZE];
+
+	for(int i = 0; i < status->num; i++)
+	{
+		if(status->curr[i].curr_name < CURR_NUM)
+		{
+			if(elementsCounter > 0)
+			{
+				listElements[elementsCounter].setListElement(Bitmap(BITMAP_FILLER_ID));
+				list.add(listElements[elementsCounter]);
+				elementsCounter++;
+			}
+			listElements[elementsCounter].setListElement(Bitmap(BITMAP_CURR_STATUS_ID));
+		}
+
+		switch(status->curr[i].curr_name)
+		{
+			case BTC:
+				listElements[elementsCounter].setCurrIco(Bitmap(BITMAP_BITCOIN_ID));
+				Unicode::strncpy(tmp, currencies_list[status->curr[i].curr_name], BUF_SIZE);
+				listElements[elementsCounter].setCurr(tmp);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::snprintf(tmp, BUF_SIZE, "%s BTC", tmp_ammount);
+				listElements[elementsCounter].setAmount(tmp);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::snprintf(tmp, BUF_SIZE, "%s $", tmp_ammount);
+				listElements[elementsCounter].setAmountDollars(tmp);
+				break;
+
+			case ETH:
+				listElements[elementsCounter].setCurrIco(Bitmap(BITMAP_ETHER_ID));
+				Unicode::strncpy(tmp, currencies_list[status->curr[i].curr_name], BUF_SIZE);
+				listElements[elementsCounter].setCurr(tmp);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::snprintf(tmp, BUF_SIZE, "%s ETH", tmp_ammount);
+				listElements[elementsCounter].setAmount(tmp);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::snprintf(tmp, BUF_SIZE, "%s $", tmp_ammount);
+				listElements[elementsCounter].setAmountDollars(tmp);
+				break;
+
+			case LTC:
+				listElements[elementsCounter].setCurrIco(Bitmap(BITMAP_LITECOIN_ID));
+				Unicode::strncpy(tmp, currencies_list[status->curr[i].curr_name], BUF_SIZE);
+				listElements[elementsCounter].setCurr(tmp);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::snprintf(tmp, BUF_SIZE, "%s LTC", tmp_ammount);
+				listElements[elementsCounter].setAmount(tmp);
+				Unicode::strncpy(tmp_ammount, status->curr[i].amount, BUF_SIZE);
+				Unicode::snprintf(tmp, BUF_SIZE, "%s $", tmp_ammount);
+				listElements[elementsCounter].setAmountDollars(tmp);
+				break;
+
+			default:
+				break;
+		}
+
+		if(status->curr[i].curr_name < CURR_NUM)
+		{
+			list.add(listElements[elementsCounter]);
+			elementsCounter++;
+		}
+	}
 }
 
 void statusView::buttonClickedHandler(const AbstractButton& button)

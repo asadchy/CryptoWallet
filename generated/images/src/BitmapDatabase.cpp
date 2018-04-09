@@ -7,8 +7,10 @@
 using namespace touchgfx;
 #endif
 
+extern const unsigned char _background[]; 
 extern const unsigned char _background_3[]; 
 extern const unsigned char _bitcoin[]; 
+extern const unsigned char _btc_status[]; 
 extern const unsigned char _button_not_pressed[]; 
 extern const unsigned char _button_not_pressed_long[]; 
 extern const unsigned char _button_pressed[]; 
@@ -18,12 +20,14 @@ extern const unsigned char _clear_wallet_pressed[];
 extern const unsigned char _curr_status[]; 
 extern const unsigned char _dialog[]; 
 extern const unsigned char _enter_pressed[]; 
+extern const unsigned char _eth_status[]; 
 extern const unsigned char _ether[]; 
 extern const unsigned char _filler[]; 
 extern const unsigned char _key_button_pressed[]; 
 extern const unsigned char _key_pressed[]; 
 extern const unsigned char _keyboard[]; 
 extern const unsigned char _leftDoor[]; 
+extern const unsigned char _lite_status[]; 
 extern const unsigned char _litecoin[]; 
 extern const unsigned char _logo[]; 
 extern const unsigned char _ms_keyboard[]; 
@@ -37,8 +41,10 @@ extern const unsigned char _top_slide_menu_background[];
 extern const unsigned char _top_slide_menu_button[]; 
 
 const touchgfx::Bitmap::BitmapData bitmap_database[] = {
+    { _background, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
     { _background_3, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
     { _bitcoin, 0, 36, 36, 6, 5, 24, 26, touchgfx::Bitmap::ARGB8888 },
+    { _btc_status, 0, 218, 124, 0, 0, 218, 124, touchgfx::Bitmap::RGB565 },
     { _button_not_pressed, 0, 96, 40, 10, 0, 76, 40, touchgfx::Bitmap::ARGB8888 },
     { _button_not_pressed_long, 0, 290, 60, 10, 0, 270, 60, touchgfx::Bitmap::ARGB8888 },
     { _button_pressed, 0, 96, 40, 10, 0, 76, 40, touchgfx::Bitmap::ARGB8888 },
@@ -48,12 +54,14 @@ const touchgfx::Bitmap::BitmapData bitmap_database[] = {
     { _curr_status, 0, 130, 200, 0, 0, 130, 200, touchgfx::Bitmap::RGB565 },
     { _dialog, 0, 320, 240, 0, 0, 320, 240, touchgfx::Bitmap::RGB565 },
     { _enter_pressed, 0, 75, 92, 5, 0, 65, 92, touchgfx::Bitmap::ARGB8888 },
+    { _eth_status, 0, 218, 124, 0, 0, 218, 124, touchgfx::Bitmap::RGB565 },
     { _ether, 0, 36, 36, 14, 8, 8, 14, touchgfx::Bitmap::ARGB8888 },
     { _filler, 0, 20, 200, 0, 0, 20, 200, touchgfx::Bitmap::RGB565 },
     { _key_button_pressed, 0, 30, 32, 4, 5, 22, 22, touchgfx::Bitmap::ARGB8888 },
     { _key_pressed, 0, 75, 45, 5, 0, 65, 45, touchgfx::Bitmap::ARGB8888 },
     { _keyboard, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
     { _leftDoor, 0, 258, 272, 0, 0, 241, 272, touchgfx::Bitmap::ARGB8888 },
+    { _lite_status, 0, 218, 124, 0, 0, 218, 124, touchgfx::Bitmap::RGB565 },
     { _litecoin, 0, 36, 36, 11, 19, 15, 14, touchgfx::Bitmap::ARGB8888 },
     { _logo, 0, 96, 85, 34, 6, 25, 29, touchgfx::Bitmap::ARGB8888 },
     { _ms_keyboard, 0, 480, 272, 39, 48, 284, 60, touchgfx::Bitmap::ARGB8888 },

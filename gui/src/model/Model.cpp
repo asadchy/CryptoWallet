@@ -200,20 +200,26 @@ void Model::walletStatus(struct wallet_status *status)
 
 void Model::clearWallet()
 {
+#ifndef SIMULATOR
 	tx_mess.cmd = WALLET_CMD_CLEAR;
 	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+#endif
 }
 
 void Model::initWallet()
 {
+#ifndef SIMULATOR
 	tx_mess.cmd = WALLET_CMD_INIT;
 	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+#endif
 }
 
 void Model::restoreWallet()
 {
+#ifndef SIMULATOR
 	tx_mess.cmd = WALLET_CMD_RESTORE;
 	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+#endif
 }
 
 void Model::pincodeEntered(int pincode)
@@ -232,6 +238,7 @@ void Model::pincodeEntered(int pincode)
 
 void Model::msEntered(Unicode::UnicodeChar *mnemonic)
 {
+#ifndef SIMULATOR
 	int i = 0;
 	int j = 0;
 
@@ -248,6 +255,7 @@ void Model::msEntered(Unicode::UnicodeChar *mnemonic)
 	tx_mess.cmd = WALLET_MNEMONIC;
 	tx_mess.data = static_cast<void*>(&mnemonicSeed);
 	xQueueSend(lcd_to_card, static_cast<void*>(&tx_mess), 0);
+#endif
 }
 
 void Model::setMnemonicSeed(Unicode::UnicodeChar *mnemonic)
@@ -317,6 +325,7 @@ void Model::statusScreenEntered()
 {
 	tmpText[0] = 0;
 	setDialogText(tmpText);
+	walletStatus(static_cast<struct wallet_status*>(rx_mess.data));
 }
 
 void Model::pinScreenEntered()
