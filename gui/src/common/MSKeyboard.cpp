@@ -109,11 +109,11 @@ void MSKeyboard::cancelPressedHandler()
 
 void MSKeyboard::keyPressedhandler(Unicode::UnicodeChar keyChar)
 {
-	//TODO handle long words (for example 40 symbols)
+	//TODO handle long words (for example 32 symbols)
 	uint16_t pos = keyboard.getBufferPosition();
 	if(keyChar > 0)
 	{
-		if(pos == 40 || pos == 80)
+		if(pos == 32 || pos == 64 || pos == 96)
 		{
 			if(buffer[pos - 1] != ' ')
 			{

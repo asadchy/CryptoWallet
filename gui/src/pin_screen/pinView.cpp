@@ -153,3 +153,8 @@ void pinView::setMnemonicSeed(Unicode::UnicodeChar *mnemonic)
 	memset(mnemonic, 0, MNEMONICSEED_SIZE);
 	mnemonicSeed.invalidate();
 }
+
+void pinView::setDialogText(touchgfx::Unicode::UnicodeChar *text)
+{
+	dialog.setText(text);
+}

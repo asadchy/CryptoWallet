@@ -23,6 +23,7 @@ public:
     void pinScreenEntered();
     void pincodeEntered(int pincode);
     void MSEntered(Unicode::UnicodeChar *mnemonic);
+    void setDialogText(touchgfx::Unicode::UnicodeChar *text);
     void cancelPressed();
     void closePressed();
 private:

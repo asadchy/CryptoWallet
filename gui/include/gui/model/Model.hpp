@@ -125,7 +125,7 @@ private:
 
 	static const uint16_t MNEMONIC_SIZE = 123;
 	static const uint16_t WORDS_NUM = 12;
-	static const uint16_t STRING_LEN = 40;
+	static const uint16_t STRING_LEN = 32;
 
     int pin;
     char mnemonicSeed[MNEMONIC_SIZE];

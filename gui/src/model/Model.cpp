@@ -93,7 +93,7 @@ void Model::tick()
 	}
 	else if(tick_counter == mul * 300)
 	{
-		//showMSKeyboard();
+		showMSKeyboard();
 		static const char *message = "Enter Your Mnemonic Seed";
 		touchgfx::Unicode::strncpy(tmpText, message, TEXT_SIZE);
 		setHeadText(tmpText);

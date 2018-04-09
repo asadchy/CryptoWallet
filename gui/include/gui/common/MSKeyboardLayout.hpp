@@ -16,7 +16,7 @@
 using namespace touchgfx;
 
 #define ALPHA_BASE_X			30
-#define ALPHA_BASE_Y			114
+#define ALPHA_BASE_Y			128
 
 #define ALPHA_BUTN_SIZE_X		30
 #define ALPHA_BUTN_SIZE_Y		32
@@ -87,7 +87,7 @@ static Keyboard::Layout MSLayout =
     27,
     MSCallbackAreas,
     3,
-    Rect(36, 50, 302, 60),
+    Rect(36, 34, 302, 126),
     TypedText(T_MS_TEXT),
     0,
     Typography::ALPHA_TEXT_BTN,

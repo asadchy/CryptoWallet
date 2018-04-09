@@ -65,7 +65,7 @@ static Keyboard::Layout pinLayout =
     12,
     pinCallbackAreas,
     3,
-    Rect(30, 54, 300, 40),
+    Rect(30, 38, 300, 40),
     TypedText(T_ENTEREDTEXT),
     0,
     Typography::BUTTON_TEXT,
