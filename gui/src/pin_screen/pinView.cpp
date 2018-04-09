@@ -38,7 +38,7 @@ void pinView::setupScreen()
 	closeBtn.setLabelColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
 	closeBtn.setLabelColorPressed(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
 	closeBtn.setAction(closePressedCallback);
-	mnemonicSeed.setPosition(36, 50, 302, 60);
+	mnemonicSeed.setPosition(36, 34, 302, 126);
 	mnemonicSeed.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
 	mnemonicSeed.setLinespacing(0);
 	mnemonicSeed.setTypedText(TypedText(T_MSW_TEXT));
