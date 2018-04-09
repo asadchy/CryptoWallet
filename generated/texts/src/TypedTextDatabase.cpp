@@ -17,7 +17,7 @@ extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_30_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_28_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_28_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_20_4bpp();
-extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_14_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_18_4bpp();
 
 const touchgfx::Font* const _fonts[] = {
     &(getFont_Heebo_Regular_16_4bpp()),
@@ -28,7 +28,7 @@ const touchgfx::Font* const _fonts[] = {
     &(getFont_Heebo_Thin_28_4bpp()),
     &(getFont_Heebo_Regular_28_4bpp()),
     &(getFont_Heebo_Regular_20_4bpp()),
-    &(getFont_Heebo_Thin_14_4bpp())
+    &(getFont_Heebo_Thin_18_4bpp())
 };
 
 TEXT_LOCATION_FLASH_PRAGMA
@@ -59,7 +59,8 @@ const touchgfx::TypedText::TypedTextData typedText_database_DEFAULT[] TEXT_LOCAT
     { 8, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
     { 7, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
     { 0, touchgfx::CENTER, touchgfx::TEXT_DIRECTION_LTR },
-    { 8, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR }
+    { 8, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR },
+    { 0, touchgfx::LEFT, touchgfx::TEXT_DIRECTION_LTR }
 };
 
 

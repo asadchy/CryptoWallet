@@ -7,6 +7,6 @@
 statusViewBase::statusViewBase()  
 {
     background.setXY(0, 0);
-    background.setBitmap(Bitmap(BITMAP_STARTUP_BACKGROUND_ID));
+    background.setBitmap(Bitmap(BITMAP_BACKGROUND_ID));
     add(background);
 }

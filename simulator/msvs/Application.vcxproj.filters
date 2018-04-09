@@ -344,6 +344,9 @@
     <None Include="..\..\assets\images\background_3.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\bitcoin.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\btc_status.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
@@ -359,6 +362,12 @@
     <None Include="..\..\assets\images\button_pressed_long.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\clear_wallet.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\clear_wallet_pressed.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\curr_status.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
@@ -369,6 +378,12 @@
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\eth_status.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\ether.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\filler.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\key_button_pressed.png">
@@ -386,10 +401,16 @@
     <None Include="..\..\assets\images\lite_status.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
+    <None Include="..\..\assets\images\litecoin.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
     <None Include="..\..\assets\images\logo.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\ms_keyboard.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\ms_window.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\num_button_pressed.png">
@@ -405,6 +426,12 @@
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\startup_background.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\top_slide_menu_background.png">
+      <Filter>Resource Files\assets\images</Filter>
+    </None>
+    <None Include="..\..\assets\images\top_slide_menu_button.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\texts\texts.xlsx">

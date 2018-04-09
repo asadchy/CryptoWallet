@@ -10,7 +10,7 @@ startupViewBase::startupViewBase()  :
     show_logoEndedCallback(this, &startupViewBase::show_logoEndedCallbackHandler)
 {
     background.setXY(0, 0);
-    background.setBitmap(Bitmap(BITMAP_STARTUP_BACKGROUND_ID));
+    background.setBitmap(Bitmap(BITMAP_BACKGROUND_ID));
 
     logo_png.setXY(192, 94);
     logo_png.setBitmap(Bitmap(BITMAP_LOGO_ID));

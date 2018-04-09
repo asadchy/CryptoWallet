@@ -11,7 +11,7 @@ pinViewBase::pinViewBase()
     background.setXY(0, 0);
     background.setBitmap(Bitmap(BITMAP_BACKGROUND_3_ID));
 
-    head_mess.setPosition(30, 20, 298, 30);
+    head_mess.setPosition(30, 10, 298, 30);
     head_mess.setColor(touchgfx::Color::getColorFrom24BitRGB(126,174,229));
     head_mess.setLinespacing(0);
     head_mess.setTypedText(TypedText(T_HEAD_TEXT));

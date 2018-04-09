@@ -66,6 +66,11 @@ void pinPresenter::setMnemonicSeed(Unicode::UnicodeChar *mnemonic)
 	view.setMnemonicSeed(mnemonic);
 }
 
+void pinPresenter::setDialogText(touchgfx::Unicode::UnicodeChar *text)
+{
+	view.setDialogText(text);
+}
+
 void pinPresenter::toInitScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();

@@ -33,6 +33,7 @@ public:
     void showPinKeyboard();
     void showMSKeyboard();
     void showMSWindow();
+    void setDialogText(touchgfx::Unicode::UnicodeChar *text);
 
     void pincodeEntered(int pincode);
     void msEntered(Unicode::UnicodeChar *mnemonic);

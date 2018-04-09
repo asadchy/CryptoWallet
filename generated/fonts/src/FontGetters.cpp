@@ -54,16 +54,16 @@ touchgfx::InternalFlashFont& getFont_Heebo_Regular_30_4bpp()
   return Heebo_Regular_30_4bpp;
 }
 
-// Heebo_Thin_14_4bpp
-extern const touchgfx::GlyphNode glyphs_Heebo_Thin_14_4bpp[];
-extern const uint8_t unicodes_Heebo_Thin_14_4bpp[];
-extern const touchgfx::KerningNode kerning_Heebo_Thin_14_4bpp[];
-touchgfx::InternalFlashFont& getFont_Heebo_Thin_14_4bpp();
+// Heebo_Thin_18_4bpp
+extern const touchgfx::GlyphNode glyphs_Heebo_Thin_18_4bpp[];
+extern const uint8_t unicodes_Heebo_Thin_18_4bpp[];
+extern const touchgfx::KerningNode kerning_Heebo_Thin_18_4bpp[];
+touchgfx::InternalFlashFont& getFont_Heebo_Thin_18_4bpp();
 
-touchgfx::InternalFlashFont& getFont_Heebo_Thin_14_4bpp()
+touchgfx::InternalFlashFont& getFont_Heebo_Thin_18_4bpp()
 {
-  static touchgfx::InternalFlashFont Heebo_Thin_14_4bpp(glyphs_Heebo_Thin_14_4bpp, 110, 14, 4, 4, 1, 1, unicodes_Heebo_Thin_14_4bpp, kerning_Heebo_Thin_14_4bpp, 0, 0);
-  return Heebo_Thin_14_4bpp;
+  static touchgfx::InternalFlashFont Heebo_Thin_18_4bpp(glyphs_Heebo_Thin_18_4bpp, 110, 18, 5, 4, 2, 1, unicodes_Heebo_Thin_18_4bpp, kerning_Heebo_Thin_18_4bpp, 0, 0);
+  return Heebo_Thin_18_4bpp;
 }
 
 // Heebo_Thin_28_4bpp

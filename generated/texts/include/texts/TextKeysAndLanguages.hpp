@@ -39,6 +39,7 @@ typedef enum {
     T_HEAD_TEXT,
     T_CURR_TEXT,
     T_MSW_TEXT,
+    T_TEXTID1,
     NUMBER_OF_TEXT_KEYS
 } TEXTS;
 
