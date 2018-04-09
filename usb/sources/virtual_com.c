@@ -651,10 +651,10 @@ while (1)
 				if(pinDef[1] == *(uint32_t*)mess.data){
 					numCheckPin = 0;
 					pinInit = *(uint32_t*)mess.data;
-					char amo[16] = {"0.18000000"};
-					char amoD[16] = {"5.6"};
-					amoD[3] = '\0';
-					amoD[4] = '\0';
+					char amo[16] = {"0.00000000"};
+					char amoD[16] = {"0.00"};
+					amoD[4] = 0x00;
+					amoD[5] = '\0';
 					amo[10] = '\0';
 					static struct wallet_status statusW;
 
