@@ -26,6 +26,11 @@ void statusPresenter::toInitScreen()
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();
 }
 
+void statusPresenter::toStatusScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoStatusScreen();
+}
+
 void statusPresenter::statusScreenEntered()
 {
 	model->statusScreenEntered();

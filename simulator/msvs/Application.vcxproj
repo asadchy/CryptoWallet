@@ -17,7 +17,6 @@
     <ClCompile Include="$(TouchGFXReleasePath)\framework\source\platform\hal\simulator\sdl2\OSWrappers.cpp" />
     <ClCompile Include="..\..\generated\gui_generated\src\common\FrontendApplicationBase.cpp" />
     <ClCompile Include="..\..\generated\gui_generated\src\init_screen\initViewBase.cpp" />
-    <ClCompile Include="..\..\generated\gui_generated\src\pin_code_screen\pin_codeViewBase.cpp" />
     <ClCompile Include="..\..\generated\gui_generated\src\pin_screen\pinViewBase.cpp" />
     <ClCompile Include="..\..\generated\gui_generated\src\startup_screen\startupViewBase.cpp" />
     <ClCompile Include="..\..\generated\gui_generated\src\status_screen\statusViewBase.cpp" />
@@ -32,8 +31,6 @@
     <ClCompile Include="..\..\gui\src\init_screen\initPresenter.cpp" />
     <ClCompile Include="..\..\gui\src\init_screen\initView.cpp" />
     <ClCompile Include="..\..\gui\src\model\Model.cpp" />
-    <ClCompile Include="..\..\gui\src\pin_code_screen\pin_codePresenter.cpp" />
-    <ClCompile Include="..\..\gui\src\pin_code_screen\pin_codeView.cpp" />
     <ClCompile Include="..\..\gui\src\pin_screen\pinPresenter.cpp" />
     <ClCompile Include="..\..\gui\src\pin_screen\pinView.cpp" />
     <ClCompile Include="..\..\gui\src\startup_screen\startupPresenter.cpp" />
@@ -52,7 +49,6 @@
     <None Include="..\..\assets\images\background.png" />
     <None Include="..\..\assets\images\background_3.png" />
     <None Include="..\..\assets\images\bitcoin.png" />
-    <None Include="..\..\assets\images\btc_status.png" />
     <None Include="..\..\assets\images\button_not_pressed.png" />
     <None Include="..\..\assets\images\button_not_pressed_long.png" />
     <None Include="..\..\assets\images\button_pressed.png" />
@@ -62,14 +58,12 @@
     <None Include="..\..\assets\images\curr_status.png" />
     <None Include="..\..\assets\images\dialog.png" />
     <None Include="..\..\assets\images\enter_pressed.png" />
-    <None Include="..\..\assets\images\eth_status.png" />
     <None Include="..\..\assets\images\ether.png" />
     <None Include="..\..\assets\images\filler.png" />
     <None Include="..\..\assets\images\key_button_pressed.png" />
     <None Include="..\..\assets\images\key_pressed.png" />
     <None Include="..\..\assets\images\keyboard.png" />
     <None Include="..\..\assets\images\leftDoor.png" />
-    <None Include="..\..\assets\images\lite_status.png" />
     <None Include="..\..\assets\images\litecoin.png" />
     <None Include="..\..\assets\images\logo.png" />
     <None Include="..\..\assets\images\ms_keyboard.png" />
@@ -78,7 +72,6 @@
     <None Include="..\..\assets\images\pin_keyboard.png" />
     <None Include="..\..\assets\images\rightDoor.png" />
     <None Include="..\..\assets\images\space_button_pressed.png" />
-    <None Include="..\..\assets\images\startup_background.png" />
     <None Include="..\..\assets\images\top_slide_menu_background.png" />
     <None Include="..\..\assets\images\top_slide_menu_button.png" />
     <None Include="..\..\assets\texts\texts.xlsx" />
@@ -222,7 +215,6 @@
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\common\FrontendHeapBase.hpp" />
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\common\SimConstants.hpp" />
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\init_screen\initViewBase.hpp" />
-    <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\pin_code_screen\pin_codeViewBase.hpp" />
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\pin_screen\pinViewBase.hpp" />
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\startup_screen\startupViewBase.hpp" />
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\status_screen\statusViewBase.hpp" />
@@ -245,8 +237,6 @@
     <ClInclude Include="..\..\gui\include\gui\init_screen\initView.hpp" />
     <ClInclude Include="..\..\gui\include\gui\model\Model.hpp" />
     <ClInclude Include="..\..\gui\include\gui\model\ModelListener.hpp" />
-    <ClInclude Include="..\..\gui\include\gui\pin_code_screen\pin_codePresenter.hpp" />
-    <ClInclude Include="..\..\gui\include\gui\pin_code_screen\pin_codeView.hpp" />
     <ClInclude Include="..\..\gui\include\gui\pin_screen\pinPresenter.hpp" />
     <ClInclude Include="..\..\gui\include\gui\pin_screen\pinView.hpp" />
     <ClInclude Include="..\..\gui\include\gui\startup_screen\startupPresenter.hpp" />

@@ -16,11 +16,6 @@ void startupPresenter::deactivate()
 
 }
 
-void startupPresenter::toPincodeScreen()
-{
-	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoPincodeScreen();
-}
-
 void startupPresenter::toStatusScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoStatusScreen();

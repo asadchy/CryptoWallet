@@ -270,7 +270,7 @@ void checkPin(int *pinInit, uint32_t *pinDef){
 			numCheckPin++;
 		}
 		if(numCheckPin >2){
-			message.cmd = BLOCKED;
+			message.cmd = WALLET_BLOCKED;
 			xQueueSend(card_to_lcd, (void*)&message, 0);
 		}
 	}
@@ -360,7 +360,7 @@ void sign (int id, int amount, BYTE *mess, BYTE *valueTr, BYTE *addr, BYTE *out,
 			}else{
 				numCheckPin ++;
 				if(numCheckPin>2){
-					message.cmd = BLOCKED;
+					message.cmd = WALLET_BLOCKED;
 					xQueueSend(card_to_lcd, (void*)&message, 0);
 				}
 				out[3] = 0x01;

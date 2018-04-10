@@ -75,7 +75,6 @@ public:
 
     virtual void toMainScreen() {}
     virtual void toStatusScreen() {}
-    virtual void toPincodeScreen() {}
     virtual void toPinScreen() {}
     virtual void toInitScreen() {}
 protected:

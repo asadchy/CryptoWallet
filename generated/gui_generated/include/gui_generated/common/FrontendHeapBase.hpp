@@ -11,8 +11,6 @@
 #include <gui/common/FrontendApplication.hpp>
 #include <gui/model/Model.hpp>
 
-#include <gui/pin_code_screen/pin_codeView.hpp>
-#include <gui/pin_code_screen/pin_codePresenter.hpp>
 #include <gui/startup_screen/startupView.hpp>
 #include <gui/startup_screen/startupPresenter.hpp>
 #include <gui/transaction_screen/transactionView.hpp>
@@ -45,13 +43,12 @@ public:
      * A list of all view types. Must end with meta::Nil.
      * @note All view types used in the application MUST be added to this list!
      */
-    typedef meta::TypeList< pin_codeView,
-            meta::TypeList< startupView,
+    typedef meta::TypeList< startupView,
             meta::TypeList< transactionView,
             meta::TypeList< statusView,
             meta::TypeList< initView,
             meta::TypeList< pinView,
-            meta::Nil > > > > >
+            meta::Nil > > > >
             > GeneratedViewTypes;
 
     /**
@@ -63,13 +60,12 @@ public:
      * A list of all presenter types. Must end with meta::Nil.
      * @note All presenter types used in the application MUST be added to this list!
      */
-    typedef meta::TypeList< pin_codePresenter,
-            meta::TypeList< startupPresenter,
+    typedef meta::TypeList< startupPresenter,
             meta::TypeList< transactionPresenter,
             meta::TypeList< statusPresenter,
             meta::TypeList< initPresenter,
             meta::TypeList< pinPresenter,
-            meta::Nil > > > > >
+            meta::Nil > > > >
             > GeneratedPresenterTypes;
 
     /**

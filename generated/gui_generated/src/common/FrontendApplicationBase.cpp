@@ -5,8 +5,6 @@
 #include <gui_generated/common/FrontendApplicationBase.hpp>
 #include <gui/common/FrontendHeap.hpp>
 #include <touchgfx/transitions/NoTransition.hpp>
-#include <gui/pin_code_screen/pin_codeView.hpp>
-#include <gui/pin_code_screen/pin_codePresenter.hpp>
 #include <gui/startup_screen/startupView.hpp>
 #include <gui/startup_screen/startupPresenter.hpp>
 #include <gui/transaction_screen/transactionView.hpp>

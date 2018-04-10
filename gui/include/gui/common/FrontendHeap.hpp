@@ -2,7 +2,6 @@
 #define FRONTENDHEAP_HPP
 
 #include <gui_generated/common/FrontendHeapBase.hpp>
-#include <gui/common/CustomTransition.hpp>
 
 class FrontendHeap : public FrontendHeapBase
 {
@@ -18,11 +17,9 @@ public:
                             > UserDefinedPresenterTypes;
 
     /* List any user-defined transition types here*/
-    typedef meta::TypeList< CustomTransition, //Replace this with first user-defined type
-                            meta::Nil  //List must always end with meta::Nil !
-                            > UserDefinedTransitionTypes;
-
-
+        typedef meta::TypeList< meta::Nil, //Replace this with first user-defined type
+                                meta::Nil  //List must always end with meta::Nil !
+                                > UserDefinedTransitionTypes;
 
     /* Calculate largest view, both from generated and user-defined typelists */
     typedef meta::select_type_maxsize< UserDefinedViewTypes >::type MaxUserViewType;
