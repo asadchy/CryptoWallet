@@ -636,13 +636,13 @@ initWalletCMD(walletInit);
 
 mess.cmd = WALLET_ENTER_PIN;
 xQueueSend(card_to_lcd, (void*)&mess, 0);
-
+int cmd;
 while (1)
 {
 
 	if(xQueueReceive(lcd_to_card, (void*)&mess, 0))
 	{
-		int cmd = mess.cmd;
+		cmd = mess.cmd;
 		switch(cmd)
 		{
 		case WALLET_PINCODE:
@@ -651,18 +651,21 @@ while (1)
 				if(pinDef[1] == *(uint32_t*)mess.data){
 					numCheckPin = 0;
 					pinInit = *(uint32_t*)mess.data;
-					char amo[11] = {"0.00000000"};
+					char amo[16] = {"0.00000000"};
+					char amoD[16] = {"0.00"};
+					amoD[4] = 0x00;
+					amoD[5] = '\0';
 					amo[10] = '\0';
 					static struct wallet_status statusW;
 
-					for (int i = 0; i < 11; i++)
+					for (int i = 0; i < 16; i++)
 					{
 						statusW.curr[0].amount[i] = amo[i];
-						statusW.curr[0].amount_dollars[i] = amo[i];
+						statusW.curr[0].amount_dollars[i] = amoD[i];
 						statusW.curr[1].amount[i] = amo[i];
-						statusW.curr[1].amount_dollars[i] = amo[i];
+						statusW.curr[1].amount_dollars[i] = amoD[i];
 						statusW.curr[2].amount[i] = amo[i];
-						statusW.curr[2].amount_dollars[i] = amo[i];
+						statusW.curr[2].amount_dollars[i] = amoD[i];
 					}
 
 					statusW.curr[0].curr_name = BTC;
@@ -691,12 +694,15 @@ while (1)
 			}
 			break;
 		case WALLET_CMD_CLEAR:
+			pinInit = -1;
 			for(int i = 0; i < 34; i++)
 			{
-				pinDef[i] = '\n';
+				pinDef[i] = '\0';
 			}
 			write_flash(pinDef, 34, PIN_ADDR);
 			initWalletCMD(walletInit);
+			mess.cmd = WALLET_ENTER_PIN;
+			xQueueSend(card_to_lcd, (void*)&mess, 0);
 			break;
 		}
 	}
@@ -725,7 +731,7 @@ while (1)
 			s_sendSize = 0;
 			if(numCheckPin<3){
 
-				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit);
+				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit, pinDef);
 
 			}
 			if(send>0){
@@ -734,7 +740,7 @@ while (1)
 				//portEXIT_CRITICAL();
                 send=0;
                 lenBuf = 0;
-                for(int i =0; i<120; i++){
+                for(int i =0; i<1800; i++){
                 	buffer[i] = 0x00;
                 }
                 if (error != kStatus_USB_Success)

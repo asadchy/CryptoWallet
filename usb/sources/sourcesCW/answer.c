@@ -4,25 +4,59 @@
 #include "crypto/sign.h"
 #include "string.h"
 #include "data.hpp"
-//#include "flash.h"
 typedef unsigned char BYTE;
 typedef unsigned int UINT32;
 
-void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int *pinInit){
-	int numCheckPin = 0;
+void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int *pinInit, uint32_t *pinDef){
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
 	BYTE address[42] = { 0 };
 	int addressLen = 0;
-	uint32_t pinDef[2] = {0};
-	//read_flash2(pinDef, 2);
-	pinDef[1] = 1234;
+	struct message mess;
+
 //	BYTE signature[130] = {0};
 //	static struct message message;
 //	static struct transaction transaction;
 
 
-	switch(dataIn[0]){
+	switch(dataIn[0]){//balance
+	case 0x42:{
+		static struct wallet_status statusW;
+		for(int i = 0; i<16; i++)
+		{
+			statusW.curr[0].amount[i] = dataIn[i + 1];
+			statusW.curr[0].amount_dollars[i] = dataIn[i + 17];
+			statusW.curr[1].amount[i] = dataIn[i + 33];
+			statusW.curr[1].amount_dollars[i] = dataIn[i + 49];
+			statusW.curr[2].amount[i] = dataIn[i + 65];
+			statusW.curr[2].amount_dollars[i] = dataIn[i + 81];
+		}
+		statusW.curr[0].amount[15] = '\0';
+		statusW.curr[0].amount_dollars[15] = '\0';
+		statusW.curr[1].amount[15] = '\0';
+		statusW.curr[1].amount_dollars[15] = '\0';
+		statusW.curr[2].amount[15] = '\0';
+		statusW.curr[2].amount_dollars[15] = '\0';
+
+		statusW.curr[0].curr_name = BTC;
+		statusW.curr[1].curr_name = ETH;
+		statusW.curr[2].curr_name = LTC;
+
+		statusW.num = 3;
+
+		mess.data = (void*)&statusW;
+		mess.cmd = WALLET_STATUS;
+		xQueueSend(card_to_lcd, (void*)&mess, 0);
+		*lenOut = 7;
+		dataOut[0] = 0x43;
+		dataOut[1] = 0x4f;
+		dataOut[2] = 0x4d;
+		dataOut[3] = 0x42;
+		dataOut[4] = 0x02;
+		dataOut[5] = 0x4f;
+		dataOut[6] = 0x4b;
+		break;
+	}
 	case 0x46:{ //findPort
 		*lenOut = 7;
 		dataOut[0] = 0x43;
@@ -133,7 +167,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[7 + 32*amount + i];
 			}
-			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit);
+			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
 		if(dataIn[1] == 0x02){//litecoin
 			int amount = dataIn[2];
@@ -146,7 +180,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[7 + 32*amount + i];
 			}
-			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit);
+			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
 		if(dataIn[1] == 0x01){//ethereum
 			int amount = dataIn[2];
@@ -159,7 +193,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<42; i++){
 				addr[i] = dataIn[7 + 32*amount + i];
 			}
-			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit);
+			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
 	break;
 	}
@@ -173,7 +207,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 }
 
-int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit){
+int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit, uint32_t *pinDef){
 
 	for(int i = (*lenBuf); i<((*lenBuf)+(*lenIn)); i++){
 		buffer[i] = dataIn[i-(*lenBuf)];
@@ -194,7 +228,7 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 						}
 						*send=1;
 						uint32_t lenTempBuf = end-start;
-						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf, pinInit);
+						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf, pinInit, pinDef);
 						return 0;
 					}
 				}
@@ -204,9 +238,8 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 	return 0;
 }
 
-void checkPin(int *pinInit){
-	uint32_t pinDef[2] = {0};
-	//read_flash2(pinDef, 8);
+void checkPin(int *pinInit, uint32_t *pinDef){
+
 	int numCheckPin = 0;
 	static struct message message;
 	while((*pinInit)!= pinDef[1] || numCheckPin < 3){
@@ -228,13 +261,10 @@ void checkPin(int *pinInit){
 	}
 }
 
-void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit){
+void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit, uint32_t *pinDef){
 	int numCheckPin = 0;
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
-	uint32_t pinDef[2] = {0};
-	//read_flash2(pinDef, 2);
-	pinDef[1] = 1234;
 	BYTE signature[130] = {0};
 	static struct message message;
 	static struct transaction transaction;
