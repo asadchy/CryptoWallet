@@ -49,7 +49,7 @@ KEEP const touchgfx::Unicode::UnicodeChar T_enter_Gb[6] TEXT_LOCATION_FLASH_ATTR
 TEXT_LOCATION_FLASH_PRAGMA
 KEEP const touchgfx::Unicode::UnicodeChar T_cancel_pin_Gb[7] TEXT_LOCATION_FLASH_ATTRIBUTE = { 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x0 };
 TEXT_LOCATION_FLASH_PRAGMA
-KEEP const touchgfx::Unicode::UnicodeChar T_TextId1_Gb[9] TEXT_LOCATION_FLASH_ATTRIBUTE = { 0x4e, 0x65, 0x77, 0x20, 0x54, 0x65, 0x78, 0x74, 0x0 };
+KEEP const touchgfx::Unicode::UnicodeChar T_blocked_Gb[24] TEXT_LOCATION_FLASH_ATTRIBUTE = { 0x59, 0x6f, 0x75, 0x72, 0x20, 0x77, 0x61, 0x6c, 0x6c, 0x65, 0x74, 0x20, 0x77, 0x61, 0x73, 0x20, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x65, 0x64, 0x0 };
 
 TEXT_LOCATION_FLASH_PRAGMA
 KEEP extern const touchgfx::Unicode::UnicodeChar* const textsGb[28] TEXT_LOCATION_FLASH_ATTRIBUTE =
@@ -81,6 +81,6 @@ T_currency_Gb+10,
 T_currency_Gb+10,
 T_currency_Gb+10,
 T_currency_Gb+10,
-T_TextId1_Gb
+T_blocked_Gb
 };
 

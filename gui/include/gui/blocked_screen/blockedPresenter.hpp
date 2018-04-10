@@ -1,17 +1,17 @@
-#ifndef STARTUP_PRESENTER_HPP
-#define STARTUP_PRESENTER_HPP
+#ifndef BLOCKED_PRESENTER_HPP
+#define BLOCKED_PRESENTER_HPP
 
 #include <gui/model/ModelListener.hpp>
 #include <mvp/Presenter.hpp>
 
 using namespace touchgfx;
 
-class startupView;
+class blockedView;
 
-class startupPresenter : public Presenter, public ModelListener
+class blockedPresenter : public Presenter, public ModelListener
 {
 public:
-    startupPresenter(startupView& v);
+    blockedPresenter(blockedView& v);
 
     /**
      * The activate function is called automatically when this screen is "switched in"
@@ -25,18 +25,19 @@ public:
      */
     virtual void deactivate();
 
-    virtual ~startupPresenter() {};
+    virtual ~blockedPresenter() {};
 
-    virtual void toStatusScreen();
-    virtual void toPinScreen();
-    virtual void toInitScreen();
     virtual void toBlockedScreen();
+    virtual void toInitScreen();
+    virtual void toPinScreen();
+    virtual void toStatusScreen();
+    virtual void toMainScreen();
 
 private:
-    startupPresenter();
+    blockedPresenter();
 
-    startupView& view;
+    blockedView& view;
 };
 
 
-#endif // STARTUP_PRESENTER_HPP
+#endif // BLOCKED_PRESENTER_HPP

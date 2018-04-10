@@ -28,6 +28,7 @@ public:
     virtual ~initPresenter() {};
 
     virtual void toPinScreen();
+    virtual void toBlockedScreen();
 
     void restoreWallet();
     void initWallet();

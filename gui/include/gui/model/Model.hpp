@@ -92,6 +92,7 @@ public:
     void toStatusScreen();
     void toPinScreen();
     void toInitScreen();
+    void toBlockedScreen();
 
     void cancelPressed();
     void confirmPressed();

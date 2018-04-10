@@ -23,12 +23,14 @@ public:
     void gotoStatusScreen();
     void gotoPinScreen();
     void gotoInitScreen();
+    void gotoBlockedScreen();
 
 private:
     void gotoMainScreenImpl();
 	void gotoStatusScreenImpl();
 	void gotoPinScreenImpl();
 	void gotoInitScreenImpl();
+	void gotoBlockedScreenImpl();
     touchgfx::Callback<FrontendApplication> customTransitionCallback;
 };
 

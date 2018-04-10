@@ -98,11 +98,12 @@ void Model::tick()
 		touchgfx::Unicode::strncpy(tmpText, message, TEXT_SIZE);
 		setHeadText(tmpText);
 	}
-	/*
+
 	else if(tick_counter == mul * 400)
 	{
-		toStatusScreen();
+		toBlockedScreen();
 	}
+	/*
 	else if(tick_counter == mul * 500)
 	{
 		toMainScreen();
@@ -160,6 +161,10 @@ void Model::message_parser(struct message *message)
 			static const char *wrong_pin = "Wrong PINCODE";
 			touchgfx::Unicode::strncpy(tmpText, wrong_pin, TEXT_SIZE);
 			setDialogText(tmpText);
+			break;
+
+		case WALLET_BLOCKED:
+			toBlockedScreen();
 			break;
 
 		case TRANSACTION_CONFIRMED:
@@ -276,6 +281,11 @@ void Model::toPinScreen()
 void Model::toInitScreen()
 {
 	modelListener->toInitScreen();
+}
+
+void Model::toBlockedScreen()
+{
+	modelListener->toBlockedScreen();
 }
 
 void Model::showPinKeyboard()

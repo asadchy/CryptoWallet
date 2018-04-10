@@ -34,6 +34,8 @@ public:
 
     virtual void toStatusScreen();
 
+    virtual void toBlockedScreen();
+
     void statusScreenEntered();
 
     void clearWallet();

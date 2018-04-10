@@ -20,6 +20,7 @@ struct Typography
   static const touchgfx::FontId ALPHA_TEXT_BTN = 9;
   static const touchgfx::FontId ALPHA_TEXT = 10;
   static const touchgfx::FontId CURR_TEXT_T = 11;
+  static const touchgfx::FontId BLOCKED = 12;
 };
 
 class ApplicationFontProvider : public touchgfx::FontProvider

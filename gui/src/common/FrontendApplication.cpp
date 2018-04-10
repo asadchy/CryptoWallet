@@ -6,6 +6,8 @@
 #include <gui/startup_screen/startupPresenter.hpp>
 #include <gui/transaction_screen/transactionView.hpp>
 #include <gui/transaction_screen/transactionPresenter.hpp>
+#include <gui/blocked_screen/blockedView.hpp>
+#include <gui/blocked_screen/blockedPresenter.hpp>
 
 FrontendApplication::FrontendApplication(Model& m, FrontendHeap& heap)
     : FrontendApplicationBase(m, heap)
@@ -76,3 +78,14 @@ void FrontendApplication::gotoInitScreenImpl()
 					&currentPresenter, frontendHeap, &currentTransition, &model);
 }
 
+void FrontendApplication::gotoBlockedScreen()
+{
+	customTransitionCallback = touchgfx::Callback<FrontendApplication>(this, &FrontendApplication::gotoBlockedScreenImpl);
+	pendingScreenTransitionCallback = &customTransitionCallback;
+}
+
+void FrontendApplication::gotoBlockedScreenImpl()
+{
+	makeTransition<blockedView, blockedPresenter, NoTransition, Model>(&currentScreen,
+					&currentPresenter, frontendHeap, &currentTransition, &model);
+}

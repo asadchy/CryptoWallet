@@ -26,6 +26,11 @@ void startupPresenter::toPinScreen()
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoPinScreen();
 }
 
+void startupPresenter::toBlockedScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoBlockedScreen();
+}
+
 void startupPresenter::toInitScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();

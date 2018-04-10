@@ -30,3 +30,8 @@ void initPresenter::toPinScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoPinScreen();
 }
+
+void initPresenter::toBlockedScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoBlockedScreen();
+}
