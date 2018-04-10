@@ -628,7 +628,7 @@ uint32_t send=0;
 int numCheckPin = 0;
 int pinInit = -1;
 struct message mess;
-int walletInit = 0x1215;
+int walletInit = 0x1255;
 
 read_flash(pinDef, 34, PIN_ADDR);
 initWalletCMD(walletInit);

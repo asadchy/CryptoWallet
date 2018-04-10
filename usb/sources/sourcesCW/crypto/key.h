@@ -9,13 +9,14 @@
 #define SOURCESCW_CRYPTO_KEY_H_
 
 typedef unsigned char BYTE;
+#include <stdint.h>
 
 
-void generatePrivateKey(int pin, int *tocenNum, BYTE *privKey);
+void generatePrivateKey(BYTE *seed, int *tocenNum, BYTE *privKey);
 
 
-void genKeyC(int pin, int idCurrency, BYTE * privKey, BYTE * pubKey, int compressed);
+void genKeyC(uint32_t *pinDef, int idCurrency, BYTE * privKey, BYTE * pubKey, int compressed);
 
-void genKeyE(int pin, int idCurrency, BYTE * privKey, BYTE * pubKey);
+void genKeyE(uint32_t *pinDef, int idCurrency, BYTE * privKey, BYTE * pubKey);
 
 #endif /* SOURCESCW_CRYPTO_KEY_H_ */

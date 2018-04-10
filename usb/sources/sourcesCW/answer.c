@@ -115,7 +115,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 
 			int compressed = 1;
 			int idCur = 0;
-			genKeyC(*pinInit, idCur, privateKey, publicKey, compressed);
+			genKeyC(pinDef, idCur, privateKey, publicKey, compressed);
 			addressBtc(publicKey, compressed, address, &addressLen);
 			for(int i = 0; i<addressLen; i++){
 				dataOut[i+7] = address[i];
@@ -130,7 +130,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			dataOut[5] = 0x48;
 			dataOut[6] = 27;
 			int idCur = 1;
-			genKeyE(*pinInit, idCur, privateKey, publicKey);
+			genKeyE(pinDef, idCur, privateKey, publicKey);
 			addressEth(publicKey, address);
 			for(int i = 0; i<20; i++){
 				dataOut[i+7] = address[i];
@@ -144,7 +144,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 
 			int compressed = 1;
 			int idCur = 2;
-			genKeyC(*pinInit, idCur, privateKey, publicKey, compressed);
+			genKeyC(pinDef, idCur, privateKey, publicKey, compressed);
 			addressLtc(publicKey, compressed, address, &addressLen);
 			for(int i = 0; i<addressLen; i++){
 				dataOut[i+7] = address[i];
@@ -162,10 +162,15 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
 			}
-			int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
+			BYTE valueTr[16] = {0};
+			for(int i = 0; i<15; i++)
+			{
+				valueTr[i] = dataIn[i + 3 + 32*amount];
+			}
+			//int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[34] = {0};
 			for(int i=0; i<34; i++){
-				addr[i] = dataIn[7 + 32*amount + i];
+				addr[i] = dataIn[19 + 32*amount + i];
 			}
 			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
@@ -175,10 +180,15 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
 			}
-			int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
+			BYTE valueTr[16] = {0};
+			for(int i = 0; i<15; i++)
+			{
+				valueTr[i] = dataIn[i + 3 + 32*amount];
+			}
+			//int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[34] = {0};
 			for(int i=0; i<34; i++){
-				addr[i] = dataIn[7 + 32*amount + i];
+				addr[i] = dataIn[19 + 32*amount + i];
 			}
 			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
@@ -188,10 +198,15 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
 			}
-			int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
+			BYTE valueTr[16] = {0};
+			for(int i = 0; i<15; i++)
+			{
+				valueTr[i] = dataIn[i + 3 + 32*amount];
+			}
+			//int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[42] = {0};
 			for(int i=0; i<42; i++){
-				addr[i] = dataIn[7 + 32*amount + i];
+				addr[i] = dataIn[19 + 32*amount + i];
 			}
 			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
@@ -261,7 +276,7 @@ void checkPin(int *pinInit, uint32_t *pinDef){
 	}
 }
 
-void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit, uint32_t *pinDef){
+void sign (int id, int amount, BYTE *mess, BYTE *valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit, uint32_t *pinDef){
 	int numCheckPin = 0;
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
@@ -279,9 +294,10 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 	if(id==0) {transaction.curr_name = BTC;}
 	if(id==1) {transaction.curr_name = ETH;}
 	if(id==2) {transaction.curr_name = LTC;}
-	//transaction.value = valueTr;
-	transaction.value[0] = '8';
-	transaction.value[1] = '\0';
+	for(int i = 0; i<16; i++)
+	{
+		transaction.value[i] = valueTr[i];
+	}
 	if( id == 0 || id ==2 ){
 		for(int i = 0; i < 34; i++){
 			transaction.addr[i] = addr[i];
@@ -317,7 +333,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 					}
 					taskENTER_CRITICAL();
 					if(id == 0 || id == 2) {
-						genKeyC(*pinInit, id, privateKey, publicKey, compressed);
+						genKeyC(pinDef, id, privateKey, publicKey, compressed);
 						int lenOutData = 0;
 						getSignBtc(privateKey, compressed, mesToSign, signature, &lenOutData);
 						out[tempLen] = lenOutData;
@@ -328,7 +344,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 						tempLen += lenOutData;
 					}
 					if(id == 1){
-						genKeyE(*pinInit, id, privateKey, publicKey);
+						genKeyE(pinDef, id, privateKey, publicKey);
 						getSignEther(privateKey, mesToSign, signature);
 						tempLen = 5+65;
 						out[4] = 65;
