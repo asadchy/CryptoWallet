@@ -156,12 +156,6 @@ void Model::message_parser(struct message *message)
 			transaction = static_cast<struct transaction*>(message->data);
 			break;
 
-		case INIT_PINCODE:
-			toPincodeScreen();
-			static const char *init_pin = "Init PINCODE";
-			touchgfx::Unicode::strncpy(tmpText, init_pin, TEXT_SIZE);
-			break;
-
 		case WALLET_WRONG_PINCODE:
 			static const char *wrong_pin = "Wrong PINCODE";
 			touchgfx::Unicode::strncpy(tmpText, wrong_pin, TEXT_SIZE);
@@ -272,11 +266,6 @@ void Model::toMainScreen()
 void Model::toStatusScreen()
 {
 	modelListener->toStatusScreen();
-}
-
-void Model::toPincodeScreen()
-{
-	modelListener->toPincodeScreen();
 }
 
 void Model::toPinScreen()

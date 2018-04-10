@@ -23,15 +23,12 @@ extern const unsigned char _ether[];
 extern const unsigned char _filler[]; 
 extern const unsigned char _key_button_pressed[]; 
 extern const unsigned char _key_pressed[]; 
-extern const unsigned char _keyboard[]; 
-extern const unsigned char _leftDoor[]; 
 extern const unsigned char _litecoin[]; 
 extern const unsigned char _logo[]; 
 extern const unsigned char _ms_keyboard[]; 
 extern const unsigned char _ms_window[]; 
 extern const unsigned char _num_button_pressed[]; 
 extern const unsigned char _pin_keyboard[]; 
-extern const unsigned char _rightDoor[]; 
 extern const unsigned char _space_button_pressed[]; 
 extern const unsigned char _top_slide_menu_background[]; 
 extern const unsigned char _top_slide_menu_button[]; 
@@ -53,15 +50,12 @@ const touchgfx::Bitmap::BitmapData bitmap_database[] = {
     { _filler, 0, 20, 200, 0, 0, 20, 200, touchgfx::Bitmap::RGB565 },
     { _key_button_pressed, 0, 30, 32, 4, 5, 22, 22, touchgfx::Bitmap::ARGB8888 },
     { _key_pressed, 0, 75, 45, 5, 0, 65, 45, touchgfx::Bitmap::ARGB8888 },
-    { _keyboard, 0, 480, 272, 0, 0, 480, 272, touchgfx::Bitmap::RGB565 },
-    { _leftDoor, 0, 258, 272, 0, 0, 241, 272, touchgfx::Bitmap::ARGB8888 },
     { _litecoin, 0, 36, 36, 11, 19, 15, 14, touchgfx::Bitmap::ARGB8888 },
     { _logo, 0, 96, 85, 34, 6, 25, 29, touchgfx::Bitmap::ARGB8888 },
     { _ms_keyboard, 0, 480, 272, 39, 34, 284, 90, touchgfx::Bitmap::ARGB8888 },
     { _ms_window, 0, 480, 272, 39, 38, 284, 84, touchgfx::Bitmap::ARGB8888 },
     { _num_button_pressed, 0, 90, 32, 10, 0, 70, 32, touchgfx::Bitmap::ARGB8888 },
     { _pin_keyboard, 0, 480, 272, 39, 38, 282, 40, touchgfx::Bitmap::ARGB8888 },
-    { _rightDoor, 0, 240, 272, 16, 0, 224, 272, touchgfx::Bitmap::ARGB8888 },
     { _space_button_pressed, 0, 302, 32, 10, 0, 282, 32, touchgfx::Bitmap::ARGB8888 },
     { _top_slide_menu_background, 0, 480, 77, 0, 0, 480, 74, touchgfx::Bitmap::ARGB8888 },
     { _top_slide_menu_button, 0, 54, 24, 8, 0, 38, 20, touchgfx::Bitmap::ARGB8888 }

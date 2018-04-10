@@ -89,7 +89,6 @@ public:
     void setMnemonicSeed(Unicode::UnicodeChar *mnemonic);
 
     void toMainScreen();
-    void toPincodeScreen();
     void toStatusScreen();
     void toPinScreen();
     void toInitScreen();

@@ -27,7 +27,6 @@ public:
 
     virtual ~startupPresenter() {};
 
-    virtual void toPincodeScreen();
     virtual void toStatusScreen();
     virtual void toPinScreen();
     virtual void toInitScreen();

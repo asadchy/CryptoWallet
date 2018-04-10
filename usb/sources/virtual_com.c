@@ -679,7 +679,7 @@ while (1)
 					numCheckPin ++;
 					if(numCheckPin > 2)
 					{
-						mess.cmd = BLOCKED;
+						mess.cmd = WALLET_BLOCKED;
 						xQueueSend(card_to_lcd, (void*)&mess, 0);
 
 					}else

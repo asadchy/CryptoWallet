@@ -41,11 +41,6 @@ void transactionPresenter::confirmPressed()
 	model->confirmPressed();
 }
 
-void transactionPresenter::toPincodeScreen()
-{
-	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoPincodeScreen();
-}
-
 void transactionPresenter::toStatusScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoStatusScreen();

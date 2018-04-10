@@ -32,6 +32,8 @@ public:
 
     virtual void toInitScreen();
 
+    virtual void toStatusScreen();
+
     void statusScreenEntered();
 
     void clearWallet();

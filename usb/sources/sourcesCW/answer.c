@@ -222,7 +222,7 @@ void checkPin(int *pinInit){
 			numCheckPin++;
 		}
 		if(numCheckPin >2){
-			message.cmd = BLOCKED;
+			message.cmd = WALLET_BLOCKED;
 			xQueueSend(card_to_lcd, (void*)&message, 0);
 		}
 	}
@@ -314,7 +314,7 @@ void sign (int id, int amount, BYTE *mess, int valueTr, BYTE *addr, BYTE *out, u
 			}else{
 				numCheckPin ++;
 				if(numCheckPin>2){
-					message.cmd = BLOCKED;
+					message.cmd = WALLET_BLOCKED;
 					xQueueSend(card_to_lcd, (void*)&message, 0);
 				}
 				out[3] = 0x01;
