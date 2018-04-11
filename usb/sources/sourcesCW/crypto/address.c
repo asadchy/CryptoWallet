@@ -129,13 +129,36 @@ void addressLtc(BYTE *PubKeyBin, int compressed, BYTE *outAddress, int *outAddre
 		*outAddressLength = addlen;
 }
 
+void binToHex(BYTE* inBinData, BYTE* outHexData)
+{
+	int numDec[40] = {0};
+	for (int i = 0; i < 20; i++)
+	{
+		numDec[2 * i] = ((int)inBinData[i] - ((int)inBinData[i]) % 16) / 16;
+		numDec[2 * i + 1] = ((int)inBinData[i]) % 16;
+	}
+	char hexLib[] = "0123456789ABCDEF";
+	for (int i = 0; i < 40; i++)
+	{
+		outHexData[i] = hexLib[numDec[i]];
+	}
+}
+
 void addressEth(BYTE *pubKeyBin, BYTE *outAddress)
 {
 	BYTE hash[32] = { 0 };
 	keccak(pubKeyBin, 64, hash);
+	BYTE addressBin[20] = {0};
+	BYTE addressHex[40] = {0};
 	for (int i = 0; i < 20; i++)
 	{
-		outAddress[i] = hash[i + 12];
+		addressBin[i] = hash[i + 12];
 	}
+
+	binToHex(addressBin, addressHex);
+	for (int i = 0; i < 40; i++)
+		{
+			outAddress[i] = addressHex[i];
+		}
 }
 

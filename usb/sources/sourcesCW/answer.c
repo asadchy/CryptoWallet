@@ -3,46 +3,41 @@
 #include "crypto/address.h"
 #include "crypto/sign.h"
 #include "string.h"
-#include "data.hpp"
+
 typedef unsigned char BYTE;
 typedef unsigned int UINT32;
 
-void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int *pinInit, uint32_t *pinDef){
+void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int *pinInit, uint32_t *pinDef, struct wallet_status *statusW){
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
 	BYTE address[42] = { 0 };
 	int addressLen = 0;
 	struct message mess;
 
-//	BYTE signature[130] = {0};
-//	static struct message message;
-//	static struct transaction transaction;
-
-
 	switch(dataIn[0]){//balance
 	case 0x42:{
-		static struct wallet_status statusW;
+
 		for(int i = 0; i<16; i++)
 		{
-			statusW.curr[0].amount[i] = dataIn[i + 1];
-			statusW.curr[0].amount_dollars[i] = dataIn[i + 17];
-			statusW.curr[1].amount[i] = dataIn[i + 33];
-			statusW.curr[1].amount_dollars[i] = dataIn[i + 49];
-			statusW.curr[2].amount[i] = dataIn[i + 65];
-			statusW.curr[2].amount_dollars[i] = dataIn[i + 81];
+			statusW->curr[0].amount[i] = dataIn[i + 1];
+			statusW->curr[0].amount_dollars[i] = dataIn[i + 17];
+			statusW->curr[1].amount[i] = dataIn[i + 33];
+			statusW->curr[1].amount_dollars[i] = dataIn[i + 49];
+			statusW->curr[2].amount[i] = dataIn[i + 65];
+			statusW->curr[2].amount_dollars[i] = dataIn[i + 81];
 		}
-		statusW.curr[0].amount[15] = '\0';
-		statusW.curr[0].amount_dollars[15] = '\0';
-		statusW.curr[1].amount[15] = '\0';
-		statusW.curr[1].amount_dollars[15] = '\0';
-		statusW.curr[2].amount[15] = '\0';
-		statusW.curr[2].amount_dollars[15] = '\0';
+		statusW->curr[0].amount[15] = '\0';
+		statusW->curr[0].amount_dollars[15] = '\0';
+		statusW->curr[1].amount[15] = '\0';
+		statusW->curr[1].amount_dollars[15] = '\0';
+		statusW->curr[2].amount[15] = '\0';
+		statusW->curr[2].amount_dollars[15] = '\0';
 
-		statusW.curr[0].curr_name = BTC;
-		statusW.curr[1].curr_name = ETH;
-		statusW.curr[2].curr_name = LTC;
+		statusW->curr[0].curr_name = BTC;
+		statusW->curr[1].curr_name = ETH;
+		statusW->curr[2].curr_name = LTC;
 
-		statusW.num = 3;
+		statusW->num = 3;
 
 		mess.data = (void*)&statusW;
 		mess.cmd = WALLET_STATUS;
@@ -124,15 +119,15 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			*lenOut = addressLen + 7;
 		}
 		if(dataIn[1] == 0x01){//ethereum
-			*lenOut = 27;
+			*lenOut = 47;
 			dataOut[3] = 0x45;
 			dataOut[4] = 0x54;
 			dataOut[5] = 0x48;
-			dataOut[6] = 27;
+			dataOut[6] = 47;
 			int idCur = 1;
 			genKeyE(pinDef, idCur, privateKey, publicKey);
 			addressEth(publicKey, address);
-			for(int i = 0; i<20; i++){
+			for(int i = 0; i<40; i++){
 				dataOut[i+7] = address[i];
 			}
 		}
@@ -172,7 +167,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
+			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef, statusW);
 		}
 		if(dataIn[1] == 0x02){//litecoin
 			int amount = dataIn[2];
@@ -190,7 +185,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
+			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef, statusW);
 		}
 		if(dataIn[1] == 0x01){//ethereum
 			int amount = dataIn[2];
@@ -208,7 +203,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<42; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
+			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef, statusW);
 		}
 	break;
 	}
@@ -222,7 +217,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 }
 
-int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit, uint32_t *pinDef){
+int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit, uint32_t *pinDef, struct wallet_status *statusW){
 
 	for(int i = (*lenBuf); i<((*lenBuf)+(*lenIn)); i++){
 		buffer[i] = dataIn[i-(*lenBuf)];
@@ -243,7 +238,8 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 						}
 						*send=1;
 						uint32_t lenTempBuf = end-start;
-						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf, pinInit, pinDef);
+
+						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf, pinInit, pinDef, statusW);
 						return 0;
 					}
 				}
@@ -253,37 +249,15 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 	return 0;
 }
 
-void checkPin(int *pinInit, uint32_t *pinDef){
 
-	int numCheckPin = 0;
-	static struct message message;
-	while((*pinInit)!= pinDef[1] || numCheckPin < 3){
-		message.cmd = WALLET_WRONG_PINCODE;
-		xQueueSend(card_to_lcd, (void*)&message, 0);
-		xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
-		if(pinDef[1] == (*(int*)message.data)){
-			*pinInit = *(int*)message.data;
-			numCheckPin = 0;
-			message.cmd = WALLET_STATUS;
-			xQueueSend(card_to_lcd, (void*)&message, 0);
-		}else{
-			numCheckPin++;
-		}
-		if(numCheckPin >2){
-			message.cmd = WALLET_BLOCKED;
-			xQueueSend(card_to_lcd, (void*)&message, 0);
-		}
-	}
-}
-
-void sign (int id, int amount, BYTE *mess, BYTE *valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit, uint32_t *pinDef){
+void sign (int id, int amount, BYTE *mess, BYTE *valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit, uint32_t *pinDef, struct wallet_status *statusW){
 	int numCheckPin = 0;
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
 	BYTE signature[130] = {0};
 	static struct message message;
 	static struct transaction transaction;
-
+	int blocked = 0;
 
 	BYTE mesToSign[32] = {0};
 	out[0] = 0x43;
@@ -362,16 +336,26 @@ void sign (int id, int amount, BYTE *mess, BYTE *valueTr, BYTE *addr, BYTE *out,
 				if(numCheckPin>2){
 					message.cmd = WALLET_BLOCKED;
 					xQueueSend(card_to_lcd, (void*)&message, 0);
-				}
+					vTaskDelay( 5000 );
+					numCheckPin = 0;
+					out[3] = 0x01;
+					out[4] = 0x04;
+					*lenOut = 5;
+					blocked = 1;
+				}else{
 				out[3] = 0x01;
 				out[4] = 0x04;
 				*lenOut = 5;
+				int ostNum = 3-numCheckPin;
+				message.data = (void*)&ostNum;
 				message.cmd = WALLET_WRONG_PINCODE;
 				xQueueSend(card_to_lcd, (void*)&message, 0);
-				xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
+				xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);}
 			}
-		}while((pinDef[1] != (*(int*)message.data))||(numCheckPin!=0));
+		}while(((pinDef[1] != (*(int*)message.data))||(numCheckPin!=0)) && (blocked == 0));
 		ans=1;
+		message.data = (void*)&statusW;
+		message.cmd = WALLET_STATUS;
 		break;
 
 	case TRANSACTION_CANCELED:

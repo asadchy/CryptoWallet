@@ -90,7 +90,7 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
 uint32_t pinDef[34];
 static void write_flash(uint32_t *data, uint32_t size, uint32_t addr);
 static void read_flash(uint32_t *data, uint32_t size, uint32_t addr);
-void initWalletCMD(int walletInit);
+void initWalletCMD(int walletInit, int blocked);
 /*******************************************************************************
 * Variables
 ******************************************************************************/
@@ -628,10 +628,11 @@ uint32_t send=0;
 int numCheckPin = 0;
 int pinInit = -1;
 struct message mess;
-int walletInit = 0x1255;
+int walletInit = 0x1555;
+static struct wallet_status statusW;
 
 read_flash(pinDef, 34, PIN_ADDR);
-initWalletCMD(walletInit);
+initWalletCMD(walletInit, 0);
 
 
 mess.cmd = WALLET_ENTER_PIN;
@@ -656,7 +657,7 @@ while (1)
 					amoD[4] = 0x00;
 					amoD[5] = '\0';
 					amo[10] = '\0';
-					static struct wallet_status statusW;
+
 
 					for (int i = 0; i < 16; i++)
 					{
@@ -684,9 +685,14 @@ while (1)
 					{
 						mess.cmd = WALLET_BLOCKED;
 						xQueueSend(card_to_lcd, (void*)&mess, 0);
-
+						vTaskDelay( 5000 );
+						initWalletCMD(walletInit, 1);
+						mess.cmd = WALLET_ENTER_PIN;
+						xQueueSend(card_to_lcd, (void*)&mess, 0);
 					}else
 					{
+						int ostNum = 3-numCheckPin;
+						mess.data = (void*)&ostNum;
 						mess.cmd = WALLET_WRONG_PINCODE;
 						xQueueSend(card_to_lcd, (void*)&mess, 0);
 					}
@@ -700,7 +706,7 @@ while (1)
 				pinDef[i] = '\0';
 			}
 			write_flash(pinDef, 34, PIN_ADDR);
-			initWalletCMD(walletInit);
+			initWalletCMD(walletInit, 0);
 			mess.cmd = WALLET_ENTER_PIN;
 			xQueueSend(card_to_lcd, (void*)&mess, 0);
 			break;
@@ -731,7 +737,7 @@ while (1)
 			s_sendSize = 0;
 			if(numCheckPin<3){
 
-				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit, pinDef);
+				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit, pinDef, &statusW);
 
 			}
 			if(send>0){
@@ -863,7 +869,7 @@ static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 	}
 }
 
-void initWalletCMD(int walletInit)
+void initWalletCMD(int walletInit, int blocked)
 {
 	uint8_t seed[32] = {0};
 
@@ -871,8 +877,9 @@ void initWalletCMD(int walletInit)
 	int initWallet = 0;
 	int restoreWalletPin = 0;
 	int restoreWalletMS = 0;
-	while (pinDef[0] != walletInit)
+	while (pinDef[0] != walletInit || blocked == 1)
 	{
+		blocked = 0;
 		BYTE pin[5] = {0};
 		pin[4] = '\0';
 		int lenMnem = 0;
