@@ -6,6 +6,7 @@
  */
 
 #include "keccak.h"
+#include <string.h>
 
 
 #define ROTL64(x, y)    (((x) << (y)) | ((x) >> (64 - (y))))
