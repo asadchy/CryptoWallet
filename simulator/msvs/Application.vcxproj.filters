@@ -14,6 +14,9 @@
     <Filter Include="Header Files\TouchGFX">
       <UniqueIdentifier>{BA2D5532-83FC-489E-8572-F86039C235B3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\gui\blocked_screen">
+      <UniqueIdentifier>{A5CA5D56-262C-400D-9EC7-D32022343B67}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\gui\common">
       <UniqueIdentifier>{4D70648B-D3CC-4A4D-8B7B-49EE2C6E628E}</UniqueIdentifier>
     </Filter>
@@ -34,6 +37,9 @@
     </Filter>
     <Filter Include="Header Files\gui\transaction_screen">
       <UniqueIdentifier>{75AFB0C4-241E-4A1B-9B00-D7521C631EC5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gui_generated\blocked_screen">
+      <UniqueIdentifier>{96223F28-F800-44D4-A832-9F162E36D0D1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\gui_generated\common">
       <UniqueIdentifier>{83E1512D-AF16-43B0-94C3-F1C3BE352149}</UniqueIdentifier>
@@ -154,6 +160,9 @@
     <Filter Include="Source Files\TouchGFX">
       <UniqueIdentifier>{2D589D32-74E1-495F-AD05-EAA71FD725A8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gui\blocked_screen">
+      <UniqueIdentifier>{7258F3DF-3F3F-4733-8725-C0ADBE150CCD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\gui\common">
       <UniqueIdentifier>{7CC0E300-D9DB-4974-A8CA-FBD12452C412}</UniqueIdentifier>
     </Filter>
@@ -177,6 +186,9 @@
     </Filter>
     <Filter Include="Source Files\gui\transaction_screen">
       <UniqueIdentifier>{23D2FABC-C0F7-4594-9D1C-B4156F2C679E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui_generated\blocked_screen">
+      <UniqueIdentifier>{FFD6B8F2-82B6-4917-9408-F1238852295B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\gui_generated\common">
       <UniqueIdentifier>{78D27ADF-1A65-463A-B60F-4CD9D588A551}</UniqueIdentifier>
@@ -228,6 +240,9 @@
     <ClCompile Include="$(TouchGFXReleasePath)\framework\source\platform\hal\simulator\sdl2\OSWrappers.cpp">
       <Filter>Source Files\TouchGFX\platform\hal\simulator\sdl2</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\generated\gui_generated\src\blocked_screen\blockedViewBase.cpp">
+      <Filter>Source Files\gui_generated\blocked_screen</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\generated\gui_generated\src\common\FrontendApplicationBase.cpp">
       <Filter>Source Files\gui_generated\common</Filter>
     </ClCompile>
@@ -246,11 +261,11 @@
     <ClCompile Include="..\..\generated\gui_generated\src\transaction_screen\transactionViewBase.cpp">
       <Filter>Source Files\gui_generated\transaction_screen</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\src\common\CustomKeyboard.cpp">
-      <Filter>Source Files\gui\common</Filter>
+    <ClCompile Include="..\..\gui\src\blocked_screen\blockedPresenter.cpp">
+      <Filter>Source Files\gui\blocked_screen</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\gui\src\common\CustomTransition.cpp">
-      <Filter>Source Files\gui\common</Filter>
+    <ClCompile Include="..\..\gui\src\blocked_screen\blockedView.cpp">
+      <Filter>Source Files\gui\blocked_screen</Filter>
     </ClCompile>
     <ClCompile Include="..\..\gui\src\common\dialog.cpp">
       <Filter>Source Files\gui\common</Filter>
@@ -365,12 +380,6 @@
     <None Include="..\..\assets\images\key_pressed.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
-    <None Include="..\..\assets\images\keyboard.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\leftDoor.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
     <None Include="..\..\assets\images\litecoin.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
@@ -387,9 +396,6 @@
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\pin_keyboard.png">
-      <Filter>Resource Files\assets\images</Filter>
-    </None>
-    <None Include="..\..\assets\images\rightDoor.png">
       <Filter>Resource Files\assets\images</Filter>
     </None>
     <None Include="..\..\assets\images\space_button_pressed.png">
@@ -808,6 +814,9 @@
     <ClInclude Include="$(TouchGFXReleasePath)\framework\include\touchgfx\widgets\Widget.hpp">
       <Filter>Header Files\TouchGFX\touchgfx\widgets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\blocked_screen\blockedViewBase.hpp">
+      <Filter>Header Files\gui_generated\blocked_screen</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\common\FrontendApplicationBase.hpp">
       <Filter>Header Files\gui_generated\common</Filter>
     </ClInclude>
@@ -832,11 +841,11 @@
     <ClInclude Include="..\..\generated\gui_generated\include\gui_generated\transaction_screen\transactionViewBase.hpp">
       <Filter>Header Files\gui_generated\transaction_screen</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\include\gui\common\CustomKeyboard.hpp">
-      <Filter>Header Files\gui\common</Filter>
+    <ClInclude Include="..\..\gui\include\gui\blocked_screen\blockedPresenter.hpp">
+      <Filter>Header Files\gui\blocked_screen</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\gui\include\gui\common\CustomTransition.hpp">
-      <Filter>Header Files\gui\common</Filter>
+    <ClInclude Include="..\..\gui\include\gui\blocked_screen\blockedView.hpp">
+      <Filter>Header Files\gui\blocked_screen</Filter>
     </ClInclude>
     <ClInclude Include="..\..\gui\include\gui\common\dialog.hpp">
       <Filter>Header Files\gui\common</Filter>
@@ -845,12 +854,6 @@
       <Filter>Header Files\gui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\gui\include\gui\common\FrontendHeap.hpp">
-      <Filter>Header Files\gui\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gui\include\gui\common\KeyboardKeyMapping.hpp">
-      <Filter>Header Files\gui\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\gui\include\gui\common\KeyboardLayout.hpp">
       <Filter>Header Files\gui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\gui\include\gui\common\ListElement.hpp">

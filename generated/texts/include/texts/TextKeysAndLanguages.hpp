@@ -39,7 +39,7 @@ typedef enum {
     T_HEAD_TEXT,
     T_CURR_TEXT,
     T_MSW_TEXT,
-    T_TEXTID1,
+    T_BLOCKED,
     NUMBER_OF_TEXT_KEYS
 } TEXTS;
 

@@ -56,4 +56,9 @@ void transactionPresenter::toInitScreen()
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();
 }
 
+void transactionPresenter::toBlockedScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoBlockedScreen();
+}
+
 

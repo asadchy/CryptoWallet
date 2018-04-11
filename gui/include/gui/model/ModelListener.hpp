@@ -77,6 +77,7 @@ public:
     virtual void toStatusScreen() {}
     virtual void toPinScreen() {}
     virtual void toInitScreen() {}
+    virtual void toBlockedScreen() {}
 protected:
     Model* model;
 };

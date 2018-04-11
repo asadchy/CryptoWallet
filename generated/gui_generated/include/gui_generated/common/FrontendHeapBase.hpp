@@ -21,6 +21,8 @@
 #include <gui/init_screen/initPresenter.hpp>
 #include <gui/pin_screen/pinView.hpp>
 #include <gui/pin_screen/pinPresenter.hpp>
+#include <gui/blocked_screen/blockedView.hpp>
+#include <gui/blocked_screen/blockedPresenter.hpp>
 
 
 /**
@@ -48,7 +50,8 @@ public:
             meta::TypeList< statusView,
             meta::TypeList< initView,
             meta::TypeList< pinView,
-            meta::Nil > > > >
+            meta::TypeList< blockedView,
+            meta::Nil > > > > >
             > GeneratedViewTypes;
 
     /**
@@ -65,7 +68,8 @@ public:
             meta::TypeList< statusPresenter,
             meta::TypeList< initPresenter,
             meta::TypeList< pinPresenter,
-            meta::Nil > > > >
+            meta::TypeList< blockedPresenter,
+            meta::Nil > > > > >
             > GeneratedPresenterTypes;
 
     /**

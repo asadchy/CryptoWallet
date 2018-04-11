@@ -20,6 +20,7 @@ extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_20_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_20_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Thin_18_4bpp();
 extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_16_4bpp();
+extern touchgfx::InternalFlashFont& getFont_Heebo_Regular_30_4bpp();
 
 touchgfx::Font* ApplicationFontProvider::getFont(touchgfx::FontId fontId)
 {
@@ -61,6 +62,9 @@ touchgfx::Font* ApplicationFontProvider::getFont(touchgfx::FontId fontId)
     
     case Typography::CURR_TEXT_T:
       return &(getFont_Heebo_Regular_16_4bpp());
+    
+    case Typography::BLOCKED:
+      return &(getFont_Heebo_Regular_30_4bpp());
     
     default:
       return 0;

@@ -15,6 +15,8 @@
 #include <gui/init_screen/initPresenter.hpp>
 #include <gui/pin_screen/pinView.hpp>
 #include <gui/pin_screen/pinPresenter.hpp>
+#include <gui/blocked_screen/blockedView.hpp>
+#include <gui/blocked_screen/blockedPresenter.hpp>
 
 using namespace touchgfx;
 

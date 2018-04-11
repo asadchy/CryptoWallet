@@ -76,6 +76,11 @@ void pinPresenter::toInitScreen()
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoInitScreen();
 }
 
+void pinPresenter::toBlockedScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoBlockedScreen();
+}
+
 void pinPresenter::toStatusScreen()
 {
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoStatusScreen();

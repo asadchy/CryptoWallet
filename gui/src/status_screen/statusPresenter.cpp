@@ -31,6 +31,11 @@ void statusPresenter::toStatusScreen()
 	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoStatusScreen();
 }
 
+void statusPresenter::toBlockedScreen()
+{
+	static_cast<FrontendApplication*>(FrontendApplication::getInstance())->gotoBlockedScreen();
+}
+
 void statusPresenter::statusScreenEntered()
 {
 	model->statusScreenEntered();

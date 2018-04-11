@@ -43,6 +43,7 @@ public:
     virtual void toInitScreen();
     virtual void toStatusScreen();
     virtual void toPinScreen();
+    virtual void toBlockedScreen();
 
 private:
     pinPresenter();
