@@ -737,7 +737,7 @@ while (1)
 			s_sendSize = 0;
 			if(numCheckPin<3){
 
-				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit, pinDef, &statusW);
+				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit, pinDef/*, &statusW*/);
 
 			}
 			if(send>0){

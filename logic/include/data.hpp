@@ -78,6 +78,7 @@ struct wallet_status
 };
 
 
+
 #ifndef SIMULATOR
 	extern QueueHandle_t lcd_to_card, card_to_lcd;
 #endif
