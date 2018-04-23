@@ -74,6 +74,7 @@ PinsProfile:
 #define IOCON_PIO_DIGITAL_EN        0x0100u   /*!< Enables digital function */
 #define IOCON_PIO_FUNC0               0x00u   /*!< Selects pin function 0 */
 #define IOCON_PIO_FUNC1               0x01u   /*!< Selects pin function 1 */
+#define IOCON_PIO_FUNC2				  0x02u	  /*!< Selects pin function 2 */
 #define IOCON_PIO_FUNC6               0x06u   /*!< Selects pin function 6 */
 #define IOCON_PIO_FUNC7               0x07u   /*!< Selects pin function 7 */
 #define IOCON_PIO_I2CDRIVE_HIGH     0x0400u   /*!< High drive: 20 mA */
@@ -84,6 +85,7 @@ PinsProfile:
 #define IOCON_PIO_MODE_INACT          0x00u   /*!< No addition pin function */
 #define IOCON_PIO_MODE_PULLUP         0x20u   /*!< Selects pull-up function */
 #define IOCON_PIO_OPENDRAIN_DI        0x00u   /*!< Open drain is disabled */
+#define IOCON_PIO_OPENDRAIN_EN 		0x0800u   /*!< Open drain is enabled */
 #define IOCON_PIO_SLEW_FAST         0x0400u   /*!< Fast mode, slew rate control is disabled */
 #define IOCON_PIO_SLEW_STANDARD       0x00u   /*!< Standard mode, output slew rate control is enabled */
 #define PIN0_IDX                         0u   /*!< Pin number for pin 0 in a port 3 */
@@ -1027,6 +1029,28 @@ void BOARD_InitPins(void) {
     IOCON_PIO_OPENDRAIN_DI                                   /* Open drain is disabled */
   );
   IOCON_PinMuxSet(IOCON, PORT4_IDX, PIN8_IDX, port4_pin8_config); /* PORT4 PIN8 (coords: B14) is configured as ENET_TXD0 */
+
+  /* I2C pin's */
+  const uint32_t port3_pin16_config = (
+	IOCON_PIO_FUNC1 |										 /* Selects pull-up function */
+	IOCON_PIO_MODE_PULLUP |									 /* Input function is not inverted */
+	IOCON_PIO_INV_DI |										 /* Enables digital function */
+	IOCON_PIO_DIGITAL_EN |									 /* Input filter disabled */
+	IOCON_PIO_INPFILT_OFF |									 /* Standard mode, output slew rate control is enabled */
+	IOCON_PIO_SLEW_STANDARD |								 /* Open drain is enabled */
+	IOCON_PIO_OPENDRAIN_EN
+  );
+  IOCON_PinMuxSet(IOCON, PORT3_IDX, PIN16_IDX, port3_pin16_config); /* PORT3 PIN16 (coords: ???) is configured as FC8_RXD_SDA_MOSI */
+  const uint32_t port3_pin17_config = (
+  	IOCON_PIO_FUNC1 |										 /* Selects pull-up function */
+  	IOCON_PIO_MODE_PULLUP |									 /* Input function is not inverted */
+  	IOCON_PIO_INV_DI |										 /* Enables digital function */
+  	IOCON_PIO_DIGITAL_EN |									 /* Input filter disabled */
+  	IOCON_PIO_INPFILT_OFF |									 /* Standard mode, output slew rate control is enabled */
+  	IOCON_PIO_SLEW_STANDARD |								 /* Open drain is enabled */
+  	IOCON_PIO_OPENDRAIN_EN
+    );
+    IOCON_PinMuxSet(IOCON, PORT3_IDX, PIN17_IDX, port3_pin17_config); /* PORT3 PIN17 (coords: ???) is configured as FC8_TXD_SCL_MISO */
 }
 /*******************************************************************************
  * EOF

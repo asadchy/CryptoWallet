@@ -47,6 +47,7 @@ using namespace touchgfx;
 
 extern "C" {
 	extern void usb_init(void);
+	#include "communication.h"
 }
 
 /**
@@ -87,6 +88,12 @@ int main(void)
                 NULL);
 
     usb_init();
+
+    xTaskCreate(Communication_Task, (TASKCREATE_NAME_TYPE)"I2CTask",
+				configGUI_TASK_STK_SIZE,
+				NULL,
+				configGUI_TASK_PRIORITY - 1,
+				NULL);
 
     vTaskStartScheduler();
 

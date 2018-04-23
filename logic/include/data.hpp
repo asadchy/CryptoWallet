@@ -12,9 +12,14 @@
 	#include "FreeRTOS.h"
 	#include "task.h"
 	#include "queue.h"
+	#include "semphr.h"
 #endif
 
-#define QUEUE_SIZE								5
+#include "stdint.h"
+#include "stdbool.h"
+
+#define QUEUE_SIZE		5
+#define IPC_BUF_SIZE	128
 
 enum COMMANDS
 {
@@ -77,10 +82,23 @@ struct wallet_status
 	int num;								//number of available currencies
 };
 
-
+struct ipc_packet
+{
+	uint8_t data[IPC_BUF_SIZE];
+	uint32_t size;
+	bool ready;
+};
 
 #ifndef SIMULATOR
+	struct ipc_wrapper
+	{
+		struct ipc_packet *tx;
+		struct ipc_packet *rx;
+		SemaphoreHandle_t *sem;
+	};
+
 	extern QueueHandle_t lcd_to_card, card_to_lcd;
+	extern QueueHandle_t lpc_to_pn, pn_to_lpc;
 #endif
 
 #endif /* DATA_HPP_ */
