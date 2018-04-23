@@ -36,6 +36,7 @@
 #include "board.h"
 #include "sourcesCW/answer.h"
 #include "sourcesCW/pbkdf2/mnemonic.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -87,10 +88,12 @@ void BOARD_DbgConsole_Deinit(void);
 void BOARD_DbgConsole_Init(void);
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
-uint32_t pinDef[34];
+
 static void write_flash(uint32_t *data, uint32_t size, uint32_t addr);
 static void read_flash(uint32_t *data, uint32_t size, uint32_t addr);
-void initWalletCMD(int walletInit, int blocked);
+void initWalletCMD(int walletInit, int blocked, uint32_t *pinDef);
+
+
 /*******************************************************************************
 * Variables
 ******************************************************************************/
@@ -627,132 +630,135 @@ uint32_t lenBuf = 0;
 uint32_t send=0;
 int numCheckPin = 0;
 int pinInit = -1;
+int walletInit = 0x00;
+uint32_t pinDef[34];
+buffer[0] = 0x9c;
+buffer[1] = 0x9c;
+buffer[2] = 0x10;
+buffer[3] = 0x9a;
+buffer[4] = 0x9a;
+USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, 5);
+buffer[0] = 0x00;
+buffer[1] = 0x00;
+buffer[2] = 0x00;
+buffer[3] = 0x00;
+buffer[4] = 0x00;
 struct message mess;
-int walletInit = 0x1555;
 static struct wallet_status statusW;
 
-read_flash(pinDef, 34, PIN_ADDR);
-initWalletCMD(walletInit, 0);
-
-
-mess.cmd = WALLET_ENTER_PIN;
-xQueueSend(card_to_lcd, (void*)&mess, 0);
+//read_flash(pinDef, 34, PIN_ADDR);
+//initWalletCMD(walletInit, 0, pinDef);
+//mess.cmd = WALLET_ENTER_PIN;
+//xQueueSend(card_to_lcd, (void*)&mess, 0);
 int cmd;
+
 while (1)
 {
-
 	if(xQueueReceive(lcd_to_card, (void*)&mess, 0))
-	{
-		cmd = mess.cmd;
-		switch(cmd)
 		{
-		case WALLET_PINCODE:
-			if(pinInit == -1)
+			cmd = mess.cmd;
+			switch(cmd)
 			{
-				if(pinDef[1] == *(uint32_t*)mess.data){
-					numCheckPin = 0;
-					pinInit = *(uint32_t*)mess.data;
-					char amo[16] = {"0.00000000"};
-					char amoD[16] = {"0.00"};
-					amoD[4] = 0x00;
-					amoD[5] = '\0';
-					amo[10] = '\0';
-
-
-					for (int i = 0; i < 16; i++)
+			case WALLET_PINCODE:
+				if(pinInit == -1)
+				{
+					if(pinDef[1] == *(uint32_t*)mess.data)
 					{
-						statusW.curr[0].amount[i] = amo[i];
-						statusW.curr[0].amount_dollars[i] = amoD[i];
-						statusW.curr[1].amount[i] = amo[i];
-						statusW.curr[1].amount_dollars[i] = amoD[i];
-						statusW.curr[2].amount[i] = amo[i];
-						statusW.curr[2].amount_dollars[i] = amoD[i];
-					}
+						numCheckPin = 0;
+						pinInit = *(uint32_t*)mess.data;
+						char amo[16] = {"0.00000000"};
+						char amoD[16] = {"0.00"};
+						amoD[4] = 0x00;
+						amoD[5] = '\0';
+						amo[10] = '\0';
+						for (int i = 0; i < 16; i++)
+						{
+							statusW.curr[0].amount[i] = amo[i];
+							statusW.curr[0].amount_dollars[i] = amoD[i];
+							statusW.curr[1].amount[i] = amo[i];
+							statusW.curr[1].amount_dollars[i] = amoD[i];
+							statusW.curr[2].amount[i] = amo[i];
+							statusW.curr[2].amount_dollars[i] = amoD[i];
+						}
+						statusW.curr[0].curr_name = BTC;
+						statusW.curr[1].curr_name = ETH;
+						statusW.curr[2].curr_name = LTC;
 
-					statusW.curr[0].curr_name = BTC;
-					statusW.curr[1].curr_name = ETH;
-					statusW.curr[2].curr_name = LTC;
-
-					statusW.num = 3;
-
-					mess.data = (void*)&statusW;
-					mess.cmd = WALLET_STATUS;
-					xQueueSend(card_to_lcd, (void*)&mess, 0);
-				}
-				else{
-					numCheckPin ++;
-					if(numCheckPin > 2)
-					{
-						mess.cmd = WALLET_BLOCKED;
-						xQueueSend(card_to_lcd, (void*)&mess, 0);
-						vTaskDelay( 5000 );
-						initWalletCMD(walletInit, 1);
-						mess.cmd = WALLET_ENTER_PIN;
-						xQueueSend(card_to_lcd, (void*)&mess, 0);
-					}else
-					{
-						int ostNum = 3-numCheckPin;
-						mess.data = (void*)&ostNum;
-						mess.cmd = WALLET_WRONG_PINCODE;
+						statusW.num = 3;
+						mess.data = (void*)&statusW;
+						mess.cmd = WALLET_STATUS;
 						xQueueSend(card_to_lcd, (void*)&mess, 0);
 					}
+					else{
+						numCheckPin = numCheckPin + 1;
+						if(numCheckPin > 2)
+						{
+							mess.cmd = WALLET_BLOCKED;
+							xQueueSend(card_to_lcd, (void*)&mess, 0);
+							vTaskDelay( 5000 );
+							initWalletCMD(walletInit, 1, pinDef);
+							mess.cmd = WALLET_ENTER_PIN;
+							xQueueSend(card_to_lcd, (void*)&mess, 0);
+						}else
+						{
+							int ostNum = 3- numCheckPin;
+							mess.data = (void*)&ostNum;
+							mess.cmd = WALLET_WRONG_PINCODE;
+							xQueueSend(card_to_lcd, (void*)&mess, 0);
+						}
+					}
 				}
+				break;
+			case WALLET_CMD_CLEAR:
+				pinInit = -1;
+				for(int i = 0; i < 34; i++)
+				{
+					pinDef[i] = '\0';
+				}
+				write_flash(pinDef, 34, PIN_ADDR);
+				initWalletCMD(walletInit, 0, pinDef);
+				mess.cmd = WALLET_ENTER_PIN;
+				xQueueSend(card_to_lcd, (void*)&mess, 0);
+				break;
 			}
-			break;
-		case WALLET_CMD_CLEAR:
-			pinInit = -1;
-			for(int i = 0; i < 34; i++)
-			{
-				pinDef[i] = '\0';
-			}
-			write_flash(pinDef, 34, PIN_ADDR);
-			initWalletCMD(walletInit, 0);
-			mess.cmd = WALLET_ENTER_PIN;
-			xQueueSend(card_to_lcd, (void*)&mess, 0);
-			break;
 		}
-	}
-
 	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
 	{
 		/* User Code */
 		if ((0 != s_recvSize) && (0xFFFFFFFF != s_recvSize))
 		{
 			int32_t i;
-
 			/* Copy Buffer to Send Buff */
 			for (i = 0; i < s_recvSize; i++)
 			{
-
 				s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
-
 			}
 			s_recvSize = 0;
 		}
-
-
 		if (s_sendSize)
 		{
 			uint32_t size = s_sendSize;
 			s_sendSize = 0;
-			if(numCheckPin<3){
-
-				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit, pinDef/*, &statusW*/);
-
+			if(numCheckPin<3)
+			{
+				dataToBuffer(s_currSendBuf,&size, buffer, &lenBuf, &send, &pinInit, pinDef);
 			}
-			if(send>0){
+			if(send>0)
+			{
 				//portENTER_CRITICAL();
 				error =	USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
 				//portEXIT_CRITICAL();
                 send=0;
                 lenBuf = 0;
-                for(int i =0; i<1800; i++){
+                for(int i =0; i<1800; i++)
+                {
                 	buffer[i] = 0x00;
                 }
                 if (error != kStatus_USB_Success)
                 {
                     // Failure to send Data Handling code here
-                }}else{USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, 0);}
+                }
+			}else{USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, 0);}
 		}
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
@@ -792,7 +798,7 @@ while (1)
             }
 #endif
        }
-    }
+	}
 }
 
 #if defined(__CC_ARM) || defined(__GNUC__)
@@ -869,10 +875,9 @@ static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 	}
 }
 
-void initWalletCMD(int walletInit, int blocked)
+void initWalletCMD(int walletInit, int blocked, uint32_t *pinDef)
 {
 	uint8_t seed[32] = {0};
-
 	struct message messRes;
 	int initWallet = 0;
 	int restoreWalletPin = 0;
@@ -891,7 +896,6 @@ void initWalletCMD(int walletInit, int blocked)
 		vTaskDelay(500 / portTICK_PERIOD_MS);
 		messInit.cmd = WALLET_INIT;
 		xQueueSend(card_to_lcd, (void*)&messInit, 0);
-
 		while (!initWallet)
 		{
 			if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
@@ -900,7 +904,6 @@ void initWalletCMD(int walletInit, int blocked)
 				switch(cmd)
 				{
 				case WALLET_CMD_RESTORE:
-
 					messRes.cmd = WALLET_ENTER_PIN;
 					xQueueSend(card_to_lcd, (void*)&messRes, 0);
 					while (!restoreWalletPin)
@@ -911,16 +914,15 @@ void initWalletCMD(int walletInit, int blocked)
 							switch(cmd)
 							{
 							case WALLET_PINCODE:
-							pinDef[1] = *(uint32_t*)messRes.data;
-
-							pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
-							pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
-							pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
-							pin[3] = pinDef[1]%10 + 48;
-							mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
-							restoreWalletPin = 1;
-							messRes.cmd = WALLET_ENTER_MS;
-							xQueueSend(card_to_lcd, (void*)&messRes, 0);
+								pinDef[1] = *(uint32_t*)messRes.data;
+								pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+								pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+								pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+								pin[3] = pinDef[1]%10 + 48;
+								mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
+								restoreWalletPin = 1;
+								messRes.cmd = WALLET_ENTER_MS;
+								xQueueSend(card_to_lcd, (void*)&messRes, 0);
 								while(!restoreWalletMS)
 								{
 									if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
@@ -930,40 +932,37 @@ void initWalletCMD(int walletInit, int blocked)
 										switch(cmd)
 										{
 										case WALLET_MNEMONIC:
-
-										if(strncmp((char*)mnemonic, (char*)messRes.data, lenMnem))
-										{
-											pinToSeed = 0;
-										}
-										if(pinToSeed == 1)
-										{
-											pinDef[0] = walletInit;
-											seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
-											for(int i = 0; i < 32; i++)
+											if(strncmp((char*)mnemonic, (char*)messRes.data, lenMnem))
 											{
-												pinDef[i+2] = seed[i];
+												pinToSeed = 0;
 											}
-											write_flash(pinDef, 34, PIN_ADDR);
-										}
-										restoreWalletMS = 1;
-										initWallet = 1;
-									/*	messInit.cmd = WALLET_STATUS;
-										xQueueSend(card_to_lcd, (void*)&messInit, 0);*/
-										break;
+											if(pinToSeed == 1)
+											{
+												pinDef[0] = walletInit;
+												seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
+												for(int i = 0; i < 32; i++)
+												{
+													pinDef[i+2] = seed[i];
+												}
+												write_flash(pinDef, 34, PIN_ADDR);
+											}
+											restoreWalletMS = 1;
+											initWallet = 1;
+											break;
 										case WALLET_CANCEL_PRESSED:
 											initWallet = 1;
 											restoreWalletPin = 1;
 											restoreWalletMS = 1;
 											break;
-									}
+										}
 									}
 								}
 								break;
 							case WALLET_CANCEL_PRESSED:
 								initWallet = 1;
 								restoreWalletPin = 1;
-							break;
-						}
+								break;
+							}
 						}
 					}
 					break;
@@ -978,9 +977,8 @@ void initWalletCMD(int walletInit, int blocked)
 							switch(cmd)
 							{
 							case WALLET_PINCODE:
-							pinDef[1] = *(uint32_t*)messInit.data;
-
-							pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+								pinDef[1] = *(uint32_t*)messInit.data;
+								pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
 							pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
 							pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
 							pin[3] = pinDef[1]%10 + 48;
@@ -1003,8 +1001,6 @@ void initWalletCMD(int walletInit, int blocked)
 								if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
 								{
 									temp=1;
-									/*messInit.cmd = WALLET_STATUS;
-									xQueueSend(card_to_lcd, (void*)&messInit, 0);*/
 								}
 							}
 							break;
@@ -1020,3 +1016,5 @@ void initWalletCMD(int walletInit, int blocked)
 		}
 	}
 }
+
+

@@ -4,11 +4,153 @@
 #include "crypto/sign.h"
 #include "string.h"
 #include "balance.h"
+#include "pbkdf2/mnemonic.h"
 
 typedef unsigned char BYTE;
 typedef unsigned int UINT32;
 
-void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int *pinInit, uint32_t *pinDef/*, struct wallet_status *statusW*/){
+void initWalletCMD_(int walletInit, uint32_t *pinDef)
+{
+	uint8_t seed[32] = {0};
+	struct message messRes;
+	int initWallet = 0;
+	int restoreWalletPin = 0;
+	int restoreWalletMS = 0;
+	while (pinDef[0] != walletInit)
+	{
+		BYTE pin[5] = {0};
+		pin[4] = '\0';
+		int lenMnem = 0;
+		BYTE mnemonic[120] = {0};
+		initWallet=0;
+		restoreWalletPin = 0;
+		restoreWalletMS = 0;
+		struct message messInit;
+		vTaskDelay(500 / portTICK_PERIOD_MS);
+		messInit.cmd = WALLET_INIT;
+		xQueueSend(card_to_lcd, (void*)&messInit, 0);
+		while (!initWallet)
+		{
+			if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+			{
+				int cmd = messInit.cmd;
+				switch(cmd)
+				{
+				case WALLET_CMD_RESTORE:
+					messRes.cmd = WALLET_ENTER_PIN;
+					xQueueSend(card_to_lcd, (void*)&messRes, 0);
+					while (!restoreWalletPin)
+					{
+						if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
+						{
+							cmd = messRes.cmd;
+							switch(cmd)
+							{
+							case WALLET_PINCODE:
+								pinDef[1] = *(uint32_t*)messRes.data;
+								pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+								pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+								pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+								pin[3] = pinDef[1]%10 + 48;
+								mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
+								restoreWalletPin = 1;
+								messRes.cmd = WALLET_ENTER_MS;
+								xQueueSend(card_to_lcd, (void*)&messRes, 0);
+								while(!restoreWalletMS)
+								{
+									if(xQueueReceive(lcd_to_card, (void*)&messRes, 0))
+									{
+										int pinToSeed = 1;
+										cmd = messRes.cmd;
+										switch(cmd)
+										{
+										case WALLET_MNEMONIC:
+											if(strncmp((char*)mnemonic, (char*)messRes.data, lenMnem))
+											{
+												pinToSeed = 0;
+											}
+											if(pinToSeed == 1)
+											{
+												pinDef[0] = walletInit;
+												seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
+												for(int i = 0; i < 32; i++)
+												{
+													pinDef[i+2] = seed[i];
+												}
+												//write_flash(pinDef, 34, PIN_ADDR);
+											}
+											restoreWalletMS = 1;
+											initWallet = 1;
+											break;
+										case WALLET_CANCEL_PRESSED:
+											initWallet = 1;
+											restoreWalletPin = 1;
+											restoreWalletMS = 1;
+											break;
+										}
+									}
+								}
+								break;
+							case WALLET_CANCEL_PRESSED:
+								initWallet = 1;
+								restoreWalletPin = 1;
+								break;
+							}
+						}
+					}
+					break;
+				case WALLET_CMD_INIT:
+					messInit.cmd = WALLET_SET_PIN;
+					xQueueSend(card_to_lcd, (void*)&messInit, 0);
+					while (!initWallet)
+						{
+						if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+						{
+							int cmd = messInit.cmd;
+							switch(cmd)
+							{
+							case WALLET_PINCODE:
+								pinDef[1] = *(uint32_t*)messInit.data;
+								pin[0] = (pinDef[1] - pinDef[1]%1000)/1000 + 48;
+							pin[1] = ((pinDef[1] - pinDef[1]%100)/100)%10 + 48;
+							pin[2] = ((pinDef[1] - pinDef[1]%10)/10)%10 + 48;
+							pin[3] = pinDef[1]%10 + 48;
+							mnemonicGenerate(pin, mnemonic, &lenMnem, 128);
+							seedFromMnemonic(mnemonic, lenMnem, pin, 4, seed);
+							pinDef[0] = walletInit;
+							for(int i = 0; i < 32; i++)
+							{
+								pinDef[i+2] = seed[i];
+							}
+							//write_flash(pinDef, 34, PIN_ADDR);
+							messInit.cmd = WALLET_SET_MS;
+							mnemonic[lenMnem] = '\0';
+							messInit.data = (void*)mnemonic;
+							initWallet = 1;
+							xQueueSend(card_to_lcd, (void*)&messInit, 0);
+							int temp = 0;
+							while(!temp)
+							{
+								if(xQueueReceive(lcd_to_card, (void*)&messInit, 0))
+								{
+									temp=1;
+								}
+							}
+							break;
+							case WALLET_CANCEL_PRESSED:
+								initWallet = 1;
+							break;
+							}
+						}
+						}
+					break;
+				}
+			}
+		}
+	}
+}
+
+void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* lenOut, int *pinInit, uint32_t *pinDef){
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
 	BYTE address[42] = { 0 };
@@ -16,8 +158,31 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	struct message mess;
 	static struct wallet_status statusW;
 
-	switch(dataIn[0]){//balance
-	case 0x42:{
+	switch(dataIn[0]){
+	case 0x10:{//status wallet
+		if(dataIn[1] == 0) //not init sim
+		{
+
+		}
+		if(dataIn[1] == 1) //init sim
+		{
+			pinDef[0] = dataIn[1];
+			pinDef[1] = dataIn[2]*256 + dataIn[3];
+			for(int i=0; i<32; i++)
+			{
+				pinDef[2+i] = dataIn[4+i];
+			}
+		}
+		if(dataIn[1] == 2) //block sim
+		{
+
+		}
+		break;
+	}
+
+
+
+	case 0x42:{//balance
 		for(int i = 0; i<96; i++)
 		{
 			balanceWallet[i] = dataIn[i+1];
@@ -166,12 +331,11 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			{
 				valueTr[i] = dataIn[i + 3 + 32*amount];
 			}
-			//int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[34] = {0};
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef/*, statusW*/);
+			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
 		if(dataIn[1] == 0x02){//litecoin
 			int amount = dataIn[2];
@@ -184,12 +348,11 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			{
 				valueTr[i] = dataIn[i + 3 + 32*amount];
 			}
-			//int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[34] = {0};
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef/*, statusW*/);
+			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
 		if(dataIn[1] == 0x01){//ethereum
 			int amount = dataIn[2];
@@ -202,12 +365,11 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			{
 				valueTr[i] = dataIn[i + 3 + 32*amount];
 			}
-			//int valueTr = ((int)dataIn[3 + 32*amount]*16777216 + (int)dataIn[4 + 32*amount]*65536 + (int)dataIn[5 + 32*amount]*256 + (int)dataIn[6 + 32*amount]);
 			BYTE addr[42] = {0};
 			for(int i=0; i<42; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef/*, statusW*/);
+			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
 		}
 	break;
 	}
@@ -221,7 +383,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 }
 
-int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit, uint32_t *pinDef/*, struct wallet_status *statusW*/){
+int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit, uint32_t *pinDef){
 
 	for(int i = (*lenBuf); i<((*lenBuf)+(*lenIn)); i++){
 		buffer[i] = dataIn[i-(*lenBuf)];
@@ -243,7 +405,7 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 						*send=1;
 						uint32_t lenTempBuf = end-start;
 
-						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf, pinInit, pinDef/*, statusW*/);
+						answerCom(tempBuf, &lenTempBuf,buffer, lenBuf, pinInit, pinDef);
 						return 0;
 					}
 				}
@@ -254,7 +416,7 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 }
 
 
-void sign (int id, int amount, BYTE *mess, BYTE *valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit, uint32_t *pinDef/*, struct wallet_status *statusW*/){
+void sign (int id, int amount, BYTE *mess, BYTE *valueTr, BYTE *addr, BYTE *out, uint32_t *lenOut, int *pinInit, uint32_t *pinDef){
 	int numCheckPin = 0;
 	BYTE privateKey[32] = { 0 };
 	BYTE publicKey[65] = { 0 };
