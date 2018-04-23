@@ -103,6 +103,11 @@ void Model::tick()
 	{
 		toBlockedScreen();
 	}
+	else if(tick_counter == mul * 500)
+	{
+
+		toStatusScreen();
+	}
 	/*
 	else if(tick_counter == mul * 500)
 	{
@@ -324,7 +329,9 @@ void Model::statusScreenEntered()
 {
 	tmpText[0] = 0;
 	setDialogText(tmpText);
+#ifndef SIMULATOR
 	walletStatus(static_cast<struct wallet_status*>(rx_mess.data));
+#endif
 }
 
 void Model::pinScreenEntered()
