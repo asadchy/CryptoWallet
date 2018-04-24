@@ -625,32 +625,68 @@ void APPTask(void *handle)
         }
     }
 #endif
+int cmd;
+struct message mess;
+static struct wallet_status statusW;
 uint8_t buffer[1800] = {0};
 uint32_t lenBuf = 0;
 uint32_t send=0;
 int numCheckPin = 0;
 int pinInit = -1;
-int walletInit = 0x00;
+int walletInit = 0x01;
+int receivePntoLcp = 0;
 uint32_t pinDef[34];
 buffer[0] = 0x9c;
 buffer[1] = 0x9c;
 buffer[2] = 0x10;
 buffer[3] = 0x9a;
 buffer[4] = 0x9a;
-USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, 5);
+xQueueSend(lpc_to_pn, buffer, 0);
+while(!receivePntoLcp)
+{
+	if(xQueueReceive(pn_to_lpc, buffer, 0))
+	{
+		switch(buffer[3]){
+		case 0:{//not init
+			initWalletCMD(walletInit, 0, pinDef);
+			receivePntoLcp = 1;
+			break;
+		}
+		case 1:{//init
+			pinDef[0] = buffer[3];
+			pinDef[1] = buffer[4]*256 + buffer[5];
+			for(int i=0; i<32; i++)
+			{
+				pinDef[2+i] = buffer[6+i];
+			}
+			receivePntoLcp = 1;
+			break;
+		}
+		case 2:{//block
+			receivePntoLcp = 1;
+			break;
+		}
+		}
+	}
+}
+
 buffer[0] = 0x00;
 buffer[1] = 0x00;
 buffer[2] = 0x00;
 buffer[3] = 0x00;
 buffer[4] = 0x00;
-struct message mess;
-static struct wallet_status statusW;
+
+
+
+
+
+
 
 //read_flash(pinDef, 34, PIN_ADDR);
 //initWalletCMD(walletInit, 0, pinDef);
-//mess.cmd = WALLET_ENTER_PIN;
-//xQueueSend(card_to_lcd, (void*)&mess, 0);
-int cmd;
+mess.cmd = WALLET_ENTER_PIN;
+xQueueSend(card_to_lcd, (void*)&mess, 0);
+
 
 while (1)
 {
@@ -715,13 +751,33 @@ while (1)
 				{
 					pinDef[i] = '\0';
 				}
-				write_flash(pinDef, 34, PIN_ADDR);
+				//write_flash(pinDef, 34, PIN_ADDR);
 				initWalletCMD(walletInit, 0, pinDef);
 				mess.cmd = WALLET_ENTER_PIN;
 				xQueueSend(card_to_lcd, (void*)&mess, 0);
 				break;
 			}
 		}
+	if(xQueueReceive(pn_to_lpc, buffer, 0))
+	{
+		uint32_t size = 128;
+		dataToBuffer(buffer ,&size, buffer, &lenBuf, &send, &pinInit, pinDef);
+		if(send>0)
+		{
+			//portENTER_CRITICAL();
+			xQueueSend(lpc_to_pn, buffer, 0);
+			//portEXIT_CRITICAL();
+            send=0;
+            lenBuf = 0;
+            for(int i =0; i<1800; i++)
+            {
+            	buffer[i] = 0x00;
+            }
+
+		}
+
+	}
+#ifdef usbConnect
 	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
 	{
 		/* User Code */
@@ -798,6 +854,7 @@ while (1)
             }
 #endif
        }
+#endif
 	}
 }
 
@@ -877,6 +934,7 @@ static void read_flash(uint32_t *data, uint32_t size, uint32_t addr)
 
 void initWalletCMD(int walletInit, int blocked, uint32_t *pinDef)
 {
+	uint8_t buffer[40] = {0};
 	uint8_t seed[32] = {0};
 	struct message messRes;
 	int initWallet = 0;
@@ -944,7 +1002,20 @@ void initWalletCMD(int walletInit, int blocked, uint32_t *pinDef)
 												{
 													pinDef[i+2] = seed[i];
 												}
-												write_flash(pinDef, 34, PIN_ADDR);
+												buffer[0] = 0x9c;
+												buffer[1] = 0x9c;
+												buffer[2] = 0x20;
+												buffer[3] = 0x01;
+												buffer[4] = (pinDef[1] - pinDef[1]%256)/256;
+												buffer[5] = pinDef[1]%256;
+												for(int i = 0; i<32; i++)
+												{
+													buffer[i+6] = pinDef[i+2];
+												}
+												buffer[38] = 0x9a;
+												buffer[39] = 0x9a;
+												xQueueSend(lpc_to_pn, buffer, 0);
+											//	write_flash(pinDef, 34, PIN_ADDR);
 											}
 											restoreWalletMS = 1;
 											initWallet = 1;
@@ -989,7 +1060,20 @@ void initWalletCMD(int walletInit, int blocked, uint32_t *pinDef)
 							{
 								pinDef[i+2] = seed[i];
 							}
-							write_flash(pinDef, 34, PIN_ADDR);
+							buffer[0] = 0x9c;
+							buffer[1] = 0x9c;
+							buffer[2] = 0x20;
+							buffer[3] = 0x01;
+							buffer[4] = (pinDef[1] - pinDef[1]%256)/256;
+							buffer[5] = pinDef[1]%256;
+							for(int i = 0; i<32; i++)
+							{
+								buffer[i+6] = pinDef[i+2];
+							}
+							buffer[38] = 0x9a;
+							buffer[39] = 0x9a;
+							xQueueSend(lpc_to_pn, buffer, 0);
+							//write_flash(pinDef, 34, PIN_ADDR);
 							messInit.cmd = WALLET_SET_MS;
 							mnemonic[lenMnem] = '\0';
 							messInit.data = (void*)mnemonic;

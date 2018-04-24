@@ -158,30 +158,8 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	struct message mess;
 	static struct wallet_status statusW;
 
-	switch(dataIn[0]){
-	case 0x10:{//status wallet
-		if(dataIn[1] == 0) //not init sim
-		{
-
-		}
-		if(dataIn[1] == 1) //init sim
-		{
-			pinDef[0] = dataIn[1];
-			pinDef[1] = dataIn[2]*256 + dataIn[3];
-			for(int i=0; i<32; i++)
-			{
-				pinDef[2+i] = dataIn[4+i];
-			}
-		}
-		if(dataIn[1] == 2) //block sim
-		{
-
-		}
-		break;
-	}
-
-
-
+	switch(dataIn[0])
+	{
 	case 0x42:{//balance
 		for(int i = 0; i<96; i++)
 		{
