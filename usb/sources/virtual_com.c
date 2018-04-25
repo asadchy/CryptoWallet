@@ -641,6 +641,7 @@ buffer[1] = 0x9c;
 buffer[2] = 0x10;
 buffer[3] = 0x9a;
 buffer[4] = 0x9a;
+vTaskDelay(2500 / portTICK_PERIOD_MS);
 xQueueSend(lpc_to_pn, buffer, 0);
 while(!receivePntoLcp)
 {
