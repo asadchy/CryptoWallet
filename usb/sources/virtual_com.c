@@ -628,7 +628,7 @@ void APPTask(void *handle)
 int cmd;
 struct message mess;
 static struct wallet_status statusW;
-uint8_t buffer[1800] = {0};
+uint8_t buffer[128] = {0};
 uint32_t lenBuf = 0;
 uint32_t send=0;
 int numCheckPin = 0;
@@ -647,6 +647,16 @@ while(!receivePntoLcp)
 {
 	if(xQueueReceive(pn_to_lpc, buffer, 0))
 	{
+		if(buffer[0] == 0x00 || buffer[3] == 0x9a || buffer[1] == 0x00){
+			buffer[0] = 0x9c;
+			buffer[1] = 0x9c;
+			buffer[2] = 0x10;
+			buffer[3] = 0x9a;
+			buffer[4] = 0x9a;
+			vTaskDelay(500 / portTICK_PERIOD_MS);
+			xQueueSend(lpc_to_pn, buffer, 0);
+		}else{
+
 		switch(buffer[3]){
 		case 0:{//not init
 			initWalletCMD(walletInit, 0, pinDef);
@@ -668,14 +678,14 @@ while(!receivePntoLcp)
 			break;
 		}
 		}
+		}
 	}
 }
 
-buffer[0] = 0x00;
-buffer[1] = 0x00;
-buffer[2] = 0x00;
-buffer[3] = 0x00;
-buffer[4] = 0x00;
+for(int i = 0; i<128; i++)
+{
+buffer[i] = 0x00;
+}
 
 
 
@@ -748,6 +758,20 @@ while (1)
 				{
 					pinDef[i] = '\0';
 				}
+				for(int i = 0; i < 128; i++)
+				{
+					buffer[i] = '\0';
+				}
+				buffer[0] = 0x9c;
+				buffer[1] = 0x9c;
+				buffer[2] = 0x20;
+				buffer[38] = 0x9a;
+				buffer[39] = 0x9a;
+				xQueueSend(lpc_to_pn, buffer, 0);
+				for(int i = 0; i<128; i++)
+				{
+				buffer[i] = 0x00;
+				}
 				//write_flash(pinDef, 34, PIN_ADDR);
 				initWalletCMD(walletInit, 0, pinDef);
 				mess.cmd = WALLET_ENTER_PIN;
@@ -757,16 +781,17 @@ while (1)
 		}
 	if(xQueueReceive(pn_to_lpc, buffer, 0))
 	{
-		uint32_t size = 128;
-		dataToBuffer(buffer ,&size, buffer, &lenBuf, &send, &pinInit, pinDef);
+		uint8_t sendBuffer[128] = {0};
+		dataInPN(buffer , sendBuffer, &lenBuf, &send, &pinInit, pinDef);
+
 		if(send>0)
 		{
 			//portENTER_CRITICAL();
-			xQueueSend(lpc_to_pn, buffer, 0);
+			xQueueSend(lpc_to_pn, sendBuffer, 0);
 			//portEXIT_CRITICAL();
             send=0;
             lenBuf = 0;
-            for(int i =0; i<1800; i++)
+            for(int i =0; i<128; i++)
             {
             	buffer[i] = 0x00;
             }

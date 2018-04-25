@@ -360,6 +360,27 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 	}
 	}
 }
+int dataInPN(uint8_t *dataIN, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit, uint32_t *pinDef)
+
+{
+	uint32_t len =0;
+	uint8_t tempBuf[128]={0};
+	for(int i = 0; i<127; i++)
+	{
+		if(dataIN[i]==0x9a && dataIN[i+1]==0x9a)
+		{
+			len = i-2;
+		}
+	}
+	for(int i = 0; i<len; i++)
+	{
+		tempBuf[i] = dataIN[i+2];
+	}
+	answerCom(tempBuf, &len, buffer, lenBuf, pinInit, pinDef);
+	*send=1;
+	return 0;
+}
+
 
 int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *lenBuf, uint32_t *send, int *pinInit, uint32_t *pinDef){
 
@@ -367,7 +388,7 @@ int dataToBuffer(uint8_t *dataIn, uint32_t *lenIn, uint8_t *buffer, uint32_t *le
 		buffer[i] = dataIn[i-(*lenBuf)];
 	}
 	(*lenBuf) = (*lenBuf)+(*lenIn);
-	uint8_t tempBuf[1800] = {0};
+	uint8_t tempBuf[128] = {0};
 	uint32_t start = 0;
 	uint32_t end = 0;
 	if((*lenBuf) > 5){
