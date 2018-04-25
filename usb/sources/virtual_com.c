@@ -678,10 +678,6 @@ buffer[4] = 0x00;
 
 
 
-
-
-
-
 //read_flash(pinDef, 34, PIN_ADDR);
 //initWalletCMD(walletInit, 0, pinDef);
 mess.cmd = WALLET_ENTER_PIN;
