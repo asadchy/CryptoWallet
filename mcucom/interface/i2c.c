@@ -45,11 +45,13 @@ static void i2c_callback(I2C_Type *base, volatile i2c_slave_transfer_t *xfer, vo
 				xfer->txSize = wrp->tx->size;
 				wrp->tx->ready = false;
         	}
+#if 0
         	else
         	{
         		xfer->txData = empty_packet;
 				xfer->txSize = IPC_BUF_SIZE;
         	}
+#endif
             break;
 
         /* Setup the slave receive buffer */
@@ -84,8 +86,8 @@ void BOARD_InitI2C(struct ipc_wrapper *wrp)
 	RESET_PeripheralReset(kFC8_RST_SHIFT_RSTn);
 
 	/*  Set i2c slave interrupt priority higher. */
-	NVIC_SetPriority(I2C_IRQ, 3);
-	EnableIRQ(I2C_IRQ);
+	//NVIC_SetPriority(I2C_IRQ, 3);
+	//EnableIRQ(I2C_IRQ);
 
 	/* Set up i2c slave */
 	I2C_SlaveGetDefaultConfig(&config);
