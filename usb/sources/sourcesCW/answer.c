@@ -296,10 +296,169 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 		}
 		break;
 	}
-	case 0x53:{ //signature
+	case 0x53:{ //signature Pin and confirmation
+		static struct wallet_status statusW;
+		int id = dataIn[1];
+		BYTE valueTr[16] = {0};
+		for(int i = 0; i<15; i++)
+		{
+			valueTr[i] = dataIn[i + 5];
+		}
+		BYTE addr[34] = {0};
+		for(int i=0; i<34; i++){
+			addr[i] = dataIn[5+16 + i];
+		}
+		static struct message message;
+		static struct transaction transaction;
+		if(id==0) {transaction.curr_name = BTC;}
+		if(id==1) {transaction.curr_name = ETH;}
+		if(id==2) {transaction.curr_name = LTC;}
+		for(int i = 0; i<16; i++)
+		{
+			transaction.value[i] = valueTr[i];
+		}
+		if( id == 0 || id ==2 ){
+			for(int i = 0; i < 34; i++){
+				transaction.addr[i] = addr[i];
+			}
+			transaction.addr[34] = '\0';
+		}
+		if( id == 1 ){
+			for(int i = 0; i < 42; i++){
+				transaction.addr[i] = addr[i];
+			}
+			transaction.addr[42] = '\0';
+		}
+		message.cmd = WALLET_TRANSACTION;
+		message.data = (void*)&transaction;
+		xQueueSend(card_to_lcd, (void*)&message, 0);
+		int ans = 0;
+			while(!ans){
+				if(xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY))
+				{
+			int cmd = message.cmd;
+			switch(cmd)
+			{
+			case WALLET_PINCODE:
+				do{
+					if(pinDef[1] == (*(int*)message.data)){
+						*pinInit = *(int*)message.data;
+						message.cmd = TRANSACTION_CONFIRMED;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+						pinOK = 1;
+					}else{
+						int ostNum = 1;
+						message.data = (void*)&ostNum;
+						message.cmd = WALLET_WRONG_PINCODE;
+						xQueueSend(card_to_lcd, (void*)&message, 0);
+						xQueueReceive(lcd_to_card, (void*)&message, portMAX_DELAY);
+					}
+				}while(pinDef[1] != (*(int*)message.data));
+				ans=1;
+				pinOK=1;
+				dataOut[0] = 0x9c;
+				dataOut[1] = 0x9c;
+				dataOut[2] = 0x53;
+				dataOut[0] = 0x9a;
+				dataOut[1] = 0x9a;
+				for(int i = 0; i<16; i++)
+				{
+					statusW.curr[0].amount[i] = balanceWallet[i];
+					statusW.curr[0].amount_dollars[i] = balanceWallet[i + 16];
+					statusW.curr[1].amount[i] = balanceWallet[i + 32];
+					statusW.curr[1].amount_dollars[i] = balanceWallet[i + 48];
+					statusW.curr[2].amount[i] = balanceWallet[i + 64];
+					statusW.curr[2].amount_dollars[i] = balanceWallet[i + 80];
+				}
+				statusW.curr[0].amount[15] = '\0';
+				statusW.curr[0].amount_dollars[15] = '\0';
+				statusW.curr[1].amount[15] = '\0';
+				statusW.curr[1].amount_dollars[15] = '\0';
+				statusW.curr[2].amount[15] = '\0';
+				statusW.curr[2].amount_dollars[15] = '\0';
 
+				statusW.curr[0].curr_name = BTC;
+				statusW.curr[1].curr_name = ETH;
+				statusW.curr[2].curr_name = LTC;
+
+				statusW.num = 3;
+				message.data = (void*)&statusW;
+				message.cmd = WALLET_STATUS;
+				xQueueSend(card_to_lcd, (void*)&message, 0);
+				break;
+
+			case WALLET_CANCEL_PRESSED:
+				pinOK = 0;
+				ans=1;
+				for(int i = 0; i<16; i++)
+				{
+					statusW.curr[0].amount[i] = balanceWallet[i];
+					statusW.curr[0].amount_dollars[i] = balanceWallet[i + 16];
+					statusW.curr[1].amount[i] = balanceWallet[i + 32];
+					statusW.curr[1].amount_dollars[i] = balanceWallet[i + 48];
+					statusW.curr[2].amount[i] = balanceWallet[i + 64];
+					statusW.curr[2].amount_dollars[i] = balanceWallet[i + 80];
+				}
+				statusW.curr[0].amount[15] = '\0';
+				statusW.curr[0].amount_dollars[15] = '\0';
+				statusW.curr[1].amount[15] = '\0';
+				statusW.curr[1].amount_dollars[15] = '\0';
+				statusW.curr[2].amount[15] = '\0';
+				statusW.curr[2].amount_dollars[15] = '\0';
+
+				statusW.curr[0].curr_name = BTC;
+				statusW.curr[1].curr_name = ETH;
+				statusW.curr[2].curr_name = LTC;
+
+				statusW.num = 3;
+				message.data = (void*)&statusW;
+				message.cmd = WALLET_STATUS;
+				xQueueSend(card_to_lcd, (void*)&message, 0);
+				break;
+			}
+			}
+			}
+
+	break;
+	}
+	case 0x54:{ //signature
+		uint8_t privateKey[32]={0};
+		uint8_t publicKey[65]={0};
+		uint8_t hash[32]={0};
+		uint8_t sign[128]={0};
 		if(dataIn[1] == 0x00){//bitcoin
-			int amount = dataIn[2];
+
+			for(int i=0; i<32; i++)
+			{
+				hash[i] = dataIn[3+i];
+			}
+			genKeyC(pinDef, 0, privateKey, publicKey, 1);
+			int lenOutData = 0;
+			getSignBtc(privateKey, 1, hash, sign, &lenOutData);
+			dataOut[0] = 0x9c;
+			dataOut[1] = 0x9c;
+			dataOut[2] = 0x54;
+			dataOut[3] = lenOutData;
+			for(int i =0; i<lenOutData; i++)
+			{
+				dataOut[4+i] = sign[i];
+			}
+			dataOut[4+lenOutData] = 0x9a;
+			dataOut[4+lenOutData] = 0x9a;
+			if(pinOK == 0){
+				for(int i =0; i<128; i++)
+				{
+					dataOut[i] = 0x00;
+				}
+				dataOut[0] = 0x9c;
+				dataOut[1] = 0x9c;
+				dataOut[2] = 0x54;
+				dataOut[5] = 0x9a;
+				dataOut[6] = 0x9a;
+			}
+			pinOK = 0;
+
+			/*int amount = dataIn[2];
 			BYTE mess[512] = {0};
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
@@ -313,10 +472,39 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
+			sign (0, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);*/
 		}
 		if(dataIn[1] == 0x02){//litecoin
-			int amount = dataIn[2];
+			for(int i=0; i<32; i++)
+			{
+				hash[i] = dataIn[3+i];
+			}
+			genKeyC(pinDef, 2, privateKey, publicKey, 1);
+			int lenOutData = 0;
+			getSignBtc(privateKey, 1, hash, sign, &lenOutData);
+			dataOut[0] = 0x9c;
+			dataOut[1] = 0x9c;
+			dataOut[2] = 0x54;
+			dataOut[3] = lenOutData;
+			for(int i =0; i<lenOutData; i++)
+			{
+				dataOut[4+i] = sign[i];
+			}
+			dataOut[4+lenOutData] = 0x9a;
+			dataOut[4+lenOutData] = 0x9a;
+			if(pinOK == 0){
+				for(int i =0; i<128; i++)
+				{
+					dataOut[i] = 0x00;
+				}
+				dataOut[0] = 0x9c;
+				dataOut[1] = 0x9c;
+				dataOut[2] = 0x54;
+				dataOut[5] = 0x9a;
+				dataOut[6] = 0x9a;
+			}
+			pinOK = 0;
+			/*int amount = dataIn[2];
 			BYTE mess[512] = {0};
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
@@ -330,10 +518,39 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<34; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
+			sign (2, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);*/
 		}
 		if(dataIn[1] == 0x01){//ethereum
-			int amount = dataIn[2];
+			for(int i=0; i<32; i++)
+			{
+				hash[i] = dataIn[3+i];
+			}
+			int lenOutData = 65;
+			genKeyE(pinDef, 1, privateKey, publicKey);
+			getSignEther(privateKey, hash, sign);
+			dataOut[0] = 0x9c;
+			dataOut[1] = 0x9c;
+			dataOut[2] = 0x54;
+			dataOut[3] = lenOutData;
+			for(int i =0; i<lenOutData; i++)
+			{
+				dataOut[4+i] = sign[i];
+			}
+			dataOut[4+lenOutData] = 0x9a;
+			dataOut[4+lenOutData] = 0x9a;
+			if(pinOK == 0){
+				for(int i =0; i<128; i++)
+				{
+					dataOut[i] = 0x00;
+				}
+				dataOut[0] = 0x9c;
+				dataOut[1] = 0x9c;
+				dataOut[2] = 0x54;
+				dataOut[5] = 0x9a;
+				dataOut[6] = 0x9a;
+			}
+			pinOK = 0;
+			/*int amount = dataIn[2];
 			BYTE mess[512] = {0};
 			for(int i = 0; i < 32*amount; i++){
 				mess[i] = dataIn[3+i];
@@ -347,7 +564,7 @@ void answerCom(uint8_t *dataIn, uint32_t* lenIn, uint8_t *dataOut, uint32_t* len
 			for(int i=0; i<42; i++){
 				addr[i] = dataIn[19 + 32*amount + i];
 			}
-			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);
+			sign (1, amount, mess, valueTr, addr, dataOut, lenOut, pinInit, pinDef);*/
 		}
 	break;
 	}

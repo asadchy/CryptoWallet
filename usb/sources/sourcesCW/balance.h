@@ -9,7 +9,7 @@
 #define SOURCES_SOURCESCW_BALANCE_H_
 
 uint8_t balanceWallet[96];
-
+int pinOK;
 
 
 #endif /* SOURCES_SOURCESCW_BALANCE_H_ */
