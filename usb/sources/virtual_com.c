@@ -643,6 +643,10 @@ buffer[3] = 0x9a;
 buffer[4] = 0x9a;
 
 xQueueSend(lpc_to_pn, buffer, 0);
+for(int i = 0; i<128; i++)
+{
+buffer[i] = 0x00;
+}
 while(!receivePntoLcp)
 {
 	vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -657,6 +661,10 @@ while(!receivePntoLcp)
 			buffer[4] = 0x9a;
 			//vTaskDelay(500 / portTICK_PERIOD_MS);
 			xQueueSend(lpc_to_pn, buffer, 0);
+			for(int i = 0; i<128; i++)
+			{
+			buffer[i] = 0x00;
+			}
 		}else{
 
 		switch(buffer[3]){
@@ -781,6 +789,10 @@ while (1)
 				buffer[38] = 0x9a;
 				buffer[39] = 0x9a;
 				xQueueSend(lpc_to_pn, buffer, 0);
+				for(int i = 0; i<128; i++)
+				{
+				buffer[i] = 0x00;
+				}
 				while(!xQueueReceive(pn_to_lpc, buffer, 0)){}
 				for(int i = 0; i<128; i++)
 				{
