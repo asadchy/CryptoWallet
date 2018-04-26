@@ -641,19 +641,21 @@ buffer[1] = 0x9c;
 buffer[2] = 0x10;
 buffer[3] = 0x9a;
 buffer[4] = 0x9a;
-vTaskDelay(2500 / portTICK_PERIOD_MS);
+
 xQueueSend(lpc_to_pn, buffer, 0);
 while(!receivePntoLcp)
 {
+	vTaskDelay(500 / portTICK_PERIOD_MS);
 	if(xQueueReceive(pn_to_lpc, buffer, 0))
 	{
-		if(buffer[0] == 0x00 || buffer[3] == 0x9a || buffer[1] == 0x00){
+		if ((buffer[0] != 0x9c) || (buffer[1] != 0x9c) || (buffer[2] != 0x10) || (buffer[3+35] != 0x9a) || (buffer[4+35] != 0x9a))
+		{
 			buffer[0] = 0x9c;
 			buffer[1] = 0x9c;
 			buffer[2] = 0x10;
 			buffer[3] = 0x9a;
 			buffer[4] = 0x9a;
-			vTaskDelay(500 / portTICK_PERIOD_MS);
+			//vTaskDelay(500 / portTICK_PERIOD_MS);
 			xQueueSend(lpc_to_pn, buffer, 0);
 		}else{
 
@@ -707,6 +709,17 @@ while (1)
 				{
 					if(pinDef[1] == *(uint32_t*)mess.data)
 					{
+						buffer[0] = 0x9c;
+						buffer[1] = 0x9c;
+						buffer[2] = 0x30;
+						buffer[3] = 0x9a;
+						buffer[4] = 0x9a;
+						xQueueSend(lpc_to_pn, buffer, 0);
+						buffer[0] = 0x00;
+						buffer[1] = 0x00;
+						buffer[2] = 0x00;
+						buffer[3] = 0x00;
+						buffer[4] = 0x00;
 						numCheckPin = 0;
 						pinInit = *(uint32_t*)mess.data;
 						char amo[16] = {"0.00000000"};
@@ -768,6 +781,7 @@ while (1)
 				buffer[38] = 0x9a;
 				buffer[39] = 0x9a;
 				xQueueSend(lpc_to_pn, buffer, 0);
+				while(!xQueueReceive(pn_to_lpc, buffer, 0)){}
 				for(int i = 0; i<128; i++)
 				{
 				buffer[i] = 0x00;
@@ -784,7 +798,7 @@ while (1)
 		uint8_t sendBuffer[128] = {0};
 		dataInPN(buffer , sendBuffer, &lenBuf, &send, &pinInit, pinDef);
 
-		if(send>0)
+		if(send>0 && sendBuffer[0] != 0)
 		{
 			//portENTER_CRITICAL();
 			xQueueSend(lpc_to_pn, sendBuffer, 0);
@@ -794,6 +808,7 @@ while (1)
             for(int i =0; i<128; i++)
             {
             	buffer[i] = 0x00;
+            	sendBuffer[i] = 0x00;
             }
 
 		}
@@ -1037,6 +1052,7 @@ void initWalletCMD(int walletInit, int blocked, uint32_t *pinDef)
 												buffer[38] = 0x9a;
 												buffer[39] = 0x9a;
 												xQueueSend(lpc_to_pn, buffer, 0);
+												while(!xQueueReceive(pn_to_lpc, buffer, 0)){}
 											//	write_flash(pinDef, 34, PIN_ADDR);
 											}
 											restoreWalletMS = 1;
@@ -1095,6 +1111,7 @@ void initWalletCMD(int walletInit, int blocked, uint32_t *pinDef)
 							buffer[38] = 0x9a;
 							buffer[39] = 0x9a;
 							xQueueSend(lpc_to_pn, buffer, 0);
+							while(!xQueueReceive(pn_to_lpc, buffer, 0)){}
 							//write_flash(pinDef, 34, PIN_ADDR);
 							messInit.cmd = WALLET_SET_MS;
 							mnemonic[lenMnem] = '\0';
