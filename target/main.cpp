@@ -47,6 +47,7 @@ using namespace touchgfx;
 
 extern "C" {
 	extern void usb_init(void);
+	extern void uart_task_init(void);
 }
 
 /**
@@ -80,13 +81,23 @@ int main(void)
     	while(1);
     }
 
-    xTaskCreate(GUITask, (TASKCREATE_NAME_TYPE)"GUITask",
-                configGUI_TASK_STK_SIZE,
-                NULL,
-                configGUI_TASK_PRIORITY,
-                NULL);
+    uart_rx = xQueueCreate(128, 1);
+	if(uart_rx == 0)
+	{
+		while(1);
+	}
+
+	uart_tx = xQueueCreate(128, 1);
+	if(uart_tx == 0)
+	{
+		while(1);
+	}
+
+    xTaskCreate(GUITask, "GUITask", configGUI_TASK_STK_SIZE, NULL, configGUI_TASK_PRIORITY, NULL);
 
     usb_init();
+
+    uart_task_init();
 
     vTaskStartScheduler();
 

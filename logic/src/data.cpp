@@ -9,6 +9,7 @@
 
 #ifndef SIMULATOR
 	QueueHandle_t lcd_to_card, card_to_lcd;
+	QueueHandle_t uart_rx, uart_tx;
 #endif
 
 const char * const currencies_list[CURR_NUM] = {

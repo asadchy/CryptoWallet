@@ -81,6 +81,7 @@ struct wallet_status
 
 #ifndef SIMULATOR
 	extern QueueHandle_t lcd_to_card, card_to_lcd;
+	extern QueueHandle_t uart_rx, uart_tx;
 #endif
 
 #endif /* DATA_HPP_ */

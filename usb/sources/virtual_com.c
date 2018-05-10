@@ -91,6 +91,7 @@ uint32_t pinDef[34];
 static void write_flash(uint32_t *data, uint32_t size, uint32_t addr);
 static void read_flash(uint32_t *data, uint32_t size, uint32_t addr);
 void initWalletCMD(int walletInit, int blocked);
+
 /*******************************************************************************
 * Variables
 ******************************************************************************/
@@ -638,6 +639,7 @@ initWalletCMD(walletInit, 0);
 mess.cmd = WALLET_ENTER_PIN;
 xQueueSend(card_to_lcd, (void*)&mess, 0);
 int cmd;
+uint8_t rx_byte;
 while (1)
 {
 
@@ -713,23 +715,9 @@ while (1)
 		}
 	}
 
-	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
+	if (xQueueReceive(uart_rx, &rx_byte, 0))
 	{
-		/* User Code */
-		if ((0 != s_recvSize) && (0xFFFFFFFF != s_recvSize))
-		{
-			int32_t i;
-
-			/* Copy Buffer to Send Buff */
-			for (i = 0; i < s_recvSize; i++)
-			{
-
-				s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
-
-			}
-			s_recvSize = 0;
-		}
-
+		s_sendSize = 1;
 
 		if (s_sendSize)
 		{
@@ -741,18 +729,16 @@ while (1)
 
 			}
 			if(send>0){
-				//portENTER_CRITICAL();
-				error =	USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, lenBuf);
-				//portEXIT_CRITICAL();
+				for(uint32_t i = 0; i < lenBuf; i++)
+				{
+					xQueueSend(uart_tx, &buffer[i], 0);
+				}
                 send=0;
                 lenBuf = 0;
                 for(int i =0; i<1800; i++){
                 	buffer[i] = 0x00;
                 }
-                if (error != kStatus_USB_Success)
-                {
-                    // Failure to send Data Handling code here
-                }}else{USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, 0);}
+			}
 		}
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \

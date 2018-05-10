@@ -1027,6 +1027,28 @@ void BOARD_InitPins(void) {
     IOCON_PIO_OPENDRAIN_DI                                   /* Open drain is disabled */
   );
   IOCON_PinMuxSet(IOCON, PORT4_IDX, PIN8_IDX, port4_pin8_config); /* PORT4 PIN8 (coords: B14) is configured as ENET_TXD0 */
+
+  /* UART to Flexcom9 */
+  const uint32_t port3_pin21_config = (
+    IOCON_PIO_FUNC1 |                                        /* Pin is configured as FC0_RXD_SDA_MOSI */
+    IOCON_PIO_MODE_INACT |                                   /* No addition pin function */
+    IOCON_PIO_INV_DI |                                       /* Input function is not inverted */
+    IOCON_PIO_DIGITAL_EN |                                   /* Enables digital function */
+    IOCON_PIO_INPFILT_OFF |                                  /* Input filter disabled */
+    IOCON_PIO_SLEW_STANDARD |                                /* Standard mode, output slew rate control is enabled */
+    IOCON_PIO_OPENDRAIN_DI                                   /* Open drain is disabled */
+  );
+  IOCON_PinMuxSet(IOCON, PORT3_IDX, PIN21_IDX, port3_pin21_config); /* PORT0 PIN29 (coords: B13) is configured as FC0_RXD_SDA_MOSI */
+  const uint32_t port3_pin22_config = (
+      IOCON_PIO_FUNC1 |                                        /* Pin is configured as FC0_RXD_SDA_MOSI */
+      IOCON_PIO_MODE_INACT |                                   /* No addition pin function */
+      IOCON_PIO_INV_DI |                                       /* Input function is not inverted */
+      IOCON_PIO_DIGITAL_EN |                                   /* Enables digital function */
+      IOCON_PIO_INPFILT_OFF |                                  /* Input filter disabled */
+      IOCON_PIO_SLEW_STANDARD |                                /* Standard mode, output slew rate control is enabled */
+      IOCON_PIO_OPENDRAIN_DI                                   /* Open drain is disabled */
+    );
+    IOCON_PinMuxSet(IOCON, PORT3_IDX, PIN22_IDX, port3_pin22_config); /* PORT0 PIN29 (coords: B13) is configured as FC0_RXD_SDA_MOSI */
 }
 /*******************************************************************************
  * EOF
