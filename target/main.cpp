@@ -87,13 +87,14 @@ int main(void)
                 configGUI_TASK_PRIORITY,
                 NULL);
 
-    usb_init();
+    //usb_init();
 
     xTaskCreate(Communication_Task, (TASKCREATE_NAME_TYPE)"I2CTask",
 				configGUI_TASK_STK_SIZE,
 				NULL,
 				configGUI_TASK_PRIORITY - 1,
 				NULL);
+
 
     vTaskStartScheduler();
 
