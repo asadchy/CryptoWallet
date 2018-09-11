@@ -19,7 +19,7 @@
 #include "stdbool.h"
 
 #define QUEUE_SIZE		5
-#define IPC_BUF_SIZE	128
+#define IPC_BUF_SIZE	64
 
 enum COMMANDS
 {
@@ -43,7 +43,8 @@ enum COMMANDS
 	WALLET_WRONG_PINCODE,
 	WALLET_PIN_NOT_MATCH,
 	WALLET_MS_ACCEPTED,
-	WALLET_BLOCKED
+	WALLET_BLOCKED,
+	WALLET_CURRENCY_INFO
 };
 
 struct message
