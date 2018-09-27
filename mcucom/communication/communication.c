@@ -28,6 +28,18 @@ uint32_t attempts_left;
 static struct wallet_status currency_info;
 static struct transaction trans;
 
+enum wallet_to_sim_status
+{
+	REMOVE_WALLET = 0,
+	CONFIRM_TRANACTION,
+	CANCEL_TRANSACTION,
+	RECOVER_WALLET,
+	CREATE_WALLET,
+	SEND_PIN,
+	SEND_MS,
+	NOT_READY = 0xFF
+};
+
 void packet_parser();
 
 void Communication_Task(void *params)
@@ -105,6 +117,31 @@ void Communication_Task(void *params)
 			{
 			case WALLET_PINCODE:
 				pin = *(uint32_t*)mess_from_lcd.data;
+				status = SEND_PIN;
+				break;
+
+			case WALLET_CMD_CLEAR:
+				status = REMOVE_WALLET;
+				break;
+
+			case WALLET_CMD_INIT:
+				status = CREATE_WALLET;
+				break;
+
+			case WALLET_CMD_RESTORE:
+				status = RECOVER_WALLET;
+				break;
+
+			case WALLET_MNEMONIC:
+				status = SEND_MS;
+				break;
+
+			case WALLET_CANCEL_PRESSED:
+				status = CANCEL_TRANSACTION;
+				break;
+
+			case WALLET_CONFIRM_PRESSED:
+				status = CONFIRM_TRANACTION;
 				break;
 			}
 		}
@@ -259,6 +296,50 @@ void packet_parser()
 				tx_crc = crc16(tx_packet.data, tx_packet.data[2] + 3);
 				tx_packet.data[3] = tx_crc >> 8;
 				tx_packet.data[4] = tx_crc;
+
+				tx_packet.ready = true;
+				break;
+
+			case WALLET_GET_STATUS:
+				memset(tx_packet.data, 0, sizeof(tx_packet.data));
+				uint8_t pos;
+				if(status < SEND_PIN)
+				{
+					tx_packet.data[0] = 0x21;
+					tx_packet.data[1] = WALLET_GET_STATUS;
+					tx_packet.data[2] = 0x01;
+					tx_packet.data[3] = status;
+					tx_crc = crc16(tx_packet.data, tx_packet.data[2] + 3);
+					pos = 4;
+				}
+				else if(status == SEND_PIN)
+				{
+					tx_packet.data[0] = 0x21;
+					tx_packet.data[1] = WALLET_GET_STATUS;
+					tx_packet.data[2] = 0x05;
+					tx_packet.data[3] = pin >> 24;
+					tx_packet.data[4] = pin >> 16;
+					tx_packet.data[5] = pin >> 8;
+					tx_packet.data[6] = pin;
+					tx_crc = crc16(tx_packet.data, tx_packet.data[2] + 3);
+					pos = 7;
+				}
+				else if(status == SEND_MS)
+				{
+
+				}
+				else if(status == NOT_READY)
+				{
+					tx_packet.data[0] = 0x21;
+					tx_packet.data[1] = WALLET_GET_STATUS;
+					tx_packet.data[2] = 0x01;
+					tx_packet.data[3] = 0xFF;
+					tx_crc = crc16(tx_packet.data, tx_packet.data[2] + 3);
+					pos = 4;
+				}
+
+				tx_packet.data[pos] = tx_crc >> 8;
+				tx_packet.data[pos + 1] = tx_crc;
 
 				tx_packet.ready = true;
 				break;
