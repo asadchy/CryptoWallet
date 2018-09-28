@@ -2057,7 +2057,6 @@ static const char * const wordlist[] = {
 	"zero",
 	"zone",
 	"zoo",
-	0,
 };
 
 

@@ -16,6 +16,10 @@
 #include "i2c.h"
 #include "data.hpp"
 #include "string.h"
+#include "sourcesCW/pbkdf2/bip39_english.h"
+
+#define MNEMONIC_SIZE			123
+#define WORDS_NUM				12
 
 SemaphoreHandle_t packet_ready_sem;
 struct ipc_packet tx_packet, rx_packet;
@@ -27,6 +31,8 @@ uint32_t pin = 0xFFFFFFFF;
 uint32_t attempts_left;
 static struct wallet_status currency_info;
 static struct transaction trans;
+static char ms_str[MNEMONIC_SIZE];
+static uint16_t ms_num[WORDS_NUM];
 
 enum wallet_to_sim_status
 {
@@ -133,6 +139,27 @@ void Communication_Task(void *params)
 				break;
 
 			case WALLET_MNEMONIC:
+				strncpy(ms_str, (const char*)mess_from_lcd.data, MNEMONIC_SIZE);
+				memset(ms_num, 0xFF, WORDS_NUM * 2);
+
+				char *ms_ptr;
+				const char *sep = " ";
+				int counter;
+
+				ms_ptr = strtok(ms_str, sep);
+				for(counter = 0; counter < WORDS_NUM; counter++)
+				{
+					int i;
+					for(i = 0; i < sizeof(wordlist); i++)
+					{
+						if(strcmp(ms_ptr, wordlist[i]) == 0)
+						{
+							ms_num[counter] = i;
+							break;
+						}
+					}
+					ms_ptr = strtok(NULL, sep);
+				}
 				status = SEND_MS;
 				break;
 
@@ -276,7 +303,7 @@ void packet_parser()
 				break;
 
 			case WALLET_TRANSACTION:
-				/*
+
 				trans.curr_name = rx_packet.data[3];
 				memcpy(trans.addr, &rx_packet.data[4], 43);
 				crypto = ((uint32_t)rx_packet.data[47] << 24) | ((uint32_t)rx_packet.data[48] << 16) |
@@ -284,7 +311,7 @@ void packet_parser()
 				crypto_fract = ((uint32_t)rx_packet.data[51] << 24) | ((uint32_t)rx_packet.data[52] << 16) |
 						((uint32_t)rx_packet.data[53] << 8) | ((uint32_t)rx_packet.data[54]);
 				snprintf(trans.value, 16, "%u.%u", crypto, crypto_fract);
-				*/
+
 				mess_to_lcd.cmd = WALLET_TRANSACTION;
 				mess_to_lcd.data = &trans;
 				xQueueSend(card_to_lcd, (void* )&mess_to_lcd, 0);
@@ -326,7 +353,17 @@ void packet_parser()
 				}
 				else if(status == SEND_MS)
 				{
-
+					tx_packet.data[0] = 0x21;
+					tx_packet.data[1] = WALLET_GET_STATUS;
+					tx_packet.data[2] = 0x19;
+					int i;
+					for(i = 0; i < WORDS_NUM; i++)
+					{
+						tx_packet.data[3 + (i * 2)] = ms_num[i] >> 16;
+						tx_packet.data[3 + (i * 2 + 1)] = ms_num[i];
+					}
+					tx_crc = crc16(tx_packet.data, tx_packet.data[2] + 3);
+					pos = 27;
 				}
 				else if(status == NOT_READY)
 				{
