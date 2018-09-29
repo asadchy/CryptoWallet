@@ -303,7 +303,7 @@ void packet_parser()
 				break;
 
 			case WALLET_TRANSACTION:
-
+				/*
 				trans.curr_name = rx_packet.data[3];
 				memcpy(trans.addr, &rx_packet.data[4], 43);
 				crypto = ((uint32_t)rx_packet.data[47] << 24) | ((uint32_t)rx_packet.data[48] << 16) |
@@ -311,6 +311,7 @@ void packet_parser()
 				crypto_fract = ((uint32_t)rx_packet.data[51] << 24) | ((uint32_t)rx_packet.data[52] << 16) |
 						((uint32_t)rx_packet.data[53] << 8) | ((uint32_t)rx_packet.data[54]);
 				snprintf(trans.value, 16, "%u.%u", crypto, crypto_fract);
+				*/
 
 				mess_to_lcd.cmd = WALLET_TRANSACTION;
 				mess_to_lcd.data = &trans;
@@ -343,12 +344,13 @@ void packet_parser()
 				{
 					tx_packet.data[0] = 0x21;
 					tx_packet.data[1] = WALLET_GET_STATUS;
-					tx_packet.data[2] = 0x05;
+					tx_packet.data[2] = 0x04;
 					tx_packet.data[3] = pin >> 24;
 					tx_packet.data[4] = pin >> 16;
 					tx_packet.data[5] = pin >> 8;
 					tx_packet.data[6] = pin;
 					tx_crc = crc16(tx_packet.data, tx_packet.data[2] + 3);
+					pin = 0xFFFFFFFF;
 					pos = 7;
 				}
 				else if(status == SEND_MS)
@@ -379,6 +381,7 @@ void packet_parser()
 				tx_packet.data[pos + 1] = tx_crc;
 
 				tx_packet.ready = true;
+				status = 0xFF;
 				break;
 			}
 		}
