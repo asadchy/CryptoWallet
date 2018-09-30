@@ -59,12 +59,12 @@ static void i2c_callback(I2C_Type *base, volatile i2c_slave_transfer_t *xfer, vo
             /*  Update information for received process */
 				xfer->rxData = wrp->rx->data;
 				xfer->rxSize = wrp->rx->size;
-				wrp->rx->ready = true;
             break;
 
         /* The master has sent a stop transition on the bus */
         case kI2C_SlaveCompletionEvent:
             //xSemaphoreGiveFromISR(*(wrp->sem), NULL);
+        	wrp->rx->ready = true;
             break;
 
         default:

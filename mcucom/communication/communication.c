@@ -384,6 +384,7 @@ void packet_parser()
 				status = 0xFF;
 				break;
 			}
+			memset(rx_packet.data, 0, sizeof(rx_packet.data));
 		}
 	}
 }
